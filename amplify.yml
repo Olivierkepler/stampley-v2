@@ -3,7 +3,8 @@ frontend:
   phases:
     preBuild:
       commands:
-        - npm ci
+        # Amplify sets NODE_ENV=production; plain `npm ci` skips devDependencies and breaks `next build` (Tailwind/PostCSS, TypeScript).
+        - npm ci --include=dev
     build:
       commands:
         - npm run build
