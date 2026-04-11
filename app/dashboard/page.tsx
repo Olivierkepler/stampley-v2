@@ -1,4 +1,4 @@
-import { auth } from "@/lib/auth"
+import { auth, signOut } from "@/lib/auth"
 import { redirect } from "next/navigation"
 import Link from "next/link"
 
@@ -7,9 +7,30 @@ export default async function DashboardPage() {
   if (!session) redirect("/login")
 
   return (
-    <div className="min-h-screen bg-gray-50 p-8">
-      <div className="max-w-2xl mx-auto">
-        
+    <div className="min-h-screen bg-gray-50">
+
+      {/* Navbar */}
+      <nav className="bg-white border-b border-gray-100 px-8 py-4 flex items-center justify-between">
+        <h1 className="font-semibold text-gray-900">AIDES-T2D</h1>
+        <div className="flex items-center gap-4">
+          <span className="text-sm text-gray-500">{session.user?.email}</span>
+          <form action={async () => {
+            "use server"
+            await signOut({ redirectTo: "/login" })
+          }}>
+            <button
+              type="submit"
+              className="text-sm text-gray-500 hover:text-gray-900 transition"
+            >
+              Sign out
+            </button>
+          </form>
+        </div>
+      </nav>
+
+      {/* Content */}
+      <div className="max-w-2xl mx-auto p-8">
+
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-2xl font-semibold text-gray-900">
@@ -54,7 +75,6 @@ export default async function DashboardPage() {
             </div>
           )}
         </div>
-
       </div>
     </div>
   )

@@ -41,7 +41,8 @@ export default function LoginPage() {
             Welcome back
           </h1>
           <p className="text-sm text-gray-500 mt-1">
-            Sign in to your AIDES-T2D account
+            Sign in to your account
+            {/* AIDES-T2D account */}
           </p>
         </div>
 
