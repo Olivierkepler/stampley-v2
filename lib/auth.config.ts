@@ -3,14 +3,15 @@ import { NextResponse } from "next/server";
 
 export type AuthRole = "ADMIN" | "PARTICIPANT";
 
-export function resolveAuthSecret(): string {
+/** Returns undefined in production when unset so Auth.js can surface Configuration / MissingSecret instead of crashing module load. */
+export function resolveAuthSecret(): string | undefined {
   const s = process.env.AUTH_SECRET?.trim() ||
             process.env.NEXTAUTH_SECRET?.trim();
   if (s) return s;
   if (process.env.NODE_ENV !== "production") {
     return "local-dev-only-secret-min-32-chars-long!!";
   }
-  throw new Error("AUTH_SECRET must be set in production");
+  return undefined;
 }
 
 export const baseAuthConfig = {

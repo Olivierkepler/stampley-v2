@@ -1,16 +1,24 @@
 import { Pool } from "pg";
 
-if (!process.env.DATABASE_URL) {
-  throw new Error("DATABASE_URL must be set");
-}
+const globalForPg = globalThis as unknown as { pool?: Pool };
 
-const globalForPg = globalThis as unknown as { pool: Pool };
+/**
+ * Pool is created on first use so missing DATABASE_URL does not crash every
+ * module that imports this file (e.g. NextAuth routes like /api/auth/error).
+ */
+export function getPool(): Pool {
+  if (globalForPg.pool) return globalForPg.pool;
 
-export const pool =
-  globalForPg.pool ??
-  new Pool({
-    connectionString: process.env.DATABASE_URL,
-    ssl: process.env.DATABASE_URL.includes("rds.amazonaws.com")
+  const connectionString = process.env.DATABASE_URL?.trim();
+  if (!connectionString) {
+    throw new Error(
+      "DATABASE_URL is not set. In Amplify: Hosting → Environment variables."
+    );
+  }
+
+  globalForPg.pool = new Pool({
+    connectionString,
+    ssl: connectionString.includes("rds.amazonaws.com")
       ? { rejectUnauthorized: false }
       : false,
     max: 10,
@@ -18,10 +26,11 @@ export const pool =
     connectionTimeoutMillis: 2000,
   });
 
-if (process.env.NODE_ENV !== "production") globalForPg.pool = pool;
+  return globalForPg.pool;
+}
 
 export async function query(text: string, params?: unknown[]) {
-  const client = await pool.connect();
+  const client = await getPool().connect();
   try {
     const result = await client.query(text, params);
     return result;
