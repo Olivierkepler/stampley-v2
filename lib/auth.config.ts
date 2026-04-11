@@ -1,23 +1,7 @@
-import type { NextAuthConfig, User as NextAuthUser, Session } from "next-auth";
+import type { NextAuthConfig } from "next-auth";
 import { NextResponse } from "next/server";
 
 export type AuthRole = "ADMIN" | "PARTICIPANT";
-
-// Extend types to include `role`
-declare module "next-auth" {
-  interface User {
-    id: string;
-    email: string;
-    role: AuthRole;
-  }
-  interface Session {
-    user: {
-      id: string;
-      email: string;
-      role: AuthRole;
-    }
-  }
-}
 
 export function resolveAuthSecret(): string {
   const s = process.env.AUTH_SECRET?.trim() ||
@@ -35,7 +19,10 @@ export const baseAuthConfig = {
     signIn: "/login",
   },
   callbacks: {
-    authorized({ auth, request }: { auth: { user?: { role?: AuthRole } } | null, request: any }) {
+    authorized({ auth, request }: { 
+      auth: { user?: { role?: AuthRole } } | null, 
+      request: any 
+    }) {
       const { pathname } = request.nextUrl;
       const isLoggedIn = !!auth?.user;
       const role = auth?.user?.role as AuthRole | undefined;

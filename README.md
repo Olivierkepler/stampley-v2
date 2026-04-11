@@ -79,67 +79,112 @@ Fill in your .env.local with this — replace the placeholders with your actual 
 
 
 
-AWS RDS Setup Guide — Stampley V2
+
+
+
+
+AWS RDS Setup Guide — Stampley V3
 
 Step 1: Go to AWS RDS
 👉 https://us-east-2.console.aws.amazon.com/rds/home?region=us-east-2#launch-dbinstance:
 
 Step 2: Create Database Settings
 Engine options
-Creation method:    Standard create
-Engine:             PostgreSQL
-Version:            PostgreSQL 16.x
-Creation method:    Full configuration
+    Creation method:    Standard create
+    Engine:             PostgreSQL
+    Version:            PostgreSQL 16.x
+    Creation method:    Full configuration
 Templates
-Template:           Free tier
-Availability:       Single-AZ DB instance deployment (1 instance)
+    Template:           Free tier
+    Availability:       Single-AZ DB instance deployment (1 instance)
 Settings
-Engine version:     PostgreSQL 16.13-R1
-DB instance ID:     stampley-v2-db
-Master username:    postgres
-Credentials:        Self managed
-Authentication:     Password authentication
-Master password:    [create a strong one, write it down]
+    Engine version:     PostgreSQL 16.13-R1
+    DB instance ID:     stampley-v3-db
+    Master username:    postgres
+    Credentials:        Self managed
+    Authentication:     Password authentication
+    Master password:    [create a strong one, write it down]
 Instance Configuration
-DB instance class:  Burstable classes (includes t classes)
-Instance type:      db.t4g.micro
+    DB instance class:  Burstable classes (includes t classes)
+    Instance type:      db.t4g.micro
 Storage
-Storage type:       General Purpose SSD (gp2)
-Allocated storage:  20 GiB
-Storage autoscaling: ☐ unchecked
+    Storage type:       General Purpose SSD (gp2)
+    Allocated storage:  20 GiB
+Additional storage configuration
+    Storage autoscaling: ☐ unchecked
 Connectivity
-Compute resource:   Don't connect to an EC2 compute resource
-Network type:       IPv4
-VPC:                Default VPC (vpc-0833007bf0d76f553)
-DB subnet group:    default-vpc-0833007bf0d76f553
-Public access:      YES
-Security group:     Create new
-Security group name: stampley-v2-sg
-Availability Zone:  No preference
-RDS Proxy:          ☐ unchecked
-Certificate:        rds-ca-rsa2048-g1 (default)
-Database port:      5432
+    Compute resource:   Don't connect to an EC2 compute resource
+    Network type:       IPv4
+    VPC:                Default VPC (vpc-0833007bf0d76f553)
+    DB subnet group:    default-vpc-0833007bf0d76f553
+    Public access:      YES
+    Security group:     Create new
+    New VPC Security group name: stampley-v3-sg
+    Availability Zone:  No preference
+    RDS Proxy:          ☐ unchecked
+    Certificate:        rds-ca-rsa2048-g1 (default)
+    Database port:      5432
 Monitoring
-Database Insights:  Standard
-Performance Insights: ☑ enabled
-Retention period:   7 days
-AWS KMS key:        (default) aws/rds
+    Database Insights:  Standard
+    Performance Insights: ☑ enabled
+    Retention period:   7 days
+    AWS KMS key:        (default) aws/rds
+
 Additional Configuration
-Initial database name: stampley_db
-DB parameter group:    default.postgres16
-Automated backup:      ☑ enabled
-Backup retention:      1 day
-Backup window:         No preference
-Copy tags to snapshots: ☑ enabled
-Backup replication:    ☐ disabled
-Encryption:            ☑ enabled
-AWS KMS key:           (default) aws/rds
-Auto minor upgrade:    ☑ enabled
-Maintenance window:    No preference
-Deletion protection:   ☐ unchecked
+    Initial database name: stampley_db3
+    DB parameter group:    default.postgres16
+    Automated backup:      ☑ enabled
+    Backup retention:      1 day
+    Backup window:         No preference
+    Copy tags to snapshots: ☑ enabled
+    Backup replication:    ☐ disabled
+    Encryption:            ☑ enabled
+    AWS KMS key:           (default) aws/rds
+    Auto minor upgrade:    ☑ enabled
+    Maintenance window:    No preference
+    Deletion protection:   ☐ unchecked
 
 
-   
+
+
+
+
+Get Your Database Connection String
+        Step 1: Find your endpoint
+
+            Go to RDS → Databases → stampley-v3-db
+            Click the "Connectivity & security" tab
+            Under "Connection steps" find this line:
+
+            export RDSHOST="stampley-v3-db.cvugs2cu0xyt.us-east-2.rds.amazonaws.com"
+            Copy the value inside the quotes — that's your endpoint.
+
+        Step 2: Build your DATABASE_URL
+            Replace the placeholders with your actual values:
+            postgresql://postgres:YOURPASSWORD@YOUR_ENDPOINT:5432/stampley_db3
+            Example:
+            postgresql://postgres:MyStr0ngP@ss!@stampley-v3-db.cvugs2cu0xyt.us-east-2.rds.amazonaws.com:5432/stampley_db3
+
+        Step 3: Add it to .env.local
+            bashDATABASE_URL="postgresql://postgres:YOURPASSWORD@stampley-v3-db.cvugs2cu0xyt.us-east-2.rds.amazonaws.com:5432/stampley_db3"
+            AUTH_SECRET="your-generated-secret"
+            NEXTAUTH_URL="http://localhost:3000"
+
+
+Step 2: Add security group rules
+    Go to EC2 → Security Groups → stampley-v3-sg → Edit inbound rules
+    Get your current IP first:
+    bashcurl ifconfig.me
+Then add:
+    Rule 1: PostgreSQL  5432  YOUR_IP/32   ← your local IP
+    Rule 2: PostgreSQL  5432  0.0.0.0/0   ← for Amplify
+
+Step 3: Test connection
+    bashpsql -h stampley-v3-db.cvugs2cu0xyt.us-east-2.rds.amazonaws.com -U postgres -d stampley_db3
+
+Step 4: Run the schema
+    Once connected, paste the contents of lib/schema.sql to create all tables.
+
 
 While the RDS is being created, let's create the database schema. Create a new file lib/schema.sql:
 sqlCREATE EXTENSION IF NOT EXISTS "pgcrypto";
