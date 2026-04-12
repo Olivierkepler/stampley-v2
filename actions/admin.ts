@@ -19,7 +19,6 @@ export async function generateStudyKey() {
   if (!session || session.user?.role !== "ADMIN") {
     return { error: "Unauthorized" }
   }
-
   try {
     const key = generateKey()
     await query(
@@ -40,7 +39,6 @@ export async function deleteStudyKey(id: string) {
   if (!session || session.user?.role !== "ADMIN") {
     return { error: "Unauthorized" }
   }
-
   try {
     await query(
       "DELETE FROM study_keys WHERE id = $1 AND is_used = FALSE",
@@ -59,7 +57,6 @@ export async function deleteUser(id: string) {
   if (!session || session.user?.role !== "ADMIN") {
     return { error: "Unauthorized" }
   }
-
   try {
     await query("DELETE FROM users WHERE id = $1", [id])
     revalidatePath("/admin/users")
@@ -75,11 +72,9 @@ export async function createUser(formData: FormData) {
   if (!session || session.user?.role !== "ADMIN") {
     return { error: "Unauthorized" }
   }
-
   const email = formData.get("email") as string
   const password = formData.get("password") as string
   const role = formData.get("role") as string
-
   try {
     const hashedPassword = await bcrypt.hash(password, 10)
     await query(
@@ -92,5 +87,24 @@ export async function createUser(formData: FormData) {
   } catch (error) {
     console.error("[createUser]", error)
     return { error: "Failed to create user" }
+  }
+}
+
+export async function toggleUserRole(id: string, currentRole: string) {
+  const session = await auth()
+  if (!session || session.user?.role !== "ADMIN") {
+    return { error: "Unauthorized" }
+  }
+  const newRole = currentRole === "ADMIN" ? "PARTICIPANT" : "ADMIN"
+  try {
+    await query(
+      "UPDATE users SET role = $1 WHERE id = $2",
+      [newRole, id]
+    )
+    revalidatePath("/admin/users")
+    return { success: true, newRole }
+  } catch (error) {
+    console.error("[toggleUserRole]", error)
+    return { error: "Failed to update role" }
   }
 }

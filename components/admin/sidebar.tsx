@@ -2,6 +2,7 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
+import Image from "next/image"
 
 const navItems = [
   {
@@ -90,53 +91,75 @@ export function AdminSidebar({
 
   return (
     <aside
-      className={`bg-white border-r border-gray-100 flex flex-col fixed h-full z-30 transition-[width] duration-200 ease-out ${
-        collapsed ? "w-16" : "w-64"
+      className={`fixed z-30 flex h-full flex-col border-r border-white/60 bg-white/85 backdrop-blur-xl shadow-[0_10px_40px_rgba(15,23,42,0.08)] transition-[width] duration-300 ease-out ${
+        collapsed ? "w-20" : "w-72"
       }`}
     >
-      {/* Logo + collapse toggle */}
       <div
-        className={`border-b border-gray-100 flex items-center gap-2 shrink-0 ${
-          collapsed ? "flex-col px-2 py-3" : "px-4 py-4 justify-between"
+        className={`shrink-0 border-b border-slate-200/70 ${
+          collapsed ? "px-3 py-4" : "px-5 py-5"
         }`}
       >
-        {!collapsed ? (
-          <>
-            <div className="min-w-0">
-              <h1 className="font-semibold text-gray-900 truncate">AIDES-T2D</h1>
-              <p className="text-xs text-gray-400 mt-0.5">Admin Portal</p>
-            </div>
-            <button
-              type="button"
-              onClick={onToggleCollapse}
-              aria-label="Collapse sidebar"
-              className="p-1.5 rounded-lg text-gray-500 hover:bg-gray-100 hover:text-gray-900 transition shrink-0"
-            >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-              </svg>
-            </button>
-          </>
-        ) : (
-          <button
-            type="button"
-            onClick={onToggleCollapse}
-            aria-label="Expand sidebar"
-            className="p-1.5 rounded-lg text-gray-500 hover:bg-gray-100 hover:text-gray-900 transition"
-          >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-            </svg>
-          </button>
-        )}
+        <div className={`flex items-center ${collapsed ? "flex-col gap-3" : "justify-between gap-3"}`}>
+          {!collapsed ? (
+            <>
+              <div className="min-w-0">
+                <div className="flex items-center gap-3">
+                  {/* <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-slate-900 via-slate-800 to-slate-700 text-white shadow-lg shadow-slate-900/20">
+                    <span className="text-sm font-semibold">A</span>
+                  </div> */}
+                  <Image
+                    src="/images/stampleyLogo.png"
+                    alt="AIDES-T2D"
+                    width={32}
+                    height={32}
+                    style={{ width: 32, height: "auto" }}
+                  />
+                  <div className="min-w-0">
+                    <h1 className="truncate text-sm font-semibold tracking-wide text-slate-900">
+                      AIDES-T2D
+                    </h1>
+                    <p className="mt-0.5 text-xs text-slate-500">Admin Portal</p>
+                  </div>
+            
+                </div>
+              </div>
+
+              <button
+                type="button"
+                onClick={onToggleCollapse}
+                aria-label="Collapse sidebar"
+                className="inline-flex h-10 w-10 cursor-pointer items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-500 shadow-sm transition hover:border-slate-300 hover:bg-slate-50 hover:text-slate-900"
+              >
+                <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                </svg>
+              </button>
+            </>
+          ) : (
+            <>
+                {/* <Image src="/images/stampleyLogo.png" alt="AIDES-T2D" width={32} height={32} /> */}
+
+              <button
+                type="button"
+                onClick={onToggleCollapse}
+                aria-label="Expand sidebar"
+                className="inline-flex cursor-pointer h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-500 shadow-sm transition hover:border-slate-300 hover:bg-slate-50 hover:text-slate-900"
+              >
+                <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </button>
+            </>
+          )}
+        </div>
       </div>
 
-      {/* Search */}
       {!collapsed && (
-        <div className="px-4 py-4 border-b border-gray-100">
-          <div className="relative">
+        <div className="border-b border-slate-200/70 px-5 py-4">
+          <div className="group relative">
             <svg
-              className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400"
+              className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400 transition group-focus-within:text-slate-600"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -150,65 +173,89 @@ export function AdminSidebar({
             </svg>
             <input
               type="text"
-              placeholder="Search..."
-              className="w-full pl-9 pr-4 py-2 text-sm bg-gray-50 border border-gray-200 rounded-lg outline-none focus:border-gray-400 transition"
+              placeholder="Search navigation..."
+              className="w-full rounded-2xl border border-slate-200 bg-slate-50/80 py-2.5 pl-10 pr-4 text-sm text-slate-700 outline-none transition placeholder:text-slate-400 focus:border-slate-300 focus:bg-white focus:ring-4 focus:ring-slate-200/50"
             />
           </div>
         </div>
       )}
 
-      {/* Navigation */}
-      <nav className={`flex-1 py-4 space-y-1 overflow-y-auto ${collapsed ? "px-2" : "px-4"}`}>
-        {navItems.map((section) => (
-          <div key={section.section} className="mb-4">
-            {!collapsed && (
-              <p className="text-xs font-medium text-gray-400 uppercase tracking-wider px-2 mb-2">
-                {section.section}
-              </p>
-            )}
-            {section.links.map((link) => {
-              const isActive = pathname === link.href
-              return (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  title={collapsed ? link.label : undefined}
-                  className={`flex items-center rounded-lg text-sm transition group ${
-                    collapsed ? "justify-center px-2 py-2.5" : "gap-3 px-3 py-2.5"
-                  } ${
-                    isActive
-                      ? "bg-gray-900 text-white"
-                      : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
-                  }`}
-                >
-                  <span
-                    className={`shrink-0 ${isActive ? "text-white" : "text-gray-400 group-hover:text-gray-600"}`}
-                  >
-                    {link.icon}
-                  </span>
-                  {!collapsed && <span className="truncate">{link.label}</span>}
-                </Link>
-              )
-            })}
-          </div>
-        ))}
+      <nav className={`flex-1 overflow-y-auto py-5 ${collapsed ? "px-3" : "px-4"}`}>
+        <div className="space-y-6">
+          {navItems.map((section) => (
+            <div key={section.section}>
+              {!collapsed && (
+                <div className="mb-2 px-3">
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-400">
+                    {section.section}
+                  </p>
+                </div>
+              )}
+
+              <div className="space-y-1.5">
+                {section.links.map((link) => {
+                  const isActive = pathname === link.href
+
+                  return (
+                    <Link
+                      key={link.href}
+                      href={link.href}
+                      title={collapsed ? link.label : undefined}
+                      className={`group relative flex items-center rounded-xl text-sm font-medium transition-all duration-200 ${
+                        collapsed ? "justify-center px-2 py-3" : "gap-3 px-3.5 py-3"
+                      } ${
+                        isActive
+                          ? " text-black shadow-lg shadow-slate-900/15 "
+                          : "text-slate-600 hover:bg-slate-100/80 hover:text-slate-900"
+                      }`}
+                    >
+                      {!collapsed && isActive && (
+                        <span className="absolute left-0 top-1/2 h-8 w-1 -translate-y-1/2 rounded-r-full bg-blue-900 -translate-x-4" />
+                      )}
+
+                      <span
+                        className={`relative shrink-0 transition ${
+                          isActive
+                            ? "text-blue-900"
+                            : "text-slate-400 group-hover:text-slate-700"
+                        }`}
+                      >
+                        {link.icon}
+                      </span>
+
+                      {!collapsed && (
+                        <span className="truncate">{link.label}</span>
+                      )}
+                    </Link>
+                  )
+                })}
+              </div>
+            </div>
+          ))}
+        </div>
       </nav>
 
-      {/* Bottom - User info */}
-      <div className={`py-4 border-t border-gray-100 ${collapsed ? "px-2 flex justify-center" : "px-4"}`}>
-        <div className={`flex items-center gap-3 ${collapsed ? "flex-col" : ""}`}>
-          <div
-            className="w-8 h-8 rounded-full bg-gray-900 text-white flex items-center justify-center text-xs font-medium shrink-0"
-            title={collapsed ? email : undefined}
-          >
-            {email[0]?.toUpperCase() ?? "?"}
-          </div>
-          {!collapsed && (
-            <div className="flex-1 min-w-0">
-              <p className="text-xs font-medium text-gray-900 truncate">{email}</p>
-              <p className="text-xs text-gray-400">Administrator</p>
+      <div className={`border-t border-slate-200/70 p-4 ${collapsed ? "px-3" : ""}`}>
+        <div
+          className={`rounded-2xl border border-slate-200/80 bg-slate-50/70 shadow-sm ${
+            collapsed ? "p-2.5" : "p-3"
+          }`}
+        >
+          <div className={`flex items-center ${collapsed ? "flex-col gap-2" : "gap-3"}`}>
+            <div
+              className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-slate-900 to-slate-700 text-sm font-semibold text-white shadow-md"
+              title={collapsed ? email : undefined}
+            >
+              {email[0]?.toUpperCase() ?? "?"}
             </div>
-          )}
+
+            {!collapsed && (
+              <div className="min-w-0 flex-1">
+                <p className="truncate text-sm font-medium text-slate-900">{email}</p>
+                <p className="mt-0.5 text-xs text-slate-500">Administrator</p>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </aside>

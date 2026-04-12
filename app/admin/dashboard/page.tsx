@@ -12,7 +12,7 @@ export default async function AdminDashboardPage() {
   const availableKeys = keysResult.rows[0].count
 
   return (
-    <div>
+    <div className="bg-white">
       <h1 className="text-2xl font-semibold text-gray-900 mb-8">Dashboard</h1>
       <div className="grid grid-cols-2 gap-4">
         <div className="bg-white rounded-2xl border border-gray-100 p-6">

@@ -1,175 +1,201 @@
 import { query } from "@/lib/db"
 import { generateStudyKey, deleteStudyKey } from "@/actions/admin"
 import { CopyButton } from "@/components/admin/copy-button"
+import { KeysTableToolbar } from "@/components/admin/keys/keys-table-toolbar"
+import { KeysTable } from "@/components/admin/keys/keys-table"
+import { KeysPagination } from "@/components/admin/keys/keys-pagination"
 
 export const dynamic = "force-dynamic"
 
-export default async function AdminKeysPage() {
-  const keys = await query(`
-    SELECT 
-      sk.*,
-      u.email as participant_email
-    FROM study_keys sk
-    LEFT JOIN users u ON u.study_id = sk.key
-    ORDER BY sk.created_at DESC
+type SearchParams = {
+  q?: string
+  status?: string
+  sort?: string
+  page?: string
+  pageSize?: string
+}
+
+const SORT_MAP: Record<string, string> = {
+  created_at_desc: "sk.created_at DESC",
+  created_at_asc: "sk.created_at ASC",
+  key_asc: "sk.key ASC",
+  key_desc: "sk.key DESC",
+}
+
+export default async function AdminKeysPage({
+  searchParams,
+}: {
+  searchParams: Promise<SearchParams>
+}) {
+  const params = await searchParams
+
+  const q = (params.q ?? "").trim()
+  const status = params.status ?? "ALL"
+  const sort = params.sort ?? "created_at_desc"
+  const page = Math.max(Number(params.page ?? "1"), 1)
+  const pageSize = Math.max(Number(params.pageSize ?? "20"), 1)
+
+  const where: string[] = []
+  const values: (string | number | boolean)[] = []
+
+  if (q) {
+    values.push(`%${q}%`)
+    const i = values.length
+    where.push(`(sk.key ILIKE $${i} OR u.email ILIKE $${i})`)
+  }
+
+  if (status === "USED") {
+    where.push(`sk.is_used = true`)
+  } else if (status === "AVAILABLE") {
+    where.push(`sk.is_used = false`)
+  }
+
+  const whereClause = where.length ? `WHERE ${where.join(" AND ")}` : ""
+  const orderBy = SORT_MAP[sort] ?? SORT_MAP.created_at_desc
+
+  values.push(pageSize)
+  const limitIndex = values.length
+
+  values.push((page - 1) * pageSize)
+  const offsetIndex = values.length
+
+  const keysResult = await query(
+    `
+      SELECT 
+        sk.*,
+        u.email AS participant_email
+      FROM study_keys sk
+      LEFT JOIN users u ON u.study_id = sk.key
+      ${whereClause}
+      ORDER BY ${orderBy}
+      LIMIT $${limitIndex}
+      OFFSET $${offsetIndex}
+    `,
+    values
+  )
+
+  const countValues = values.slice(0, values.length - 2)
+
+  const countResult = await query(
+    `
+      SELECT COUNT(*)::int AS count
+      FROM study_keys sk
+      LEFT JOIN users u ON u.study_id = sk.key
+      ${whereClause}
+    `,
+    countValues
+  )
+
+  const statsResult = await query(`
+    SELECT
+      COUNT(*)::int AS total,
+      COUNT(*) FILTER (WHERE is_used = true)::int AS used,
+      COUNT(*) FILTER (WHERE is_used = false)::int AS available
+    FROM study_keys
   `)
 
-  const total = keys.rows.length
-  const used = keys.rows.filter((k: any) => k.is_used).length
-  const available = total - used
+  const total = statsResult.rows[0]?.total ?? 0
+  const used = statsResult.rows[0]?.used ?? 0
+  const available = statsResult.rows[0]?.available ?? 0
+
+  const filteredTotal = countResult.rows[0]?.count ?? 0
+  const totalPages = Math.max(Math.ceil(filteredTotal / pageSize), 1)
 
   return (
-    <div>
-      {/* Header */}
-      <div className="flex items-center justify-between mb-6">
+    <div className="space-y-8">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <h1 className="text-2xl font-semibold text-gray-900">Study Keys</h1>
-          <p className="text-sm text-gray-500 mt-1">
+          <h1 className="text-3xl font-semibold tracking-tight text-gray-900">
+            Study Keys
+          </h1>
+          <p className="mt-1.5 text-sm text-gray-500">
             {available} available · {used} used · {total} total
           </p>
         </div>
-        <form action={async () => {
-          "use server"
-          await generateStudyKey()
-        }}>
+
+        <form
+          action={async () => {
+            "use server"
+            await generateStudyKey()
+          }}
+        >
           <button
             type="submit"
-            className="bg-gray-900 text-white rounded-lg px-4 py-2.5 text-sm font-medium hover:bg-gray-700 transition flex items-center gap-2"
+            className="inline-flex h-11 items-center justify-center gap-2 rounded-2xl bg-gray-900 px-5 text-sm font-medium text-white shadow-sm transition hover:bg-gray-800"
           >
-            <span>+</span>
+            <span className="text-base leading-none">+</span>
             Generate New Key
           </button>
         </form>
       </div>
 
-      {/* Stats */}
-      <div className="grid grid-cols-3 gap-4 mb-6">
-        <div className="bg-white rounded-xl border border-gray-100 p-4">
-          <p className="text-xs text-gray-500 uppercase tracking-wide">Total Keys</p>
-          <p className="text-2xl font-semibold text-gray-900 mt-1">{total}</p>
+      <section className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+        <div className="rounded-3xl border border-gray-200/80 bg-white p-5 shadow-sm">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-gray-500">
+            Total Keys
+          </p>
+          <p className="mt-2 text-3xl font-semibold tracking-tight text-gray-900">
+            {total}
+          </p>
         </div>
-        <div className="bg-white rounded-xl border border-gray-100 p-4">
-          <p className="text-xs text-gray-500 uppercase tracking-wide">Available</p>
-          <p className="text-2xl font-semibold text-green-600 mt-1">{available}</p>
+
+        <div className="rounded-3xl border border-gray-200/80 bg-white p-5 shadow-sm">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-gray-500">
+            Available
+          </p>
+          <p className="mt-2 text-3xl font-semibold tracking-tight text-emerald-600">
+            {available}
+          </p>
         </div>
-        <div className="bg-white rounded-xl border border-gray-100 p-4">
-          <p className="text-xs text-gray-500 uppercase tracking-wide">Used</p>
-          <p className="text-2xl font-semibold text-amber-600 mt-1">{used}</p>
+
+        <div className="rounded-3xl border border-gray-200/80 bg-white p-5 shadow-sm">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-gray-500">
+            Used
+          </p>
+          <p className="mt-2 text-3xl font-semibold tracking-tight text-amber-600">
+            {used}
+          </p>
         </div>
-      </div>
+      </section>
 
-      {/* Table */}
-      <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
-        <table className="w-full text-left">
-          <thead className="border-b border-gray-100 bg-gray-50">
-            <tr>
-              <th className="px-6 py-4 text-xs font-medium text-gray-500 uppercase tracking-wide">
-                Study Key
-              </th>
-              <th className="px-6 py-4 text-xs font-medium text-gray-500 uppercase tracking-wide">
-                Status
-              </th>
-              <th className="px-6 py-4 text-xs font-medium text-gray-500 uppercase tracking-wide">
-                Assigned Participant
-              </th>
-              <th className="px-6 py-4 text-xs font-medium text-gray-500 uppercase tracking-wide">
-                Created
-              </th>
-              <th className="px-6 py-4 text-xs font-medium text-gray-500 uppercase tracking-wide">
-                Actions
-              </th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-gray-50">
-            {keys.rows.map((k: any) => (
-              <tr key={k.id} className="hover:bg-gray-50 transition-colors">
+      <section className="overflow-hidden rounded-3xl border border-gray-200/80 bg-white shadow-sm">
+        <div className="border-b border-gray-100 bg-gradient-to-b from-gray-50 to-white px-6 py-5">
+          <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+            <div>
+              <h2 className="text-base font-semibold text-gray-900">All Study Keys</h2>
+              <p className="mt-1 text-sm text-gray-500">
+                {filteredTotal} matching key{filteredTotal === 1 ? "" : "s"}
+              </p>
+            </div>
 
-                {/* Key */}
-                <td className="px-6 py-4">
-                  <span className="font-mono text-sm font-medium text-gray-900 bg-gray-100 px-2 py-1 rounded">
-                    {k.key}
-                  </span>
-                </td>
-
-                {/* Status */}
-                <td className="px-6 py-4">
-                  {k.is_used ? (
-                    <span className="inline-flex items-center gap-1.5 text-xs bg-amber-50 text-amber-700 px-2.5 py-1 rounded-full border border-amber-100">
-                      <span className="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
-                      Used
-                    </span>
-                  ) : (
-                    <span className="inline-flex items-center gap-1.5 text-xs bg-green-50 text-green-700 px-2.5 py-1 rounded-full border border-green-100">
-                      <span className="w-1.5 h-1.5 rounded-full bg-green-500"></span>
-                      Available
-                    </span>
-                  )}
-                </td>
-
-                {/* Participant Email */}
-                <td className="px-6 py-4 text-sm text-gray-600">
-                  {k.participant_email ? (
-                    <span className="flex items-center gap-2">
-                      <span className="w-6 h-6 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center text-xs font-medium">
-                        {k.participant_email[0].toUpperCase()}
-                      </span>
-                      {k.participant_email}
-                    </span>
-                  ) : (
-                    <span className="text-gray-400 italic">Unassigned</span>
-                  )}
-                </td>
-
-                {/* Created */}
-                <td className="px-6 py-4 text-sm text-gray-500">
-                  {new Date(k.created_at).toLocaleDateString("en-US", {
-                    year: "numeric",
-                    month: "short",
-                    day: "numeric",
-                  })}
-                </td>
-
-                {/* Actions */}
-                <td className="px-6 py-4">
-                  <div className="flex items-center gap-3">
-                    
-                    {/* Copy button - client component */}
-                    <CopyButton text={k.key} />
-
-                    {/* Delete - only for unused keys */}
-                    {!k.is_used && (
-                      <form action={async () => {
-                        "use server"
-                        await deleteStudyKey(k.id)
-                      }}>
-                        <button
-                          type="submit"
-                          className="text-xs text-red-500 hover:text-red-700 border border-red-100 hover:border-red-200 rounded px-2 py-1 transition"
-                        >
-                          Delete
-                        </button>
-                      </form>
-                    )}
-
-                    {k.is_used && (
-                      <span className="text-xs text-gray-300">—</span>
-                    )}
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-
-        {keys.rows.length === 0 && (
-          <div className="text-center py-12">
-            <p className="text-gray-400 text-sm">No study keys yet.</p>
-            <p className="text-gray-400 text-xs mt-1">
-              Generate your first key using the button above.
-            </p>
+            <KeysTableToolbar
+              q={q}
+              status={status}
+              sort={sort}
+              pageSize={pageSize}
+            />
           </div>
-        )}
-      </div>
+        </div>
+
+        <KeysTable
+          keys={keysResult.rows}
+          deleteStudyKey={async (id: string) => {
+            "use server"
+            await deleteStudyKey(id)
+          }}
+          CopyButton={CopyButton}
+        />
+
+        <KeysPagination
+          page={page}
+          pageSize={pageSize}
+          totalItems={filteredTotal}
+          totalPages={totalPages}
+          q={q}
+          status={status}
+          sort={sort}
+        />
+      </section>
     </div>
   )
 }
