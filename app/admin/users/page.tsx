@@ -97,7 +97,7 @@ export default async function AdminUsersPage({
 
       <AddUserForm />
 
-      <section className="overflow-hidden rounded-3xl border border-gray-200/80 bg-white shadow-sm">
+      <section className="overflow-hidden rounded-xl border border-gray-200/80 bg-white ">
         <div className="border-b border-gray-100 bg-gradient-to-b from-gray-50 to-white px-6 py-5">
           <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
             <div>

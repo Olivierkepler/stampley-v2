@@ -90,14 +90,16 @@ export function AdminSidebar({
   const pathname = usePathname()
 
   return (
+
+    // shadow-[0_10px_40px_rgba(15,23,42,0.08)]
     <aside
-      className={`fixed z-30 flex h-full flex-col border-r border-white/60 bg-white/85 backdrop-blur-xl shadow-[0_10px_40px_rgba(15,23,42,0.08)] transition-[width] duration-300 ease-out ${
+      className={`fixed z-30 flex h-full flex-col border-r border-gray-200/80 bg-white/85 backdrop-blur-xl  transition-[width] duration-300 ease-out ${
         collapsed ? "w-20" : "w-72"
       }`}
     >
       <div
         className={`shrink-0 border-b border-slate-200/70 ${
-          collapsed ? "px-3 py-4" : "px-5 py-5"
+          collapsed ? "px-3 py-5" : "px-5 py-5"
         }`}
       >
         <div className={`flex items-center ${collapsed ? "flex-col gap-3" : "justify-between gap-3"}`}>
@@ -108,20 +110,13 @@ export function AdminSidebar({
                   {/* <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-slate-900 via-slate-800 to-slate-700 text-white shadow-lg shadow-slate-900/20">
                     <span className="text-sm font-semibold">A</span>
                   </div> */}
-                  <Image
-                    src="/images/stampleyLogo.png"
-                    alt="AIDES-T2D"
-                    width={32}
-                    height={32}
-                    style={{ width: 32, height: "auto" }}
-                  />
+                  <Image src="/images/stampleyLogo.png" alt="AIDES-T2D" width={32} height={32} />
                   <div className="min-w-0">
                     <h1 className="truncate text-sm font-semibold tracking-wide text-slate-900">
                       AIDES-T2D
                     </h1>
                     <p className="mt-0.5 text-xs text-slate-500">Admin Portal</p>
                   </div>
-            
                 </div>
               </div>
 
@@ -129,7 +124,7 @@ export function AdminSidebar({
                 type="button"
                 onClick={onToggleCollapse}
                 aria-label="Collapse sidebar"
-                className="inline-flex h-10 w-10 cursor-pointer items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-500 shadow-sm transition hover:border-slate-300 hover:bg-slate-50 hover:text-slate-900"
+                className="inline-flex h-10 w-10 cursor-pointer items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-500  transition hover:border-slate-300 hover:bg-slate-50 hover:text-slate-900"
               >
                 <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -205,7 +200,7 @@ export function AdminSidebar({
                         collapsed ? "justify-center px-2 py-3" : "gap-3 px-3.5 py-3"
                       } ${
                         isActive
-                          ? " text-black shadow-lg shadow-slate-900/15 "
+                          ? " text-black border-b-1 border-slate-200 "
                           : "text-slate-600 hover:bg-slate-100/80 hover:text-slate-900"
                       }`}
                     >

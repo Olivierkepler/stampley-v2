@@ -3,10 +3,10 @@ import { PasswordInput } from "./password-input"
 
 export function AddUserForm() {
   return (
-    <section className="overflow-hidden rounded-3xl border border-gray-200/80 bg-white shadow-sm">
+    <section className="overflow-hidden rounded-xl  bg-white ">
        {/* Add User Form */}
        <details
-        className="group overflow-hidden rounded-3xl border border-gray-200/80 bg-white shadow-sm"
+        className="group overflow-hidden rounded-xl border border-gray-200/80 bg-white shadow-sm"
         open
       >
         <summary className="flex cursor-pointer list-none items-start justify-between gap-4 bg-gradient-to-b from-gray-50 to-white px-6 py-5 transition hover:bg-gray-50">
