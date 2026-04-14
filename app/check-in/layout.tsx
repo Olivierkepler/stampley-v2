@@ -1,14 +1,7 @@
 import { auth } from "@/lib/auth"
 import { redirect } from "next/navigation"
 import Link from "next/link"
-
-const STEPS = [
-  { label: "Daily Metrics", path: "/check-in/daily-metrics" },
-  { label: "Context", path: "/check-in/contextual-factors" },
-  { label: "Narrative", path: "/check-in/clinical-narrative" },
-  { label: "Domain", path: "/check-in/weekly-domain" },
-  { label: "Stampley", path: "/check-in/stampley-support" },
-]
+import CollapsibleSidebar from "@/components/check-in/CollapsibleSidebar"
 
 export default async function CheckInLayout({
   children,
@@ -19,57 +12,55 @@ export default async function CheckInLayout({
   if (!session) redirect("/login")
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-[#f8f7f4] flex flex-col">
 
-      {/* Header */}
-      <div className="bg-white border-b border-gray-100 px-6 py-4 flex items-center justify-between">
+      {/* Top nav */}
+      <header className="h-14 bg-white/80 backdrop-blur-sm border-b border-black/[0.06] flex items-center justify-between px-6 z-20 shrink-0">
         <div className="flex items-center gap-3">
           <Link
             href="/dashboard"
-            className="text-sm text-gray-500 hover:text-gray-900 transition flex items-center gap-1"
+            className="flex items-center gap-1.5 text-black/40 hover:text-black/70 transition text-sm"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
             </svg>
-            Back
+            Dashboard
           </Link>
-          <span className="text-gray-200">|</span>
-          <h1 className="text-sm font-medium text-gray-900">Daily Check-in</h1>
+          <span className="text-black/20">·</span>
+          <span
+            style={{ fontFamily: "JetBrains Mono, monospace" }}
+            className="text-[11px] uppercase tracking-[0.15em] text-black/30"
+          >
+            Check-in Session
+          </span>
         </div>
-        <p className="text-xs text-gray-400">
+
+        <p
+          style={{ fontFamily: "JetBrains Mono, monospace" }}
+          className="text-[11px] text-black/30 uppercase tracking-[0.1em]"
+        >
           {new Date().toLocaleDateString("en-US", {
-            weekday: "long",
-            month: "long",
+            weekday: "short",
+            month: "short",
             day: "numeric",
           })}
         </p>
-      </div>
+      </header>
 
-      {/* Progress Steps */}
-      <div className="bg-white border-b border-gray-100 px-6 py-3">
-        <div className="max-w-2xl mx-auto flex items-center">
-          {STEPS.map((step, i) => (
-            <div key={step.label} className="flex items-center flex-1">
-              <div className="flex items-center gap-1.5">
-                <div className="w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center text-xs text-gray-500 font-medium">
-                  {i + 1}
-                </div>
-                <span className="text-xs text-gray-400 hidden sm:block">
-                  {step.label}
-                </span>
-              </div>
-              {i < STEPS.length - 1 && (
-                <div className="flex-1 h-px bg-gray-200 mx-2" />
-              )}
-            </div>
-          ))}
-        </div>
-      </div>
+      {/* Body */}
+      <div className="flex flex-1 min-h-0 overflow-hidden">
 
-      {/* Content */}
-      <main className="max-w-2xl mx-auto px-6 py-8">
-        {children}
-      </main>
+        {/* Sidebar */}
+        <CollapsibleSidebar />
+
+        {/* Main content */}
+        <main className="flex-1 overflow-y-auto">
+          <div className="max-w-5xl mx-auto px-6 py-10">
+            {children}
+          </div>
+        </main>
+
+      </div>
     </div>
   )
 }

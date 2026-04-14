@@ -102,7 +102,14 @@ export async function POST(req: NextRequest) {
       [session.user.id, weekNumber, consecutiveDays]
     )
 
-    return NextResponse.json({ success: true, needsSafetyEscalation })
+    // ✅ Return subscale + day info for Stampley AI
+    return NextResponse.json({
+      success: true,
+      needsSafetyEscalation,
+      subscale,
+      dayNumber,
+      weekNumber,
+    })
 
   } catch (error) {
     console.error("[check-in/submit]", error)
