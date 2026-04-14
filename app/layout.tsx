@@ -16,6 +16,11 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "AIDES-T2D Study Portal",
   description: "AI-Driven Emotional Support for Type 2 Diabetes",
+  icons: {
+    icon: "/images/stampleyLogo.png", // Updated path
+    shortcut: "/images/stampleyLogo.png", // Optional: ensures it shows in bookmarks
+    apple: "/images/stampleyLogo.png", // Optional: for pinned iOS home screen icons
+  },
 };
 
 export default function RootLayout({

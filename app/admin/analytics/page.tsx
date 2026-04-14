@@ -110,44 +110,103 @@ export default async function AdminAnalyticsPage() {
       {/* Header */}
       <div>
         <h1 className="text-2xl font-semibold text-gray-900">Analytics</h1>
-        <p className="text-sm text-gray-500 mt-1">
+        <p className="text-sm text-white mt-1">
           Study data insights and participant trends
         </p>
       </div>
 
       {/* Summary Stats */}
       <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-        <div className="bg-white rounded-2xl border border-gray-100 p-5">
-          <p className="text-xs text-gray-500 uppercase tracking-wide">Total Check-ins</p>
-          <p className="text-3xl font-semibold text-gray-900 mt-1">
-            {summary?.total_checkins ?? 0}
-          </p>
-        </div>
-        <div className="bg-white rounded-2xl border border-gray-100 p-5">
-          <p className="text-xs text-gray-500 uppercase tracking-wide">Avg Distress</p>
-          <p className={`text-3xl font-semibold mt-1 ${
-            parseFloat(summary?.avg_distress) >= 7
-              ? "text-red-600"
-              : parseFloat(summary?.avg_distress) >= 5
-              ? "text-amber-600"
-              : "text-green-600"
-          }`}>
-            {summary?.avg_distress ?? "—"}
-          </p>
-        </div>
-        <div className="bg-white rounded-2xl border border-gray-100 p-5">
-          <p className="text-xs text-gray-500 uppercase tracking-wide">Avg Mood</p>
-          <p className="text-3xl font-semibold text-indigo-600 mt-1">
-            {summary?.avg_mood ?? "—"}
-          </p>
-        </div>
-        <div className="bg-white rounded-2xl border border-gray-100 p-5">
-          <p className="text-xs text-gray-500 uppercase tracking-wide">Avg Energy</p>
-          <p className="text-3xl font-semibold text-amber-600 mt-1">
-            {summary?.avg_energy ?? "—"}
-          </p>
-        </div>
-      </div>
+
+{/* Total Check-ins */}
+<div
+  className="group relative overflow-hidden rounded-[24px] border border-white/20 p-5 shadow-[0_10px_24px_rgba(15,23,42,0.05)] transition "
+  style={{
+    backgroundImage: "url('/images/gradient3.jpg')",
+    backgroundSize: "cover",
+    backgroundPosition: "right bottom",
+  }}
+>
+  <div className="absolute inset-0 bg-black/15 transition" />
+  <div className="relative">
+    <p className="text-xs uppercase tracking-[0.18em] text-white/80">
+      Total Check-ins
+    </p>
+    <p className="text-3xl font-semibold text-white mt-2">
+      {summary?.total_checkins ?? 0}
+    </p>
+  </div>
+</div>
+
+{/* Avg Distress */}
+<div
+  className="group relative overflow-hidden rounded-[24px] border border-white/20 p-5 shadow-[0_10px_24px_rgba(15,23,42,0.05)] transition "
+  style={{
+    backgroundImage: "url('/images/gradient5.jpg')",
+    backgroundSize: "cover",
+    backgroundPosition: "right bottom",
+  }}
+>
+  <div className="absolute inset-0 bg-black/15  transition" />
+  <div className="relative">
+    <p className="text-xs uppercase tracking-[0.18em] text-white/80">
+      Avg Distress
+    </p>
+    <p
+      className={`text-3xl font-semibold mt-2 ${
+        parseFloat(summary?.avg_distress) >= 7
+          ? "text-red-300"
+          : parseFloat(summary?.avg_distress) >= 5
+          ? "text-amber-300"
+          : "text-white"
+      }`}
+    >
+      {summary?.avg_distress ?? "—"}
+    </p>
+  </div>
+</div>
+
+{/* Avg Mood */}
+<div
+  className="group relative overflow-hidden rounded-[24px] border border-white/20 p-5 shadow-[0_10px_24px_rgba(15,23,42,0.05)] transition "
+  style={{
+    backgroundImage: "url('/images/gradient4.jpg')",
+    backgroundSize: "cover",
+    backgroundPosition: "right bottom",
+  }}
+>
+  <div className="absolute inset-0 bg-black/15  transition" />
+  <div className="relative">
+    <p className="text-xs uppercase tracking-[0.18em] text-white/80">
+      Avg Mood
+    </p>
+    <p className="text-3xl font-semibold text-white mt-2">
+      {summary?.avg_mood ?? "—"}
+    </p>
+  </div>
+</div>
+
+{/* Avg Energy */}
+<div
+  className="group relative overflow-hidden rounded-[24px] border border-white/20 p-5 shadow-[0_10px_24px_rgba(15,23,42,0.05)] transition "
+  style={{
+    backgroundImage: "url('/images/gradient1.jpg')",
+    backgroundSize: "cover",
+    backgroundPosition: "right bottom",
+  }}
+>
+  <div className="absolute inset-0 bg-black/15  transition" />
+  <div className="relative">
+    <p className="text-xs uppercase tracking-[0.18em] text-white/80">
+      Avg Energy
+    </p>
+    <p className="text-3xl font-semibold text-white mt-2">
+      {summary?.avg_energy ?? "—"}
+    </p>
+  </div>
+</div>
+
+</div>
 
       {/* Row 1: Distress Trend + Domain Breakdown */}
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">

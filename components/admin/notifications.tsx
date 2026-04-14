@@ -81,7 +81,7 @@ export function Notifications() {
           />
         </svg>
         {unreadCount > 0 && (
-          <span className="absolute top-1 right-1 w-4 h-4 bg-red-500 rounded-full text-white text-[10px] flex items-center justify-center font-medium">
+          <span className="absolute top-1 right-1 w-4 h-4 bg-blue-900 rounded-full text-white text-[10px] flex items-center justify-center font-medium">
             {unreadCount}
           </span>
         )}

@@ -91,7 +91,7 @@ export default async function AdminUsersPage({
           Users
         </h1>
         <p className="mt-1.5 text-sm text-gray-500">
-          Manage admin and participant accounts.
+          Manage admins and participants.
         </p>
       </div>
 

@@ -105,10 +105,10 @@ export default async function AdminKeysPage({
     <div className="space-y-8">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <h1 className="text-3xl font-semibold tracking-tight text-gray-900">
+          <h1 className="text-3xl font-semibold tracking-tight text-white">
             Study Keys
           </h1>
-          <p className="mt-1.5 text-sm text-gray-500">
+          <p className="mt-1.5 text-sm text-white">
             {available} available · {used} used · {total} total
           </p>
         </div>
@@ -130,29 +130,53 @@ export default async function AdminKeysPage({
       </div>
 
       <section className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-        <div className="rounded-3xl border border-gray-200/80 bg-white p-5 shadow-sm">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-gray-500">
+      <div
+    className="rounded-2xl border border-gray-100 p-5 relative overflow-hidden"
+    style={{
+      backgroundImage: "url('/images/gradient5.jpg')",
+      backgroundSize: "cover",
+      backgroundPosition: "right bottom",
+      backgroundRepeat: "no-repeat",
+    }}
+  >
+  <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-white">
             Total Keys
           </p>
-          <p className="mt-2 text-3xl font-semibold tracking-tight text-gray-900">
+          <p className="mt-2 text-3xl font-semibold tracking-tight text-white">
             {total}
           </p>
         </div>
 
-        <div className="rounded-3xl border border-gray-200/80 bg-white p-5 shadow-sm">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-gray-500">
+      <div
+    className="rounded-2xl border border-gray-100 p-5 relative overflow-hidden"
+    style={{
+      backgroundImage: "url('/images/gradient4.jpg')",
+      backgroundSize: "cover",
+      backgroundPosition: "right bottom",
+      backgroundRepeat: "no-repeat",
+    }}
+  >
+          <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-white">
             Available
           </p>
-          <p className="mt-2 text-3xl font-semibold tracking-tight text-emerald-600">
+          <p className="mt-2 text-3xl font-semibold tracking-tight text-white">
             {available}
           </p>
         </div>
 
-        <div className="rounded-3xl border border-gray-200/80 bg-white p-5 shadow-sm">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-gray-500">
+        <div
+    className="rounded-2xl border border-gray-100 p-5 relative overflow-hidden"
+    style={{
+      backgroundImage: "url('/images/gradient3.jpg')",
+      backgroundSize: "cover",
+      backgroundPosition: "right bottom",
+      backgroundRepeat: "no-repeat",
+    }}
+  >
+          <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-white">
             Used
           </p>
-          <p className="mt-2 text-3xl font-semibold tracking-tight text-amber-600">
+          <p className="mt-2 text-3xl font-semibold tracking-tight text-white">
             {used}
           </p>
         </div>

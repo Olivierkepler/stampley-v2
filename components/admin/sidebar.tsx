@@ -150,7 +150,7 @@ export function AdminSidebar({
         </div>
       </div>
 
-      {!collapsed && (
+      {/* {!collapsed && (
         <div className="border-b border-slate-200/70 px-5 py-4">
           <div className="group relative">
             <svg
@@ -173,7 +173,7 @@ export function AdminSidebar({
             />
           </div>
         </div>
-      )}
+      )} */}
 
       <nav className={`flex-1 overflow-y-auto py-5 ${collapsed ? "px-3" : "px-4"}`}>
         <div className="space-y-6">
@@ -230,7 +230,7 @@ export function AdminSidebar({
         </div>
       </nav>
 
-      <div className={`border-t border-slate-200/70 p-4 ${collapsed ? "px-3" : ""}`}>
+      <div className={`border-t border-slate-200/70  p-4 ${collapsed ? "px-3" : ""}`}>
         <div
           className={`rounded-2xl border border-slate-200/80 bg-slate-50/70 shadow-sm ${
             collapsed ? "p-2.5" : "p-3"
@@ -238,7 +238,7 @@ export function AdminSidebar({
         >
           <div className={`flex items-center ${collapsed ? "flex-col gap-2" : "gap-3"}`}>
             <div
-              className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-slate-900 to-slate-700 text-sm font-semibold text-white shadow-md"
+              className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-blue-900 text-sm font-semibold text-white shadow-md"
               title={collapsed ? email : undefined}
             >
               {email[0]?.toUpperCase() ?? "?"}
