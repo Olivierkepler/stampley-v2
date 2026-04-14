@@ -285,14 +285,20 @@ export default async function AdminDashboardPage() {
 
           {/* Bottom Row */}
           <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-            <div className="rounded-[28px] border border-slate-200/60 bg-white/80 p-6 shadow-[0_10px_30px_rgba(15,23,42,0.04)] backdrop-blur-sm">
-              <h2 className="mb-4 text-sm font-semibold text-slate-900">
+            <div className="rounded-[28px]  border border-slate-200/60 bg-white/80 p-6 shadow-[0_10px_30px_rgba(15,23,42,0.04)] backdrop-blur-sm"
+            style={{
+              backgroundImage: "url('/images/gradient5.jpg')",
+              backgroundSize: "cover",
+              backgroundPosition: "right bottom",
+            }}
+            >
+              <h2 className="mb-4 text-sm font-semibold text-white">
                 Recent Participants
               </h2>
 
               <div className="space-y-3">
                 {recentUsersResult.rows.length === 0 ? (
-                  <p className="text-sm text-slate-500">No participants yet</p>
+                  <p className="text-sm text-white">No participants yet</p>
                 ) : (
                   recentUsersResult.rows.map((u: any) => (
                     <div key={u.email} className="flex items-center gap-3">
@@ -301,10 +307,10 @@ export default async function AdminDashboardPage() {
                       </div>
 
                       <div className="min-w-0 flex-1">
-                        <p className="truncate text-sm text-slate-900">
+                        <p className="truncate text-sm text-white">
                           {u.email}
                         </p>
-                        <p className="text-xs text-slate-500">
+                        <p className="text-xs text-white">
                           {new Date(u.created_at).toLocaleDateString()}
                         </p>
                       </div>
@@ -325,7 +331,7 @@ export default async function AdminDashboardPage() {
                     <span>Total Check-ins</span>
                     <span>{stats.totalCheckins}</span>
                   </div>
-                  <div className="h-1.5 overflow-hidden rounded-full bg-slate-100">
+                  <div className="h-1 overflow-hidden rounded-full bg-slate-100">
                     <div
                       className="h-full rounded-full bg-gradient-to-r from-slate-900 to-slate-700"
                       style={{
@@ -340,7 +346,7 @@ export default async function AdminDashboardPage() {
                     <span>Keys Used</span>
                     <span>{participants}</span>
                   </div>
-                  <div className="h-1.5 overflow-hidden rounded-full bg-slate-100">
+                  <div className="h-1 overflow-hidden rounded-full bg-slate-100">
                     <div
                       className="h-full rounded-full bg-gradient-to-r from-emerald-400 to-emerald-300"
                       style={{
@@ -357,7 +363,7 @@ export default async function AdminDashboardPage() {
                       {stats.safetyAlerts}
                     </span>
                   </div>
-                  <div className="h-1.5 overflow-hidden rounded-full bg-slate-100">
+                  <div className="h-1 overflow-hidden rounded-full bg-slate-100">
                     <div
                       className="h-full rounded-full bg-gradient-to-r from-red-500 to-rose-400"
                       style={{
