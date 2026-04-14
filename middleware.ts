@@ -14,5 +14,6 @@ export const config = {
     "/dashboard/:path*",
     "/admin/:path*",
     "/check-in/:path*",
+    "/survey/dds/results/:path*",
   ],
 };
