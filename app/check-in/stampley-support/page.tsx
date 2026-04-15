@@ -101,7 +101,7 @@ export default function StampleySupportPage() {
           @import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,300;1,9..144,400&family=JetBrains+Mono:wght@300;400;500&family=Outfit:wght@300;400;500;600&display=swap');
         `}</style>
 
-        <div className="max-w-3xl mx-auto w-full px-4 lg:px-0 py-8" style={{ fontFamily: "'Outfit', system-ui, sans-serif" }}>
+        <div className="max-w-7xl mx-auto w-full px-4 lg:px-0 py-8 " style={{ fontFamily: "'Outfit', system-ui, sans-serif" }}>
           <div className={shell + " p-6 md:p-8 space-y-6"}>
             <div>
               <div className="flex items-center gap-2 mb-4">
