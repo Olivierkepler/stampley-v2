@@ -2,6 +2,22 @@ import { Pool } from "pg";
 
 const globalForPg = globalThis as unknown as { pool?: Pool };
 
+/** TLS for managed Postgres (RDS, Neon, Supabase, etc.); off for typical local installs. */
+function sslForConnectionString(connectionString: string) {
+  const lower = connectionString.toLowerCase();
+  if (lower.includes("localhost") || lower.includes("127.0.0.1")) {
+    return false as const;
+  }
+  if (
+    lower.includes("rds.amazonaws.com") ||
+    lower.includes("sslmode=require") ||
+    lower.includes("sslmode=no-verify")
+  ) {
+    return { rejectUnauthorized: false as const };
+  }
+  return false as const;
+}
+
 /**
  * Pool is created on first use so missing DATABASE_URL does not crash every
  * module that imports this file (e.g. NextAuth routes like /api/auth/error).
@@ -18,12 +34,10 @@ export function getPool(): Pool {
 
   globalForPg.pool = new Pool({
     connectionString,
-    ssl: connectionString.includes("rds.amazonaws.com")
-      ? { rejectUnauthorized: false }
-      : false,
+    ssl: sslForConnectionString(connectionString),
     max: 10,
     idleTimeoutMillis: 30000,
-    connectionTimeoutMillis: 2000,
+    connectionTimeoutMillis: 8000,
   });
 
   return globalForPg.pool;

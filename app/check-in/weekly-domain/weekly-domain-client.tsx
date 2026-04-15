@@ -1,7 +1,7 @@
 "use client"
 
 import { useRouter } from "next/navigation"
-import { useEffect, useState } from "react"
+import { useLayoutEffect, useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { useCheckInStore, type Domain } from "@/store/checkin-store"
 import { 
@@ -75,7 +75,7 @@ export function WeeklyDomainClient({ lockedDomain, weekNumber, isLocked }: Props
   const [hoveredId, setHoveredId] = useState<string | null>(null)
   const [showInsight, setShowInsight] = useState<string | null>(null)
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (lockedDomain) setDomain(lockedDomain as Domain)
   }, [lockedDomain, setDomain])
 

@@ -5,6 +5,13 @@ import { NextRequest, NextResponse } from "next/server"
 import { auth } from "@/lib/auth"
 import { query } from "@/lib/db"
 
+const VALID_DOMAINS = ["Emotional", "Regimen", "Physician", "Interpersonal"] as const
+type ValidDomain = (typeof VALID_DOMAINS)[number]
+
+function isValidDomain(d: unknown): d is ValidDomain {
+  return typeof d === "string" && VALID_DOMAINS.includes(d as ValidDomain)
+}
+
 export async function POST(req: NextRequest) {
   const session = await auth()
   if (!session?.user?.id) {
@@ -13,7 +20,32 @@ export async function POST(req: NextRequest) {
 
   try {
     const body = await req.json()
-    const { distress, mood, energy, contextTags, reflection, copingAction, domain } = body
+    const { distress, mood, energy, contextTags, reflection, copingAction } = body
+
+    let domain: ValidDomain | null = isValidDomain(body.domain) ? body.domain : null
+    if (!domain) {
+      const weekly = await query(
+        `SELECT domain FROM user_weekly_domains
+         WHERE user_id = $1 ORDER BY week_number DESC LIMIT 1`,
+        [session.user.id]
+      )
+      const d = weekly.rows[0]?.domain
+      if (isValidDomain(d)) domain = d
+    }
+    if (!domain) {
+      const dds = await query(
+        `SELECT confirmed_domain FROM dds_responses WHERE user_id = $1`,
+        [session.user.id]
+      )
+      const d = dds.rows[0]?.confirmed_domain
+      if (isValidDomain(d)) domain = d
+    }
+    if (!domain) {
+      return NextResponse.json(
+        { error: "Weekly focus is missing. Open Weekly Domain and continue again." },
+        { status: 400 }
+      )
+    }
 
     // Get previous check-in for safety logic
     const prevResult = await query(
@@ -44,11 +76,19 @@ export async function POST(req: NextRequest) {
     if (progressResult.rows.length > 0) {
       const startDate = new Date(progressResult.rows[0].study_start_date)
       const today = new Date()
-      const diffDays = Math.floor(
-        (today.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)
-      )
+      const startMs = startDate.getTime()
+      const diffDays =
+        Number.isFinite(startMs)
+          ? Math.floor((today.getTime() - startMs) / (1000 * 60 * 60 * 24))
+          : 0
       weekNumber = Math.min(Math.floor(diffDays / 7) + 1, 4)
       dayNumber = (diffDays % 7) + 1
+    }
+    if (!Number.isFinite(dayNumber) || dayNumber < 1 || dayNumber > 7) {
+      dayNumber = 1
+    }
+    if (!Number.isFinite(weekNumber) || weekNumber < 1) {
+      weekNumber = 1
     }
 
     // Get subscale for today based on domain + day
@@ -59,8 +99,10 @@ export async function POST(req: NextRequest) {
       Interpersonal: ["Social Support for Self-Care", "Family Appreciation", "Emotional Support from Others"],
     }
 
-    const subscales = subscaleMap[domain] ?? ["General"]
-    const subscale = subscales[(dayNumber - 1) % subscales.length]
+    const subscales =
+      subscaleMap[domain]?.length ? subscaleMap[domain] : ["General"]
+    const idx = (dayNumber - 1) % subscales.length
+    const subscale = subscales[idx] ?? subscales[0] ?? "General"
 
     // Insert check-in
     await query(
