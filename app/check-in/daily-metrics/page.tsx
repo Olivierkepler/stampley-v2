@@ -260,12 +260,15 @@ export default function DailyMetricsPage() {
           </div>
         </div>
 
-        <button
-          onClick={() => router.push("/check-in/contextual-factors")}
-          className="btn-shimmer relative mt-4 w-full overflow-hidden rounded-[16px] border-none bg-[#0a0a0f] px-6 py-[15px] text-[13px] font-semibold uppercase tracking-[0.06em] text-white shadow-[0_4px_16px_rgba(10,10,15,0.18),0_1px_3px_rgba(10,10,15,0.12)] transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-px hover:bg-[#1a1a24] hover:shadow-[0_8px_28px_rgba(10,10,15,0.25),0_2px_6px_rgba(10,10,15,0.15)] active:translate-y-0 active:scale-[0.985]"
-        >
-          Continue →
-        </button>
+        <div className="flex justify-center w-full">
+          <button
+            onClick={() => router.push("/check-in/contextual-factors")}
+            className="btn-shimmer relative mt-4 max-w-3xl mx-auto overflow-hidden rounded-[16px] border-none bg-[#0a0a0f] px-6 py-[15px] text-[13px] font-semibold uppercase tracking-[0.06em] text-white shadow-[0_4px_16px_rgba(10,10,15,0.18),0_1px_3px_rgba(10,10,15,0.12)] transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-px hover:bg-[#1a1a24] hover:shadow-[0_8px_28px_rgba(10,10,15,0.25),0_2px_6px_rgba(10,10,15,0.15)] active:translate-y-0 active:scale-[0.985]"
+          >
+            Continue →
+          </button>
+        </div>
+   
       </div>
     </>
   )

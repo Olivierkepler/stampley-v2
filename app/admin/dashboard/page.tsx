@@ -322,18 +322,18 @@ export default async function AdminDashboardPage() {
 
             <div className="rounded-[28px] border border-slate-200/60 bg-white/80 p-6 shadow-[0_10px_30px_rgba(15,23,42,0.04)] backdrop-blur-sm"
              style={{
-              backgroundImage: "url('/images/gradient3.jpg')",
+              backgroundImage: "url('/images/light_white_gradient.png')",
               backgroundSize: "cover",
               backgroundPosition: "right bottom",
             }}
             >
-              <h2 className="mb-4 text-sm font-semibold text-white">
+              <h2 className="mb-4 text-sm font-semibold text-black">
                 Study Overview
               </h2>
 
               <div className="space-y-5">
                 <div>
-                  <div className="mb-2 flex justify-between text-xs text-white">
+                  <div className="mb-2 flex justify-between text-xs text-black">
                     <span>Total Check-ins</span>
                     <span>{stats.totalCheckins}</span>
                   </div>
@@ -348,7 +348,7 @@ export default async function AdminDashboardPage() {
                 </div>
 
                 <div>
-                    <div className="mb-2 flex justify-between text-xs text-white">
+                      <div className="mb-2 flex justify-between text-xs text-black">
                     <span>Keys Used</span>
                     <span>{participants}</span>
                   </div>
@@ -363,7 +363,7 @@ export default async function AdminDashboardPage() {
                 </div>
 
                 <div>
-                  <div className="mb-2 flex justify-between text-xs text-white">
+                  <div className="mb-2 flex justify-between text-xs text-black">
                     <span>Safety Alerts</span>
                     <span className={safetyAlerts > 0 ? "text-red-500" : ""}>
                       {stats.safetyAlerts}
