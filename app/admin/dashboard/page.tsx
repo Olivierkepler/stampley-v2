@@ -320,66 +320,115 @@ export default async function AdminDashboardPage() {
               </div>
             </div>
 
-            <div className="rounded-[28px] border border-slate-200/60 bg-white/80 p-6 shadow-[0_10px_30px_rgba(15,23,42,0.04)] backdrop-blur-sm"
-             style={{
-              backgroundImage: "url('/images/light_white_gradient.png')",
-              backgroundSize: "cover",
-              backgroundPosition: "right bottom",
+            <div
+  className="relative overflow-hidden rounded-[32px] border border-black/[0.06] bg-white/85 p-6 shadow-[0_12px_40px_rgba(15,23,42,0.06)] backdrop-blur-xl"
+  style={{
+    backgroundImage: "url('/images/light_white_gradient.png')",
+    backgroundSize: "cover",
+    backgroundPosition: "right bottom",
+  }}
+>
+  {/* soft overlay */}
+  <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.88)_0%,rgba(255,255,255,0.72)_100%)]" />
+
+  {/* subtle glow */}
+  <div className="pointer-events-none absolute -right-10 -top-10 h-40 w-40 rounded-full bg-white/40 blur-3xl" />
+
+  <div className="relative z-10">
+    <div className="mb-6 flex items-start justify-between">
+      <div>
+        <p className="mb-2 text-[10px] font-medium uppercase tracking-[0.18em] text-black/35">
+          Overview
+        </p>
+        <h2 className="text-[20px] font-semibold tracking-[-0.02em] text-black">
+          Study Overview
+        </h2>
+        <p className="mt-1 text-sm text-black/45">
+          High-level activity and safety signals across the study.
+        </p>
+      </div>
+
+      <div className="rounded-full border border-black/[0.06] bg-white/70 px-3 py-1 text-[11px] font-medium text-black/45 shadow-sm">
+        Live
+      </div>
+    </div>
+
+    <div className="space-y-5">
+      <div className="rounded-2xl border border-black/[0.05] bg-white/55 p-4">
+        <div className="mb-3 flex items-center justify-between">
+          <div>
+            <p className="text-[11px] uppercase tracking-[0.14em] text-black/35">
+              Total Check-ins
+            </p>
+            <p className="mt-1 text-2xl font-semibold tracking-[-0.03em] text-black">
+              {stats.totalCheckins}
+            </p>
+          </div>
+          <span className="text-xs font-medium text-black/40">/ 100 target</span>
+        </div>
+
+        <div className="h-2 overflow-hidden rounded-full bg-slate-200/70">
+          <div
+            className="h-full rounded-full bg-gradient-to-r from-slate-900 via-slate-800 to-slate-700 shadow-[0_0_12px_rgba(15,23,42,0.18)]"
+            style={{
+              width: `${Math.min((totalCheckins / 100) * 100, 100)}%`,
             }}
+          />
+        </div>
+      </div>
+
+      <div className="rounded-2xl border border-black/[0.05] bg-white/55 p-4">
+        <div className="mb-3 flex items-center justify-between">
+          <div>
+            <p className="text-[11px] uppercase tracking-[0.14em] text-black/35">
+              Keys Used
+            </p>
+            <p className="mt-1 text-2xl font-semibold tracking-[-0.03em] text-black">
+              {participants}
+            </p>
+          </div>
+          <span className="text-xs font-medium text-black/40">/ 20 active</span>
+        </div>
+
+        <div className="h-2 overflow-hidden rounded-full bg-emerald-100/80">
+          <div
+            className="h-full rounded-full bg-gradient-to-r from-emerald-500 via-emerald-400 to-emerald-300 shadow-[0_0_12px_rgba(16,185,129,0.18)]"
+            style={{
+              width: `${Math.min((participants / 20) * 100, 100)}%`,
+            }}
+          />
+        </div>
+      </div>
+
+      <div className="rounded-2xl border border-black/[0.05] bg-white/55 p-4">
+        <div className="mb-3 flex items-center justify-between">
+          <div>
+            <p className="text-[11px] uppercase tracking-[0.14em] text-black/35">
+              Safety Alerts
+            </p>
+            <p
+              className={`mt-1 text-2xl font-semibold tracking-[-0.03em] ${
+                safetyAlerts > 0 ? "text-red-600" : "text-black"
+              }`}
             >
-              <h2 className="mb-4 text-sm font-semibold text-black">
-                Study Overview
-              </h2>
+              {stats.safetyAlerts}
+            </p>
+          </div>
+          <span className="text-xs font-medium text-black/40">/ 10 threshold</span>
+        </div>
 
-              <div className="space-y-5">
-                <div>
-                  <div className="mb-2 flex justify-between text-xs text-black">
-                    <span>Total Check-ins</span>
-                    <span>{stats.totalCheckins}</span>
-                  </div>
-                  <div className="h-1 overflow-hidden rounded-full bg-slate-100">
-                    <div
-                      className="h-full rounded-full bg-gradient-to-r from-slate-900 to-slate-700"
-                      style={{
-                        width: `${Math.min((totalCheckins / 100) * 100, 100)}%`,
-                      }}
-                    />
-                  </div>
-                </div>
-
-                <div>
-                      <div className="mb-2 flex justify-between text-xs text-black">
-                    <span>Keys Used</span>
-                    <span>{participants}</span>
-                  </div>
-                  <div className="h-1 overflow-hidden rounded-full bg-slate-100">
-                    <div
-                      className="h-full rounded-full bg-gradient-to-r from-emerald-400 to-emerald-300"
-                      style={{
-                        width: `${Math.min((participants / 20) * 100, 100)}%`,
-                      }}
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <div className="mb-2 flex justify-between text-xs text-black">
-                    <span>Safety Alerts</span>
-                    <span className={safetyAlerts > 0 ? "text-red-500" : ""}>
-                      {stats.safetyAlerts}
-                    </span>
-                  </div>
-                  <div className="h-1 overflow-hidden rounded-full bg-slate-100">
-                    <div
-                      className="h-full rounded-full bg-gradient-to-r from-red-500 to-rose-400"
-                      style={{
-                        width: `${Math.min((safetyAlerts / 10) * 100, 100)}%`,
-                      }}
-                    />
-                  </div>
-                </div>
-              </div>
-            </div>
+        <div className="h-2 overflow-hidden rounded-full bg-rose-100/80">
+          <div
+            className="h-full rounded-full bg-gradient-to-r from-red-500 via-rose-500 to-rose-400 shadow-[0_0_12px_rgba(239,68,68,0.18)]"
+            style={{
+              width: `${Math.min((safetyAlerts / 10) * 100, 100)}%`,
+            }}
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
           </div>
         </div>
       </div>

@@ -1,146 +1,180 @@
 "use client"
 
-import { useState } from "react"
 import { useRouter } from "next/navigation"
-import { confirmDomain } from "@/actions/dds"
 
-const DOMAINS = [
-  { id: "Emotional", label: "Emotional Burden", emoji: "💙", description: "Feeling overwhelmed, discouraged, or burned out by diabetes" },
-  { id: "Regimen", label: "Regimen-Related", emoji: "📋", description: "Challenges with medications, blood sugar, or meal planning" },
-  { id: "Physician", label: "Physician-Related", emoji: "🩺", description: "Concerns about your doctor or healthcare team" },
-  { id: "Interpersonal", label: "Interpersonal", emoji: "🤝", description: "Feeling unsupported by family or friends about your diabetes" },
-]
-
-interface Props {
-  recommendedDomain: string
-  scores: { domain: string; label: string; score: number; emoji: string }[]
+type ScoreItem = {
+  domain: string
+  label: string
+  shortLabel: string
+  score: number
+  emoji: string
+  description: string
+  accent: string
+  softBg: string
+  softText: string
 }
 
-export function DomainConfirmation({ recommendedDomain, scores }: Props) {
+interface DomainConfirmationProps {
+  recommendedDomain: string
+  scores: ScoreItem[]
+}
+
+export function DomainConfirmation({
+  recommendedDomain,
+  scores,
+}: DomainConfirmationProps) {
   const router = useRouter()
-  const [selected, setSelected] = useState(recommendedDomain)
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState("")
 
-  async function handleConfirm() {
-    setLoading(true)
-    setError("")
+  const selected =
+    scores.find((s) => s.domain === recommendedDomain) ?? scores[0]
 
-    const result = await confirmDomain(selected)
-
-    if (result?.error) {
-      setError(result.error)
-      setLoading(false)
-    } else {
-      router.push("/dashboard")
-    }
+  const domainNotes: Record<string, string> = {
+    Emotional:
+      "This area reflects the emotional weight of living with diabetes — feeling overwhelmed, discouraged, or mentally exhausted.",
+    Regimen:
+      "This area reflects the pressure of routines like medications, blood sugar checks, meal planning, and day-to-day self-management.",
+    Physician:
+      "This area reflects concerns about healthcare support, communication, and whether your diabetes care feels clear and helpful.",
+    Interpersonal:
+      "This area reflects support from family and friends, and whether diabetes feels understood by people around you.",
   }
 
-  const recommended = DOMAINS.find(d => d.id === recommendedDomain)
-
   return (
-    <div className="space-y-4">
+    <section className="rounded-[32px] border border-black/[0.06] bg-[#fefdfb] p-7 shadow-[0_16px_50px_rgba(15,23,42,0.05)]">
+      
+      {/* HEADER */}
+      <div className="mb-6 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <p className="text-[10px] font-medium uppercase tracking-[0.18em] text-black/35">
+            Recommended focus
+          </p>
+          <h2
+            className="mt-1 text-[22px] font-medium tracking-[-0.02em] text-black/85"
+            style={{ fontFamily: "'Fraunces', Georgia, serif" }}
+          >
+            Your suggested starting domain
+          </h2>
+        </div>
 
-      {/* Recommendation card */}
-      <div className="bg-blue-50 border border-blue-100 rounded-2xl p-5">
-        <p className="text-sm font-semibold text-blue-900 mb-1">
-          💡 Our Recommendation for Week 1
-        </p>
-        <p className="text-sm text-blue-700 leading-relaxed">
-          Based on your responses, we recommend focusing on{" "}
-          <strong>{recommended?.label}</strong> this week.
-          Stampley will tailor daily support conversations to this area.
-        </p>
+        <span className="rounded-full border border-[#e7dac8] bg-[#f6efe4] px-3 py-1.5 text-[11px] font-medium text-[#8B6F47]">
+          Based on your highest score
+        </span>
       </div>
 
-      {/* Domain selection */}
-      <div className="bg-white rounded-2xl border border-gray-100 p-6">
-        <h2 className="text-sm font-semibold text-gray-900 mb-4">
-          Confirm Your Week 1 Focus
-        </h2>
-        <p className="text-xs text-gray-500 mb-4">
-          You can accept our recommendation or choose a different area to focus on.
-        </p>
+      {/* MAIN GRID */}
+      <div className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
+        
+        {/* LEFT CARD */}
+        <div className="rounded-[28px] border border-black/[0.06] bg-[linear-gradient(180deg,#fffdf9_0%,#faf6ef_100%)] p-6">
+          <div className="flex items-start gap-4">
+            <div className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-[18px] ${selected.softBg} text-2xl`}>
+              {selected.emoji}
+            </div>
 
-        <div className="space-y-3">
-          {DOMAINS.map((d) => {
-            const score = scores.find(s => s.domain === d.id)?.score ?? 0
-            const isRecommended = d.id === recommendedDomain
-            const isSelected = selected === d.id
+            <div className="min-w-0 flex-1">
+              <div className="mb-2 flex flex-wrap items-center gap-2">
+                <h3 className="text-[18px] font-semibold tracking-[-0.02em] text-black/85">
+                  {selected.label}
+                </h3>
 
-            return (
-              <button
-                key={d.id}
-                onClick={() => setSelected(d.id)}
-                className={`w-full flex items-start gap-4 px-4 py-4 rounded-xl border-2 text-left transition ${
-                  isSelected
-                    ? "border-gray-900 bg-gray-900 text-white"
-                    : "border-gray-200 bg-white hover:border-gray-300"
-                }`}
-              >
-                <span className="text-xl shrink-0">{d.emoji}</span>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <p className={`text-sm font-medium ${
-                      isSelected ? "text-white" : "text-gray-900"
-                    }`}>
-                      {d.label}
-                    </p>
-                    {isRecommended && (
-                      <span className={`text-xs px-2 py-0.5 rounded-full ${
-                        isSelected
-                          ? "bg-white/20 text-white"
-                          : "bg-blue-50 text-blue-700"
-                      }`}>
-                        Recommended
-                      </span>
-                    )}
-                    <span className={`text-xs ml-auto ${
-                      isSelected ? "text-gray-300" : "text-gray-400"
-                    }`}>
-                      Score: {score.toFixed(1)}
-                    </span>
-                  </div>
-                  <p className={`text-xs mt-0.5 ${
-                    isSelected ? "text-gray-300" : "text-gray-500"
-                  }`}>
-                    {d.description}
+                <span className="rounded-full bg-[#1f1a17] px-2.5 py-1 text-[11px] font-medium text-white">
+                  Recommended
+                </span>
+              </div>
+
+              <p className="text-[14px] leading-7 text-black/55">
+                {domainNotes[selected.domain] ??
+                  "This domain may be the most useful place to begin support right now."}
+              </p>
+            </div>
+          </div>
+
+          {/* SCORE BAR */}
+          <div className="mt-6 rounded-[22px] border border-black/[0.06] bg-white/70 p-5">
+            <div className="mb-2 flex items-center justify-between">
+              <p className="text-[12px] font-medium text-black/45">
+                Domain score
+              </p>
+              <p className="text-[13px] font-medium text-black/65">
+                {selected.score.toFixed(1)} / 6.0
+              </p>
+            </div>
+
+            <div className="h-2.5 overflow-hidden rounded-full bg-black/[0.06]">
+              <div
+                className="h-full rounded-full bg-[linear-gradient(90deg,#8B6F47,#B08968)]"
+                style={{ width: `${(selected.score / 6) * 100}%` }}
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* RIGHT CARD */}
+        <div className="rounded-[28px] border border-black/[0.06] bg-[#fbf8f4] p-6">
+          <p className="text-[10px] font-medium uppercase tracking-[0.18em] text-black/35">
+            What happens next
+          </p>
+
+          <div className="mt-5 space-y-4">
+            {[
+              {
+                title: "Start where the score is highest",
+                text: "Your highest scoring domain is usually the best place to begin because it may be contributing most to your current distress.",
+              },
+              {
+                title: "Use this as a guide, not a label",
+                text: "This recommendation helps focus support. It does not define your whole experience.",
+              },
+              {
+                title: "Weekly support can build from here",
+                text: "Your selected focus area can guide reflection prompts and support strategies.",
+              },
+            ].map((item, index) => (
+              <div key={item.title} className="flex gap-3">
+                <div className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[#f1e8da] text-[11px] font-semibold text-[#8B6F47]">
+                  {index + 1}
+                </div>
+                <div>
+                  <h4 className="text-[13px] font-semibold text-black/75">
+                    {item.title}
+                  </h4>
+                  <p className="mt-1 text-[13px] leading-6 text-black/50">
+                    {item.text}
                   </p>
                 </div>
-                {isSelected && (
-                  <div className="w-5 h-5 rounded-full bg-white flex items-center justify-center shrink-0 mt-0.5">
-                    <svg className="w-3 h-3 text-gray-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                    </svg>
-                  </div>
-                )}
-              </button>
-            )
-          })}
+              </div>
+            ))}
+          </div>
         </div>
       </div>
 
-      {error && (
-        <div className="p-3 rounded-xl bg-red-50 border border-red-100 text-red-600 text-sm">
-          {error}
-        </div>
-      )}
+      {/* FOOTER NOTE */}
+      <div className="fixed max-w-6xl mx-auto bottom-10 left-0 right-0 z-50 border border-black/[0.06] rounded-[22px] bg-[#fefdfb]/90 backdrop-blur-xl">
+  <div className="mx-auto max-w-6xl px-6 py-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+    
+    <p className="text-[12px] leading-6 text-black/55 text-center sm:text-left">
+      <span className="font-medium text-black/70">Recommended focus:</span>{" "}
+      {selected.label}. This is the area where support may feel most useful right now.
+    </p>
 
-      {/* Confirm button */}
-      <button
-        onClick={handleConfirm}
-        disabled={loading}
-        className="w-full bg-gray-900 text-white rounded-xl py-4 text-sm font-medium hover:bg-gray-700 transition disabled:opacity-50"
-      >
-        {loading
-          ? "Setting up your dashboard..."
-          : `Confirm — Start with ${DOMAINS.find(d => d.id === selected)?.label}`
-        }
-      </button>
+    <button
+      onClick={() => router.push("/check-in")}
+      className="shrink-0 rounded-[18px] bg-[#1f1a17] px-6 py-3 text-sm font-medium text-white transition hover:bg-[#2a231f] shadow-[0_6px_16px_rgba(31,26,23,0.18)]"
+    >
+      Start my {selected.shortLabel} check-in →
+    </button>
 
-      <p className="text-xs text-gray-400 text-center pb-8">
-        You can choose a new focus domain at the start of each week.
-      </p>
-    </div>
+  </div>
+</div>
+
+      {/* ✅ CTA BUTTON (NEW) */}
+      <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <p className="text-[13px] text-black/45">
+          You’re ready to begin your personalized weekly check-ins.
+        </p>
+
+      </div>
+
+    </section>
   )
 }

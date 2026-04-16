@@ -47,7 +47,7 @@ export function TopNav({ title, email }: TopNavProps) {
             onClick={() => setShowUserMenu(!showUserMenu)}
             className="flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-gray-50 transition"
           >
-            <div className="w-8 h-8 rounded-full bg-blue-900 text-white flex items-center justify-center text-xs font-medium">
+            <div className="w-8 h-8 rounded-full bg-yellow-600 text-white flex items-center justify-center text-xs font-medium">
               {email[0]?.toUpperCase()}
             </div>
             <div className="hidden md:block text-left">

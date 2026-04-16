@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useMemo, useRef, useState } from "react"
 import { useRouter } from "next/navigation"
 import { submitDDS } from "@/actions/dds"
 
@@ -33,23 +33,117 @@ const SCALE = [
   { value: 6, label: "A Very Serious Problem" },
 ]
 
+const DOMAIN_ORDER = ["Emotional", "Physician", "Regimen", "Interpersonal"] as const
+
+const DOMAIN_STYLES: Record<string, { bg: string; text: string; border: string; description: string }> = {
+  Emotional: {
+    bg: "rgba(139,111,71,0.08)",
+    text: "#8B6F47",
+    border: "rgba(139,111,71,0.16)",
+    description: "Questions about overwhelm, fear, burnout, and emotional burden.",
+  },
+  Physician: {
+    bg: "rgba(124,94,60,0.08)",
+    text: "#7C5E3C",
+    border: "rgba(124,94,60,0.16)",
+    description: "Questions about communication, support, and confidence in your healthcare team.",
+  },
+  Regimen: {
+    bg: "rgba(166,124,82,0.08)",
+    text: "#A67C52",
+    border: "rgba(166,124,82,0.16)",
+    description: "Questions about routines, meal plans, testing, and self-management.",
+  },
+  Interpersonal: {
+    bg: "rgba(176,137,104,0.08)",
+    text: "#B08968",
+    border: "rgba(176,137,104,0.16)",
+    description: "Questions about support from family, friends, and people around you.",
+  },
+}
+
 export default function DDSSurveyPage() {
   const router = useRouter()
   const [answers, setAnswers] = useState<Record<string, number>>({})
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
+  const [currentDomainIndex, setCurrentDomainIndex] = useState(0)
+
+  const questionRefs = useRef<Record<string, HTMLDivElement | null>>({})
 
   const totalAnswered = Object.keys(answers).length
   const progress = Math.round((totalAnswered / 17) * 100)
   const allAnswered = totalAnswered === 17
+  const remaining = 17 - totalAnswered
+
+  const groupedQuestions = useMemo(() => {
+    return DOMAIN_ORDER.map((domain) => ({
+      domain,
+      questions: QUESTIONS.filter((q) => q.domain === domain),
+    }))
+  }, [])
+
+  const currentSection = groupedQuestions[currentDomainIndex]
+  const currentDomain = currentSection.domain
+  const currentQuestions = currentSection.questions
+  const currentStyle = DOMAIN_STYLES[currentDomain]
+
+  const currentSectionAnswered = currentQuestions.filter((q) => answers[q.id] != null).length
+  const currentSectionComplete = currentSectionAnswered === currentQuestions.length
+  const isLastSection = currentDomainIndex === groupedQuestions.length - 1
 
   function handleAnswer(questionId: string, value: number) {
-    setAnswers(prev => ({ ...prev, [questionId]: value }))
+    setAnswers((prev) => ({ ...prev, [questionId]: value }))
+    if (error) setError("")
+  }
+
+  function handleNextSection() {
+    const firstUnanswered = currentQuestions.find((q) => answers[q.id] == null)
+    if (firstUnanswered) {
+      setError(`Please answer all ${currentDomain} questions before continuing.`)
+      questionRefs.current[firstUnanswered.id]?.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      })
+      return
+    }
+
+    setError("")
+    if (!isLastSection) {
+      setCurrentDomainIndex((prev) => prev + 1)
+      window.scrollTo({ top: 0, behavior: "smooth" })
+    }
+  }
+
+  function handlePreviousSection() {
+    setError("")
+    if (currentDomainIndex > 0) {
+      setCurrentDomainIndex((prev) => prev - 1)
+      window.scrollTo({ top: 0, behavior: "smooth" })
+    }
   }
 
   async function handleSubmit() {
     if (!allAnswered) {
-      setError("Please answer all 17 questions before continuing.")
+      const firstUnansweredDomainIndex = groupedQuestions.findIndex((section) =>
+        section.questions.some((q) => answers[q.id] == null)
+      )
+
+      if (firstUnansweredDomainIndex !== -1) {
+        setCurrentDomainIndex(firstUnansweredDomainIndex)
+        const firstUnanswered = groupedQuestions[firstUnansweredDomainIndex].questions.find(
+          (q) => answers[q.id] == null
+        )
+        setError("Please answer all 17 questions before continuing.")
+        setTimeout(() => {
+          if (firstUnanswered) {
+            questionRefs.current[firstUnanswered.id]?.scrollIntoView({
+              behavior: "smooth",
+              block: "center",
+            })
+          }
+        }, 50)
+      }
       return
     }
 
@@ -71,124 +165,259 @@ export default function DDSSurveyPage() {
     }
   }
 
+  const globalQuestionNumberStart = groupedQuestions
+    .slice(0, currentDomainIndex)
+    .reduce((sum, section) => sum + section.questions.length, 0)
+
   return (
-    <div className="min-h-screen bg-gray-50">
+    <>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500&family=JetBrains+Mono:wght@400;500&family=Outfit:wght@300;400;500;600&display=swap');
+      `}</style>
 
-      {/* Header */}
-      <div className="bg-white border-b border-gray-100 px-6 py-4 sticky top-0 z-10">
-        <div className="max-w-2xl mx-auto">
-          <div className="flex items-center justify-between mb-2">
-            <h1 className="text-sm font-medium text-gray-900">
-              Baseline Assessment — Diabetes Distress Scale
-            </h1>
-            <span className="text-xs text-gray-500">
-              {totalAnswered}/17 answered
-            </span>
-          </div>
-          {/* Progress bar */}
-          <div className="h-1.5 bg-gray-100 rounded-full">
-            <div
-              className="h-1.5 bg-gray-900 rounded-full transition-all duration-300"
-              style={{ width: `${progress}%` }}
-            />
-          </div>
-        </div>
-      </div>
-
-      {/* Content */}
-      <div className="max-w-2xl mx-auto px-6 py-8 space-y-6">
-
-        {/* Instructions */}
-        <div className="bg-blue-50 border border-blue-100 rounded-2xl p-5">
-          <h2 className="text-sm font-semibold text-blue-900 mb-2">
-            Instructions
-          </h2>
-          <p className="text-sm text-blue-700 leading-relaxed">
-            Living with diabetes can sometimes be tough. Listed below are 17 potential 
-            problem areas that people with diabetes may experience. Consider the degree 
-            to which each item may have <strong>distressed or bothered you during the past month</strong>.
-          </p>
-          <p className="text-xs text-blue-600 mt-2">
-            Rate each item from 1 (Not a Problem) to 6 (A Very Serious Problem).
-          </p>
-        </div>
-
-        {/* Questions */}
-        {QUESTIONS.map((q, index) => (
-          <div
-            key={q.id}
-            className={`bg-white rounded-2xl border p-6 transition-all ${
-              answers[q.id]
-                ? "border-gray-200"
-                : "border-gray-200"
-            }`}
-          >
-            {/* Question */}
-            <div className="flex gap-3 mb-5">
-              <span className="text-xs font-medium text-gray-400 mt-0.5 shrink-0 w-6">
-                {index + 1}.
-              </span>
-              <p className="text-sm text-gray-900 leading-relaxed">
-                {q.text}
-              </p>
-            </div>
-
-            {/* Scale buttons */}
-            <div className="grid grid-cols-3 gap-2 sm:grid-cols-6">
-              {SCALE.map((option) => (
-                <button
-                  key={option.value}
-                  onClick={() => handleAnswer(q.id, option.value)}
-                  className={`flex flex-col items-center gap-1 p-2 rounded-xl border-2 transition-all ${
-                    answers[q.id] === option.value
-                      ? "border-gray-900 bg-gray-900 text-white"
-                      : "border-gray-200 hover:border-gray-300 text-gray-600"
-                  }`}
+      <div
+        className="min-h-screen bg-[#f7f3ed]"
+        style={{ fontFamily: "'Outfit', system-ui, sans-serif" }}
+      >
+        <div className="sticky top-0 z-20 border-b border-black/[0.06] bg-[#fefdfb]/90 backdrop-blur-xl">
+          <div className="mx-auto max-w-4xl px-6 py-4">
+            <div className="mb-3 flex items-start justify-between gap-4">
+              <div>
+                <p
+                  className="mb-2 text-[10px] uppercase tracking-[0.18em] text-black/35"
+                  style={{ fontFamily: "'JetBrains Mono', monospace" }}
                 >
-                  <span className="text-lg font-semibold">
-                    {option.value}
-                  </span>
-                  <span className={`text-center leading-tight ${
-                    answers[q.id] === option.value
-                      ? "text-gray-300"
-                      : "text-gray-400"
-                  } text-[9px]`}>
-                    {option.label}
-                  </span>
-                </button>
-              ))}
+                  Baseline Assessment
+                </p>
+                <h1
+                  className="text-[22px] font-medium tracking-[-0.02em] text-black/85"
+                  style={{ fontFamily: "'Fraunces', Georgia, serif" }}
+                >
+                  Diabetes Distress Scale
+                </h1>
+                <p className="mt-1 text-[13px] leading-relaxed text-black/45">
+                  Complete one category at a time.
+                </p>
+              </div>
+
+              <div className="shrink-0 text-right">
+                <p className="text-sm font-medium text-black/65">
+                  {totalAnswered}/17 completed
+                </p>
+                <p className="text-[11px] text-black/35">
+                  Section {currentDomainIndex + 1} of {groupedQuestions.length}
+                </p>
+              </div>
+            </div>
+
+            <div className="h-2 overflow-hidden rounded-full bg-black/[0.06]">
+              <div
+                className="h-full rounded-full bg-[linear-gradient(90deg,#8B6F47,#B08968)] transition-all duration-300"
+                style={{ width: `${progress}%` }}
+              />
             </div>
           </div>
-        ))}
-
-        {/* Error */}
-        {error && (
-          <div className="p-4 rounded-xl bg-red-50 border border-red-100 text-red-600 text-sm">
-            {error}
-          </div>
-        )}
-
-        {/* Submit */}
-        <div className="pb-8">
-          <button
-            onClick={handleSubmit}
-            disabled={loading || !allAnswered}
-            className={`w-full rounded-xl py-4 text-sm font-medium transition ${
-              allAnswered
-                ? "bg-gray-900 text-white hover:bg-gray-700"
-                : "bg-gray-200 text-gray-400 cursor-not-allowed"
-            } disabled:opacity-50`}
-          >
-            {loading
-              ? "Calculating your results..."
-              : allAnswered
-              ? "See My Results →"
-              : `Answer all questions to continue (${17 - totalAnswered} remaining)`
-            }
-          </button>
         </div>
 
+        <div className="mx-auto max-w-4xl px-6 py-8 space-y-6">
+          {/* <div className="rounded-[28px] border border-[#8B6F47]/10 bg-[#fefdfb] p-6 shadow-[0_8px_30px_rgba(15,23,42,0.04)]">
+            <div className="flex items-start gap-4">
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-[#f6efe4] text-[#8B6F47]">
+                <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M12 6v6l4 2m6-2a10 10 0 11-20 0 10 10 0 0120 0z" />
+                </svg>
+              </div>
+
+              <div>
+                <h2
+                  className="mb-2 text-[17px] font-medium tracking-[-0.01em] text-black/80"
+                  style={{ fontFamily: "'Fraunces', Georgia, serif" }}
+                >
+                  Instructions
+                </h2>
+                <p className="text-[13.5px] leading-[1.8] text-black/55">
+                  Consider the degree to which each item has{" "}
+                  <strong className="font-medium text-black/70">
+                    distressed or bothered you during the past month
+                  </strong>.
+                </p>
+                <p className="mt-3 text-[12px] text-black/40">
+                  Rate each item from 1 (Not a Problem) to 6 (A Very Serious Problem).
+                </p>
+              </div>
+            </div>
+          </div> */}
+
+          <section className="space-y-5">
+            <div className="rounded-[24px] border border-black/[0.05] bg-[#fbf8f4] p-5">
+              <div className="flex items-start justify-between gap-4">
+                <div>
+                  <div className="mb-2 flex items-center gap-2">
+                    <span
+                      className="rounded-full border px-3 py-1 text-[10px] uppercase tracking-[0.14em]"
+                      style={{
+                        background: currentStyle.bg,
+                        color: currentStyle.text,
+                        borderColor: currentStyle.border,
+                        fontFamily: "'JetBrains Mono', monospace",
+                      }}
+                    >
+                      {currentDomain}
+                    </span>
+                  </div>
+
+                  <h2
+                    className="text-[20px] font-medium tracking-[-0.02em] text-black/80"
+                    style={{ fontFamily: "'Fraunces', Georgia, serif" }}
+                  >
+                    {currentDomain} Distress
+                  </h2>
+
+                  <p className="mt-1 text-[13px] leading-relaxed text-black/45">
+                    {currentStyle.description}
+                  </p>
+                </div>
+
+                <div className="text-right">
+                  <p className="text-sm font-medium text-black/60">
+                    {currentSectionAnswered}/{currentQuestions.length}
+                  </p>
+                  <p className="text-[11px] text-black/35">answered</p>
+                </div>
+              </div>
+            </div>
+
+            {currentQuestions.map((q, index) => {
+              const selectedValue = answers[q.id]
+              const selectedLabel = SCALE.find((s) => s.value === selectedValue)?.label
+              const isUnansweredError = !!error && selectedValue == null
+              const questionNumber = globalQuestionNumberStart + index + 1
+
+              return (
+                <div
+                  key={q.id}
+                  ref={(el) => {
+                    questionRefs.current[q.id] = el
+                  }}
+                  className={[
+                    "rounded-[28px] border bg-[#fefdfb] p-6 shadow-[0_4px_20px_rgba(15,23,42,0.04)] transition-all",
+                    isUnansweredError
+                      ? "border-red-200 ring-4 ring-red-50"
+                      : "border-black/[0.06]",
+                  ].join(" ")}
+                >
+                  <div className="mb-5 flex gap-4">
+                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#f6efe4] text-[12px] font-semibold text-[#8B6F47]">
+                      {questionNumber}
+                    </div>
+
+                    <div className="min-w-0 flex-1">
+                      <div className="mb-2 flex items-center gap-2">
+                        <span
+                          className="rounded-full border px-2.5 py-1 text-[10px] uppercase tracking-[0.14em]"
+                          style={{
+                            background: currentStyle.bg,
+                            color: currentStyle.text,
+                            borderColor: currentStyle.border,
+                            fontFamily: "'JetBrains Mono', monospace",
+                          }}
+                        >
+                          {q.domain}
+                        </span>
+
+                        {selectedValue != null && (
+                          <span className="text-[11px] text-black/35">
+                            Selected: {selectedLabel}
+                          </span>
+                        )}
+                      </div>
+
+                      <p className="text-[15px] leading-7 text-black/80">
+                        {q.text}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-3 gap-2 sm:grid-cols-6">
+                    {SCALE.map((option) => {
+                      const selected = selectedValue === option.value
+                      return (
+                        <button
+                          key={option.value}
+                          type="button"
+                          onClick={() => handleAnswer(q.id, option.value)}
+                          aria-pressed={selected}
+                          className={[
+                            "h-14 rounded-2xl border text-sm font-semibold transition-all",
+                            selected
+                              ? "border-[#1f1a17] bg-[#1f1a17] text-white shadow-[0_6px_16px_rgba(31,26,23,0.16)]"
+                              : "border-black/[0.08] bg-white text-black/60 hover:border-[#8B6F47]/35 hover:bg-[#faf7f2]",
+                          ].join(" ")}
+                        >
+                          {option.value}
+                        </button>
+                      )
+                    })}
+                  </div>
+
+                  <div className="mt-3 flex justify-between gap-3 text-[11px] leading-relaxed text-black/35">
+                    <span>Not a Problem</span>
+                    <span className="text-right">A Very Serious Problem</span>
+                  </div>
+                </div>
+              )
+            })}
+          </section>
+
+          {error && (
+            <div className="rounded-[18px] border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+              {error}
+            </div>
+          )}
+
+          <div className="flex gap-3 pb-8">
+            <button
+              onClick={handlePreviousSection}
+              disabled={currentDomainIndex === 0 || loading}
+              className={[
+                "flex-1 rounded-[18px] py-4 text-sm font-medium transition",
+                currentDomainIndex === 0
+                  ? "cursor-not-allowed bg-black/[0.08] text-black/30"
+                  : "border border-black/[0.08] bg-white text-black/65 hover:bg-[#faf7f2]",
+              ].join(" ")}
+            >
+              ← Back
+            </button>
+
+            {!isLastSection ? (
+              <button
+                onClick={handleNextSection}
+                disabled={loading}
+                className="flex-1 rounded-[18px] bg-[#1f1a17] py-4 text-sm font-medium text-white transition hover:bg-[#2a231f]"
+              >
+                {currentSectionComplete ? "Next Category →" : `Continue (${currentQuestions.length - currentSectionAnswered} remaining)`}
+              </button>
+            ) : (
+              <button
+                onClick={handleSubmit}
+                disabled={loading || !allAnswered}
+                className={[
+                  "flex-1 rounded-[18px] py-4 text-sm font-medium transition",
+                  allAnswered
+                    ? "bg-[#1f1a17] text-white hover:bg-[#2a231f]"
+                    : "cursor-not-allowed bg-black/[0.08] text-black/30",
+                ].join(" ")}
+              >
+                {loading
+                  ? "Calculating your results..."
+                  : allAnswered
+                  ? "See My Results →"
+                  : `Answer all questions to continue (${remaining} remaining)`}
+              </button>
+            )}
+          </div>
+        </div>
       </div>
-    </div>
+    </>
   )
 }

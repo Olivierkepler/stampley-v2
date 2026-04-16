@@ -4,7 +4,7 @@ import { useState } from "react"
 import { signIn } from "next-auth/react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
-
+import Image from "next/image"
 export default function LoginPage() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
@@ -143,14 +143,16 @@ export default function LoginPage() {
           </div>
 
           <div className="relative z-[2] flex flex-col justify-between h-full">
-            <div className="anim-brand flex items-center gap-3.5">
-              <div className="h-10 w-10 rounded-full border border-white/10 bg-white/5 flex items-center justify-center">
+            <Link href="/" className="anim-brand flex items-center gap-3.5">
+              {/* <div className="h-10 w-10 rounded-full border border-white/10 bg-white/5 flex items-center justify-center">
                 <span className="f-mono text-[10px] tracking-[0.2em] text-white/60">APP</span>
-              </div>
+              </div> */}
+
+              <Image src="/images/stampleyLogo.png" alt="AIDES-T2D" width={32} height={32} />
               <span className="f-mono text-[10.5px] font-medium uppercase tracking-[0.2em] text-white/40 select-none">
                 Secure Portal Access
               </span>
-            </div>
+            </Link>
 
             <div className="anim-hero max-w-[520px]">
               <p className="f-mono mb-7 flex items-center gap-3 text-[9.5px] uppercase tracking-[0.28em] text-[#5b7ea1]">
