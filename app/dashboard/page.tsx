@@ -2,6 +2,7 @@ import { auth, signOut } from "@/lib/auth"
 import { redirect } from "next/navigation"
 import { query } from "@/lib/db"
 import Link from "next/link"
+ 
 
 export default async function DashboardPage() {
   const session = await auth()

@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useRef, useState } from "react"
+import SocialStack from "@/components/utils/SocialStack"
 
 const CARDS = [
   {
@@ -29,17 +30,22 @@ const CARDS = [
   },
 ]
 
-function useInView(threshold = 0.15) {
+function useInView(threshold = 0.3) {
   const ref = useRef<HTMLDivElement>(null)
   const [inView, setInView] = useState(false)
+
   useEffect(() => {
     const obs = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) setInView(true) },
+      ([entry]) => {
+        if (entry.isIntersecting) setInView(true)
+      },
       { threshold }
     )
+
     if (ref.current) obs.observe(ref.current)
     return () => obs.disconnect()
   }, [threshold])
+
   return { ref, inView }
 }
 
@@ -49,11 +55,26 @@ export default function WhatIsSection() {
   return (
     <section
       id="about"
+      ref={ref}
       className="relative px-6 md:px-12 py-24 md:py-32"
-      style={{ background: "linear-gradient(160deg, #f5f2ec 0%, #f0ede6 100%)" }}
     >
-      {/* Section label */}
+      {/* Absolute social stack */}
+      <div
+        className="hidden xl:flex absolute left-8 2xl:left-16 top-1/2 -translate-y-1/2 z-20 pointer-events-auto"
+        style={{
+          opacity: inView ? 1 : 0,
+          transform: inView
+            ? "translateY(-50%) translateX(0)"
+            : "translateY(-50%) translateX(-24px)",
+          transition:
+            "opacity 0.8s ease, transform 0.8s cubic-bezier(0.22, 1, 0.36, 1)",
+        }}
+      >
+        <SocialStack />
+      </div>
+
       <div className="max-w-6xl mx-auto">
+        {/* Section label */}
         <div className="flex items-center gap-3 mb-4">
           <span className="h-px w-8 bg-black/15" />
           <span
@@ -77,7 +98,10 @@ export default function WhatIsSection() {
             }}
           >
             What is{" "}
-            <em className="italic font-light" style={{ color: "rgba(10,10,5,0.28)" }}>
+            <em
+              className="italic font-light"
+              style={{ color: "rgba(10,10,5,0.28)" }}
+            >
               AIDES-T2D?
             </em>
           </h2>
@@ -92,18 +116,16 @@ export default function WhatIsSection() {
         </div>
 
         {/* Cards grid */}
-        <div
-          ref={ref}
-          className="grid grid-cols-1 md:grid-cols-3 gap-5"
-        >
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
           {CARDS.map((card, i) => (
             <div
               key={card.tag}
               className="relative rounded-[24px] p-7 flex flex-col gap-4 transition-all duration-700"
               style={{
-                background: `linear-gradient(160deg, #fefdfb 0%, #f9f6f1 100%)`,
+                background: "linear-gradient(160deg, #fefdfb 0%, #f9f6f1 100%)",
                 border: `1.5px solid ${card.accentBorder}`,
-                boxShadow: "0 2px 16px rgba(10,10,5,0.04), inset 0 1px 0 rgba(255,255,255,0.9)",
+                boxShadow:
+                  "0 2px 16px rgba(10,10,5,0.04), inset 0 1px 0 rgba(255,255,255,0.9)",
                 opacity: inView ? 1 : 0,
                 transform: inView ? "translateY(0)" : "translateY(20px)",
                 transitionDelay: `${i * 120}ms`,
@@ -156,7 +178,9 @@ export default function WhatIsSection() {
               {/* Bottom accent line */}
               <div
                 className="absolute bottom-0 left-8 right-8 h-px rounded-full"
-                style={{ background: `linear-gradient(90deg, transparent, ${card.accentBorder}, transparent)` }}
+                style={{
+                  background: `linear-gradient(90deg, transparent, ${card.accentBorder}, transparent)`,
+                }}
               />
             </div>
           ))}
@@ -168,15 +192,32 @@ export default function WhatIsSection() {
           style={{
             background: "linear-gradient(160deg, #fefdfb 0%, #f9f6f1 100%)",
             border: "1.5px solid rgba(10,10,5,0.07)",
-            boxShadow: "0 2px 12px rgba(10,10,5,0.03), inset 0 1px 0 rgba(255,255,255,0.9)",
+            boxShadow:
+              "0 2px 12px rgba(10,10,5,0.03), inset 0 1px 0 rgba(255,255,255,0.9)",
           }}
         >
           {[
-            { value: "4", label: "Focus domains", sub: "Emotional · Regimen · Physician · Interpersonal" },
-            { value: "28", label: "Study days", sub: "Daily check-ins over 4 weeks" },
-            { value: "DDS-17", label: "Validated scale", sub: "Diabetes Distress Scale scoring" },
-            { value: "GPT-4o", label: "AI backbone", sub: "Clinically constrained responses" },
-          ].map(stat => (
+            {
+              value: "4",
+              label: "Focus domains",
+              sub: "Emotional · Regimen · Physician · Interpersonal",
+            },
+            {
+              value: "28",
+              label: "Study days",
+              sub: "Daily check-ins over 4 weeks",
+            },
+            {
+              value: "DDS-17",
+              label: "Validated scale",
+              sub: "Diabetes Distress Scale scoring",
+            },
+            {
+              value: "GPT-4o",
+              label: "AI backbone",
+              sub: "Clinically constrained responses",
+            },
+          ].map((stat) => (
             <div key={stat.label} className="flex flex-col gap-1">
               <div className="flex items-baseline gap-1.5">
                 <span

@@ -31,7 +31,7 @@ export default function Navbar() {
       <div className="max-w-6xl mx-auto h-full flex items-center justify-between">
 
         {/* Logo */}
-        <div className="flex items-center gap-3">
+        <a href="/" className="flex items-center gap-3">
           <div
             className="rounded-[8px] overflow-hidden flex items-center justify-center"
             style={{
@@ -69,7 +69,7 @@ export default function Navbar() {
           >
             AIDES-T2D
           </span>
-        </div>
+        </a>
 
         {/* Nav links — desktop */}
         <div className="hidden md:flex items-center gap-8">
