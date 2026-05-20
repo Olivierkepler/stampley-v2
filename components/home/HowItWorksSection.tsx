@@ -1,205 +1,167 @@
 "use client"
 
+import Image from "next/image"
+import { ExternalLink } from "lucide-react"
 import { useEffect, useRef, useState } from "react"
 
-const STEPS = [
+const updates = [
   {
-    number: "01",
-    title: "Register with your Study ID",
-    description: "You'll receive a unique Study ID from the research team. Use it to create your account and begin your baseline assessments.",
-    detail: "Takes ~10 minutes",
-    icon: "🔑",
-    accent: "rgba(92,92,92,0.08)",
+    image: "/images/news/family.jpg",
+    category: "AIDES-T2D",
+    title: "Supporting emotional health in diabetes care",
+    text: "Learn how AIDES-T2D explores daily emotional support, reflection, and AI-guided encouragement for people living with Type 2 Diabetes.",
+    link: "Learn More",
   },
   {
-    number: "02",
-    title: "Complete baseline surveys",
-    description: "Answer questions about your diabetes history, emotional wellbeing, and technology preferences. This helps us personalize your experience.",
-    detail: "PHQ-2 · GAD-2 · DDS-17",
-    icon: "📋",
-    accent: "rgba(124,106,82,0.08)",
+    image: "/images/news/daily.jpg",
+    category: "Diabetes Distress",
+    title: "Small check-ins can make a difference",
+    text: "Daily check-ins help participants reflect on mood, energy, and diabetes-related stress in a simple and supportive way.",
+    link: "Explore Study",
   },
   {
-    number: "03",
-    title: "Daily check-ins",
-    description: "Each day, spend about 5 minutes rating your distress, mood, and energy — then reflect on what shaped your day with diabetes.",
-    detail: "5 min/day · 28 days",
-    icon: "📊",
-    accent: "rgba(90,107,90,0.08)",
+    image: "/images/news/research.jpg",
+    category: "Research",
+    title: "A 28-day AI support study",
+    text: "AIDES-T2D studies how compassionate AI-driven support may help reduce diabetes distress over four weeks.",
+    link: "Read More",
   },
   {
-    number: "04",
-    title: "Receive support from Stampley",
-    description: "After each check-in, Stampley generates a personalized response — validating how you feel, offering a micro-skill, and providing a gentle reflection prompt.",
-    detail: "Powered by GPT-4o",
-    icon: "💙",
-    accent: "rgba(61,90,128,0.08)",
+    image: "/images/news/stamply.jpg",
+    category: "Stampley",
+    title: "Meet your AI companion",
+    text: "Stampley provides personalized encouragement, micro-skills, and compassionate responses based on each daily check-in.",
+    link: "Meet Stampley",
   },
 ]
 
-function useInView(threshold = 0.1) {
-  const ref = useRef<HTMLDivElement>(null)
+export default function WhatsHappeningSection() {
+  const sectionRef = useRef<HTMLElement>(null)
   const [inView, setInView] = useState(false)
-  useEffect(() => {
-    const obs = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) setInView(true) },
-      { threshold }
-    )
-    if (ref.current) obs.observe(ref.current)
-    return () => obs.disconnect()
-  }, [threshold])
-  return { ref, inView }
-}
 
-export default function HowItWorksSection() {
-  const { ref, inView } = useInView()
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setInView(entry.isIntersecting)
+      },
+      {
+        threshold: 0.15,
+      }
+    )
+
+    if (sectionRef.current) observer.observe(sectionRef.current)
+
+    return () => observer.disconnect()
+  }, [])
 
   return (
     <section
-      id="how"
-      className="relative px-6 md:px-12 py-24 md:py-32"
-      style={{ background: "linear-gradient(160deg, #fefdfb 0%, #f5f2ec 100%)" }}
+      ref={sectionRef}
+      className="overflow-hidden bg-white shadow-[inset_0_1px_0_rgba(15,23,42,0.04)] px-6 py-20 md:px-12 lg:px-24"
     >
-      <div className="max-w-6xl mx-auto">
-
-        {/* Label + headline */}
-        <div className="flex items-center gap-3 mb-4">
-          <span className="h-px w-8 bg-black/15" />
-          <span
-            className="text-[9.5px] uppercase tracking-[0.3em]"
-            style={{
-              color: "rgba(10,10,5,0.32)",
-              fontFamily: "'JetBrains Mono', monospace",
-            }}
-          >
-            How it works
-          </span>
-        </div>
-
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-16">
-          <h2
-            className="text-[36px] md:text-[48px] font-light leading-[1.1] tracking-[-0.025em] max-w-lg"
-            style={{
-              fontFamily: "'Fraunces', Georgia, serif",
-              color: "rgba(10,10,5,0.75)",
-            }}
-          >
-            Four steps,{" "}
-            <em className="italic font-light" style={{ color: "rgba(10,10,5,0.28)" }}>
-              28 days
-            </em>
+      <div className="mx-auto max-w-7xl">
+        {/* Header */}
+        <div
+          className={`mb-12 transition-all duration-700 ease-out ${
+            inView
+              ? "translate-y-0 opacity-100"
+              : "translate-y-10 opacity-0"
+          }`}
+        >
+          <h2 className="mb-4 text-3xl font-light tracking-tight text-slate-950 md:text-4xl">
+            What&apos;s Happening?
           </h2>
-          <p
-            className="text-[14px] font-light leading-[1.7] max-w-sm"
-            style={{ color: "rgba(10,10,5,0.4)" }}
-          >
-            The study is designed to fit into your life — not the other way around.
-            Each step builds naturally on the last.
+
+          <p className="max-w-4xl text-base leading-relaxed text-slate-700 md:text-lg">
+            Stay up to date with AIDES-T2D research updates, diabetes support
+            resources, study opportunities, and emotional wellness insights.
           </p>
         </div>
 
-        {/* Steps */}
-        <div ref={ref} className="grid grid-cols-1 md:grid-cols-2 gap-5">
-          {STEPS.map((step, i) => (
-            <div
-              key={step.number}
-              className="relative rounded-[24px] p-7 flex gap-5 transition-all duration-700 group"
+        {/* Cards */}
+        <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
+          {updates.map((item, index) => (
+            <article
+              key={item.title}
+              className={`overflow-hidden bg-white shadow-[0_8px_24px_rgba(15,23,42,0.12)] transition-all duration-700 ease-out hover:-translate-y-1 hover:shadow-[0_16px_36px_rgba(15,23,42,0.16)] ${
+                inView
+                  ? "translate-y-0 opacity-100"
+                  : "translate-y-12 opacity-0"
+              }`}
               style={{
-                background: "linear-gradient(160deg, #fefdfb 0%, #f9f6f1 100%)",
-                border: "1.5px solid rgba(10,10,5,0.07)",
-                boxShadow: "0 2px 16px rgba(10,10,5,0.04), inset 0 1px 0 rgba(255,255,255,0.9)",
-                opacity: inView ? 1 : 0,
-                transform: inView ? "translateY(0)" : "translateY(20px)",
-                transitionDelay: `${i * 100}ms`,
+                transitionDelay: inView ? `${index * 120}ms` : "0ms",
               }}
             >
-              {/* Step number */}
-              <div className="shrink-0 flex flex-col items-center gap-3 pt-1">
-                <div
-                  className="w-10 h-10 rounded-[12px] flex items-center justify-center text-xl"
-                  style={{
-                    background: step.accent,
-                    border: "1px solid rgba(10,10,5,0.07)",
-                  }}
-                >
-                  {step.icon}
-                </div>
-                <span
-                  className="text-[10px] font-bold tracking-[0.1em]"
-                  style={{
-                    color: "rgba(10,10,5,0.18)",
-                    fontFamily: "'JetBrains Mono', monospace",
-                  }}
-                >
-                  {step.number}
-                </span>
+              {/* Image */}
+              <div className="relative h-56 w-full overflow-hidden">
+                <Image
+                  src={item.image}
+                  alt={item.title}
+                  fill
+                  className={`object-cover transition-all duration-[1200ms] ease-out ${
+                    inView ? "scale-100" : "scale-110"
+                  }`}
+                />
               </div>
 
               {/* Content */}
-              <div className="flex-1 min-w-0">
-                <div className="flex items-start justify-between gap-3 mb-2">
-                  <h3
-                    className="text-[16px] font-medium leading-snug"
-                    style={{
-                      fontFamily: "'Fraunces', Georgia, serif",
-                      color: "rgba(10,10,5,0.72)",
-                      letterSpacing: "-0.012em",
-                    }}
-                  >
-                    {step.title}
-                  </h3>
-                  <span
-                    className="shrink-0 text-[9px] uppercase tracking-[0.16em] px-2.5 py-1 rounded-full"
-                    style={{
-                      color: "rgba(10,10,5,0.3)",
-                      background: "rgba(10,10,5,0.04)",
-                      border: "1px solid rgba(10,10,5,0.07)",
-                      fontFamily: "'JetBrains Mono', monospace",
-                      whiteSpace: "nowrap",
-                    }}
-                  >
-                    {step.detail}
-                  </span>
-                </div>
-                <p
-                  className="text-[13px] font-light leading-[1.72]"
-                  style={{ color: "rgba(10,10,5,0.43)" }}
-                >
-                  {step.description}
+              <div className="flex min-h-[300px] flex-col p-6">
+                <p className="mb-4 text-xs font-bold uppercase tracking-[0.32em] text-cyan-700">
+                  {item.category}
                 </p>
-              </div>
-            </div>
-          ))}
-        </div>
 
-        {/* Connector arrow */}
-        <div className="flex items-center justify-center mt-10 gap-3">
-          {["Register", "Baseline", "Check-ins", "Stampley"].map((label, i, arr) => (
-            <div key={label} className="flex items-center gap-3">
-              <div
-                className="px-4 py-2 rounded-full text-[11px] font-medium"
-                style={{
-                  background: "linear-gradient(160deg, #fefdfb 0%, #f9f6f1 100%)",
-                  border: "1px solid rgba(10,10,5,0.09)",
-                  color: "rgba(10,10,5,0.45)",
-                  fontFamily: "'JetBrains Mono', monospace",
-                  letterSpacing: "0.06em",
-                }}
-              >
-                {label}
-              </div>
-              {i < arr.length - 1 && (
-                <span
-                  className="text-[12px]"
-                  style={{ color: "rgba(10,10,5,0.18)" }}
+                <h3 className="mb-4 text-2xl font-light leading-tight text-slate-950">
+                  {item.title}
+                </h3>
+
+                <p className="mb-8 text-base leading-relaxed text-slate-600">
+                  {item.text}
+                </p>
+
+                <a
+                  href="#"
+                  className="group mt-auto inline-flex w-fit items-center gap-1 border-b-2 border-blue-900 text-sm font-semibold tracking-[0.08em] text-blue-900 transition hover:text-blue-950"
                 >
-                  →
-                </span>
-              )}
-            </div>
+                  {item.link}
+
+                  <ExternalLink
+                    size={14}
+                    strokeWidth={2}
+                    className="transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+                  />
+                </a>
+              </div>
+            </article>
           ))}
         </div>
 
+        {/* Navigation Buttons */}
+        <div
+          className={`mt-10 flex justify-end gap-4 transition-all duration-700 ease-out ${
+            inView
+              ? "translate-y-0 opacity-100"
+              : "translate-y-8 opacity-0"
+          }`}
+          style={{
+            transitionDelay: "500ms",
+          }}
+        >
+          <button
+            type="button"
+            aria-label="Previous"
+            className="flex h-11 w-11 items-center justify-center border border-slate-300 text-slate-300 transition-all duration-300 hover:border-slate-400 hover:text-slate-500"
+          >
+            ‹
+          </button>
+
+          <button
+            type="button"
+            aria-label="Next"
+            className="flex h-11 w-11 items-center justify-center border-2 border-blue-900 text-2xl text-blue-900 transition-all duration-300 hover:bg-blue-900 hover:text-white"
+          >
+            ›
+          </button>
+        </div>
       </div>
     </section>
   )

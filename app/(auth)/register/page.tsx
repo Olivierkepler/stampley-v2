@@ -4,7 +4,7 @@ import { useState } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { registerWithKey } from "@/actions/register"
-
+import Image from "next/image"
 export default function RegisterPage() {
   const [error, setError] = useState("")
   const [loading, setLoading] = useState(false)
@@ -140,128 +140,209 @@ export default function RegisterPage() {
         </div>
 
         {/* LEFT — Dark editorial panel */}
-        <div className="grain hidden lg:flex flex-1 relative overflow-hidden flex-col justify-between px-14 py-18 bg-[#0a0a0f] text-white">
-          <div className="absolute inset-0 z-0 overflow-hidden">
-            <div
-              className="mesh-drift absolute"
-              style={{
-                width: "140%",
-                height: "140%",
-                top: "-20%",
-                left: "-20%",
-                background: [
-                  "radial-gradient(ellipse 600px 500px at 20% 30%, rgba(61,90,128,0.35) 0%, transparent 70%)",
-                  "radial-gradient(ellipse 500px 600px at 80% 70%, rgba(157,120,85,0.2) 0%, transparent 70%)",
-                  "radial-gradient(ellipse 400px 400px at 50% 50%, rgba(61,90,128,0.15) 0%, transparent 70%)",
-                ].join(", "),
-              }}
-            />
-          </div>
+       {/* LEFT — Project themed editorial panel */}
+<div
+  className="grain hidden lg:flex flex-1 relative overflow-hidden flex-col justify-between px-14 py-18 text-white"
+  style={{
+    background: `
+      radial-gradient(circle at top left, rgba(255,177,0,0.12), transparent 30%),
+      radial-gradient(circle at bottom right, rgba(34,211,238,0.08), transparent 35%),
+      linear-gradient(135deg, #071224 0%, #0B1D39 45%, #10294D 100%)
+    `,
+  }}
+>
+  {/* Animated mesh background */}
+  <div className="absolute inset-0 z-0 overflow-hidden">
+    <div
+      className="mesh-drift absolute"
+      style={{
+        width: "140%",
+        height: "140%",
+        top: "-20%",
+        left: "-20%",
+        background: [
+          "radial-gradient(ellipse 700px 520px at 20% 30%, rgba(37,99,235,0.28) 0%, transparent 72%)",
+          "radial-gradient(ellipse 540px 620px at 80% 70%, rgba(255,177,0,0.14) 0%, transparent 72%)",
+          "radial-gradient(ellipse 420px 420px at 50% 50%, rgba(34,211,238,0.10) 0%, transparent 70%)",
+        ].join(", "),
+      }}
+    />
+  </div>
 
-          <div className="absolute inset-0 z-[1] opacity-[0.04] pointer-events-none">
-            <svg viewBox="0 0 800 900" fill="none" className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
-              <path d="M-50 200 C200 180, 400 260, 850 200" stroke="white" strokeWidth="0.8" />
-              <path d="M-50 280 C200 260, 450 340, 850 280" stroke="white" strokeWidth="0.6" />
-              <path d="M-50 360 C180 340, 420 400, 850 360" stroke="white" strokeWidth="0.5" />
-              <path d="M-50 440 C220 420, 380 480, 850 440" stroke="white" strokeWidth="0.4" />
-              <path d="M-50 520 C240 500, 400 560, 850 530" stroke="white" strokeWidth="0.5" />
-              <path d="M-50 600 C200 580, 440 640, 850 610" stroke="white" strokeWidth="0.6" />
-              <path d="M-50 680 C180 660, 460 720, 850 690" stroke="white" strokeWidth="0.4" />
-              <path d="M-50 760 C220 740, 400 800, 850 770" stroke="white" strokeWidth="0.3" />
-            </svg>
-          </div>
+  {/* Decorative lines */}
+  <div className="absolute inset-0 z-[1] opacity-[0.05] pointer-events-none">
+    <svg
+      viewBox="0 0 800 900"
+      fill="none"
+      className="w-full h-full"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M-50 200 C200 180, 400 260, 850 200"
+        stroke="white"
+        strokeWidth="0.8"
+      />
+      <path
+        d="M-50 280 C200 260, 450 340, 850 280"
+        stroke="white"
+        strokeWidth="0.6"
+      />
+      <path
+        d="M-50 360 C180 340, 420 400, 850 360"
+        stroke="white"
+        strokeWidth="0.5"
+      />
+      <path
+        d="M-50 440 C220 420, 380 480, 850 440"
+        stroke="white"
+        strokeWidth="0.4"
+      />
+      <path
+        d="M-50 520 C240 500, 400 560, 850 530"
+        stroke="white"
+        strokeWidth="0.5"
+      />
+      <path
+        d="M-50 600 C200 580, 440 640, 850 610"
+        stroke="white"
+        strokeWidth="0.6"
+      />
+      <path
+        d="M-50 680 C180 660, 460 720, 850 690"
+        stroke="white"
+        strokeWidth="0.4"
+      />
+      <path
+        d="M-50 760 C220 740, 400 800, 850 770"
+        stroke="white"
+        strokeWidth="0.3"
+      />
+    </svg>
+  </div>
 
-          <div className="relative z-[2] flex flex-col justify-between h-full">
-            <div className="anim-brand flex items-center gap-3.5">
-              <div className="h-10 w-10 rounded-full border border-white/10 bg-white/5 flex items-center justify-center">
+  <div className="relative z-[2] flex flex-col justify-between h-full">
+    {/* Brand */}
+    <div className="anim-brand flex items-center gap-3.5">
+     
+
+      <Link href="/" className="anim-brand flex items-center gap-3.5 hover:scale-105 transition-all duration-300">
+              {/* <div className="h-10 w-10 rounded-full border border-white/10 bg-white/5 flex items-center justify-center">
                 <span className="f-mono text-[10px] tracking-[0.2em] text-white/60">APP</span>
-              </div>
+              </div> */}
+
+              <Image src="/images/stampleyLogo.png" alt="AIDES-T2D" width={32} height={32} />
               <span className="f-mono text-[10.5px] font-medium uppercase tracking-[0.2em] text-white/40 select-none">
-                Study Portal
+                AIDES-T2D
+              </span>
+            </Link>
+    </div>
+
+    {/* Hero */}
+    <div className="anim-hero max-w-[520px]">
+      <p className="f-mono mb-7 flex items-center gap-3 text-[9.5px] uppercase tracking-[0.28em] text-[#FFB100]">
+        <span className="inline-block h-px w-7 bg-[#FFB100] opacity-60" />
+        Participant Enrollment
+      </p>
+
+      <h1
+        className="f-display mb-6 font-light leading-[1.08] text-white/[0.96] select-none"
+        style={{
+          fontSize: "clamp(38px, 4.2vw, 62px)",
+          letterSpacing: "-0.02em",
+        }}
+      >
+        Begin your journey{" "}
+        <em className="italic font-light text-white/35">
+          with the study.
+        </em>
+      </h1>
+
+      <p className="max-w-[390px] text-sm font-light leading-[1.75] text-white/[0.45]">
+        Your Study ID connects you to the program. Once registered,
+        you can access your account and continue with your participant experience.
+      </p>
+    </div>
+
+    {/* Steps */}
+    <div className="anim-steps max-w-[400px]">
+      <p className="f-mono mb-5 text-[9px] uppercase tracking-[0.22em] text-white/30 select-none">
+        How it works
+      </p>
+
+      <div className="flex flex-col gap-0">
+        {[
+          {
+            num: "01",
+            title: "Enter your Study ID",
+            desc: "Use the unique key provided by your research coordinator.",
+          },
+          {
+            num: "02",
+            title: "Create your account",
+            desc: "Set your email and password to access your portal securely.",
+          },
+          {
+            num: "03",
+            title: "Sign in and begin",
+            desc: "Once registered, return to login and access your account.",
+          },
+        ].map((step, i) => (
+          <div
+            key={step.num}
+            className={`relative flex gap-5 pb-7 ${
+              i < 2 ? "step-line" : ""
+            }`}
+          >
+            <div className="shrink-0 flex h-[28px] w-[28px] items-center justify-center rounded-full border border-[#FFB100]/30 bg-[#FFB100]/10 backdrop-blur-sm">
+              <span className="f-mono text-[8.5px] font-medium text-[#FFB100]">
+                {step.num}
               </span>
             </div>
 
-            <div className="anim-hero max-w-[520px]">
-              <p className="f-mono mb-7 flex items-center gap-3 text-[9.5px] uppercase tracking-[0.28em] text-[#5b7ea1]">
-                <span className="inline-block h-px w-7 bg-[#5b7ea1] opacity-50" />
-                Participant Enrollment
+            <div className="pt-[3px]">
+              <p className="text-[12.5px] font-medium text-white/75 mb-[3px]">
+                {step.title}
               </p>
-              <h1
-                className="f-display mb-6 font-light leading-[1.08] text-white/[0.93] select-none"
-                style={{ fontSize: "clamp(38px, 4.2vw, 62px)", letterSpacing: "-0.02em" }}
-              >
-                Begin your journey{" "}
-                <em className="italic font-light text-white/30">
-                  with the study.
-                </em>
-              </h1>
-              <p className="max-w-[380px] text-sm font-light leading-[1.75] text-white/[0.32]">
-                Your Study ID connects you to the program. Once registered,
-                you can access your account and continue with your participant experience.
-              </p>
-            </div>
 
-            <div className="anim-steps max-w-[400px]">
-              <p className="f-mono mb-5 text-[9px] uppercase tracking-[0.22em] text-white/25 select-none">
-                How it works
+              <p className="text-[11.5px] font-light text-white/35 leading-[1.5]">
+                {step.desc}
               </p>
-              <div className="flex flex-col gap-0">
-                {[
-                  {
-                    num: "01",
-                    title: "Enter your Study ID",
-                    desc: "Use the unique key provided by your research coordinator.",
-                  },
-                  {
-                    num: "02",
-                    title: "Create your account",
-                    desc: "Set your email and password to access your portal securely.",
-                  },
-                  {
-                    num: "03",
-                    title: "Sign in and begin",
-                    desc: "Once registered, return to login and access your account.",
-                  },
-                ].map((step, i) => (
-                  <div key={step.num} className={`relative flex gap-5 pb-7 ${i < 2 ? "step-line" : ""}`}>
-                    <div className="shrink-0 flex h-[26px] w-[26px] items-center justify-center rounded-full border border-[#3d5a80]/40 bg-[#3d5a80]/10">
-                      <span className="f-mono text-[8.5px] font-medium text-[#5b7ea1]">{step.num}</span>
-                    </div>
-                    <div className="pt-[3px]">
-                      <p className="text-[12.5px] font-medium text-white/70 mb-[3px]">{step.title}</p>
-                      <p className="text-[11.5px] font-light text-white/30 leading-[1.5]">{step.desc}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div className="anim-badges flex items-center gap-6">
-              {[
-                { value: "ID", label: "Required" },
-                { value: "SSL", label: "Protected" },
-                { value: "100%", label: "Confidential" },
-              ].map((badge, i) => (
-                <div
-                  key={badge.label}
-                  className={`flex flex-col gap-[5px] px-8 ${i === 0 ? "pl-0" : "border-l border-white/[0.07]"}`}
-                >
-                  <span className="f-display text-[26px] font-normal leading-none tracking-[-0.02em] text-white/[0.85]">
-                    {badge.value}
-                  </span>
-                  <span className="f-mono text-[9px] uppercase tracking-[0.16em] text-white/25">
-                    {badge.label}
-                  </span>
-                </div>
-              ))}
             </div>
           </div>
+        ))}
+      </div>
+    </div>
 
-          <div className="absolute bottom-11 right-12 z-[2] f-mono text-[8.5px] uppercase tracking-[0.2em] text-white/[0.08] select-none">
-            Secure · Private · Verified
-          </div>
+    {/* Bottom badges */}
+    <div className="anim-badges flex items-center gap-6">
+      {[
+        { value: "ID", label: "Required" },
+        { value: "SSL", label: "Protected" },
+        { value: "100%", label: "Confidential" },
+      ].map((badge, i) => (
+        <div
+          key={badge.label}
+          className={`flex flex-col gap-[5px] px-8 ${
+            i === 0 ? "pl-0" : "border-l border-white/[0.08]"
+          }`}
+        >
+          <span className="f-display text-[26px] font-normal leading-none tracking-[-0.02em] text-white/[0.92]">
+            {badge.value}
+          </span>
+
+          <span className="f-mono text-[9px] uppercase tracking-[0.16em] text-white/30">
+            {badge.label}
+          </span>
         </div>
+      ))}
+    </div>
+  </div>
 
+  {/* Bottom floating label */}
+  <div className="absolute bottom-11 right-12 z-[2] f-mono text-[8.5px] uppercase tracking-[0.2em] text-white/[0.10] select-none">
+    Secure · Private · Verified
+  </div>
+</div>
         {/* RIGHT — Form panel */}
         <div className="dot-pattern relative flex w-full items-center justify-center px-6 py-12 lg:w-[520px] lg:shrink-0 lg:bg-[#fefdfb] lg:px-14 lg:py-16 lg:shadow-[inset_1px_0_0_rgba(10,10,15,0.04),-32px_0_80px_rgba(10,10,15,0.04)]">
           <div className="anim-form relative z-10 w-full max-w-[380px]">

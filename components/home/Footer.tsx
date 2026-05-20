@@ -1,202 +1,140 @@
 import Link from "next/link"
 
-const LINKS = {
-  Study: [
-    { label: "About AIDES-T2D", href: "#about" },
-    { label: "How it works", href: "#how" },
-    { label: "Meet Stampley", href: "#stampley" },
-    { label: "Study details", href: "#details" },
-    { label: "Research team", href: "#team" },
-  ],
-  Participate: [
-    { label: "Register", href: "/register" },
-    { label: "Sign in", href: "/login" },
-    { label: "Contact us", href: "mailto:pcrg@umb.edu" },
-  ],
-  Legal: [
-    { label: "Privacy policy", href: "#" },
-    { label: "IRB approval", href: "#" },
-    { label: "Terms of use", href: "#" },
-  ],
-}
+const footerColumns = [
+  {
+    title: "Study",
+    links: [
+      { label: "About AIDES-T2D", href: "#about" },
+      { label: "How It Works", href: "#how-it-works" },
+      { label: "Meet Stampley", href: "#stampley" },
+      { label: "Study Details", href: "#details" },
+      { label: "Research Team", href: "#team" },
+    ],
+  },
+  {
+    title: "Resources",
+    links: [
+      { label: "Diabetes Support", href: "#" },
+      { label: "Emotional Wellness", href: "#" },
+      { label: "Type 2 Diabetes", href: "#" },
+      { label: "Participant FAQs", href: "#faq" },
+      { label: "Contact Us", href: "mailto:pcrg@umb.edu" },
+    ],
+  },
+  {
+    title: "Trust & Legal",
+    links: [
+      { label: "Privacy Policy", href: "#" },
+      { label: "IRB Approval", href: "#" },
+      { label: "Terms of Use", href: "#" },
+      { label: "Accessibility", href: "#" },
+    ],
+  },
+]
 
 export default function Footer() {
   return (
     <footer
-      className="px-6 md:px-12 pt-16 pb-10"
+      className="relative overflow-hidden px-5 py-12 text-white sm:px-6 sm:py-14 md:px-12 lg:px-20 xl:px-24"
       style={{
-        background: "linear-gradient(160deg, #ebe7df 0%, #e4e0d8 100%)",
-        borderTop: "1px solid rgba(10,10,5,0.08)",
-        fontFamily: "'Outfit', system-ui, sans-serif",
+        backgroundImage:
+          "linear-gradient(25deg, rgb(0, 16, 47) 3%, rgb(0, 37, 117) 100%)",
       }}
     >
-      <div className="max-w-6xl mx-auto">
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_15%_15%,rgba(96,165,250,0.22),transparent_28%),radial-gradient(circle_at_85%_90%,rgba(34,211,238,0.13),transparent_30%)]" />
+      <div className="absolute left-0 top-0 h-1 w-full bg-gradient-to-r from-cyan-300 via-blue-400 to-cyan-300" />
 
-        {/* Top row */}
-        <div className="grid grid-cols-1 md:grid-cols-5 gap-10 mb-14">
-
-          {/* Brand col */}
-          <div className="md:col-span-2 flex flex-col gap-5">
-            <div className="flex items-center gap-3">
-              <div
-                className="w-9 h-9 rounded-[10px] flex items-center justify-center text-base"
-                style={{
-                  background: "linear-gradient(135deg, #1a1a18, #0a0a0f)",
-                  boxShadow: "0 2px 8px rgba(10,10,5,0.2)",
-                }}
-              >
-                💙
-              </div>
-              <span
-                className="text-[11px] uppercase tracking-[0.28em] font-semibold"
-                style={{
-                  color: "rgba(10,10,5,0.55)",
-                  fontFamily: "'JetBrains Mono', monospace",
-                }}
-              >
-                AIDES-T2D
+      <div className="relative z-10 mx-auto max-w-7xl">
+        <div className="grid gap-12 lg:grid-cols-[0.95fr_2fr] xl:grid-cols-[1fr_2.2fr]">
+          {/* Brand */}
+          <div>
+            <Link href="/" className="inline-flex flex-col">
+              <span className="text-3xl font-semibold tracking-[0.16em] sm:text-4xl sm:tracking-[0.18em]">
+                AIDES
               </span>
-            </div>
 
-            <p
-              className="text-[13px] font-light leading-[1.75] max-w-xs"
-              style={{ color: "rgba(10,10,5,0.4)" }}
-            >
-              An AI-driven emotional support study for people living with
-              Type 2 Diabetes — developed at the University of Massachusetts
-              Boston.
+              <span className="mt-1 text-[10px] uppercase tracking-[0.22em] text-cyan-200/80 sm:text-xs sm:tracking-[0.28em]">
+                T2D Support Study
+              </span>
+            </Link>
+
+            <p className="mt-6 max-w-sm text-sm leading-relaxed text-blue-100/75 sm:mt-7">
+              A 28-day research experience built around daily check-ins,
+              structured emotional support, and Stampley, a warm AI companion.
             </p>
 
-            {/* Institution badges */}
-            <div className="flex flex-col gap-2">
-              {[
-                { label: "UMass Boston", sub: "College of Nursing & Health Sciences" },
-                { label: "PCRG", sub: "Patient-Centered Research Group" },
-              ].map(badge => (
-                <div
-                  key={badge.label}
-                  className="flex items-center gap-2.5 px-3 py-2 rounded-[10px] w-fit"
-                  style={{
-                    background: "rgba(255,255,255,0.35)",
-                    border: "1px solid rgba(10,10,5,0.08)",
-                  }}
-                >
-                  <div
-                    className="w-1.5 h-1.5 rounded-full shrink-0"
-                    style={{ background: "rgba(10,10,5,0.3)" }}
-                  />
-                  <div>
-                    <span
-                      className="text-[9.5px] font-semibold uppercase tracking-[0.16em]"
-                      style={{
-                        color: "rgba(10,10,5,0.45)",
-                        fontFamily: "'JetBrains Mono', monospace",
-                      }}
-                    >
-                      {badge.label}
-                    </span>
-                    <span
-                      className="text-[9.5px] ml-1.5"
-                      style={{ color: "rgba(10,10,5,0.3)" }}
-                    >
-                      {badge.sub}
-                    </span>
-                  </div>
-                </div>
-              ))}
+            <div className="mt-7 flex flex-wrap gap-2.5 sm:mt-8 sm:gap-3">
+              {["IRB Reviewed", "Free to Participate", "28 Days"].map(
+                (item) => (
+                  <span
+                    key={item}
+                    className="rounded-full border border-cyan-300/20 bg-cyan-300/10 px-3 py-2 text-[10px] font-semibold uppercase tracking-[0.14em] text-cyan-200 sm:px-4 sm:text-[11px] sm:tracking-[0.16em]"
+                  >
+                    {item}
+                  </span>
+                )
+              )}
             </div>
           </div>
 
-          {/* Link cols */}
-          {Object.entries(LINKS).map(([group, links]) => (
-            <div key={group}>
-              <p
-                className="text-[9px] uppercase tracking-[0.24em] font-semibold mb-4"
-                style={{
-                  color: "rgba(10,10,5,0.3)",
-                  fontFamily: "'JetBrains Mono', monospace",
-                }}
-              >
-                {group}
-              </p>
-              <ul className="space-y-2.5">
-                {links.map(link => (
-                  <li key={link.label}>
-                    <Link
-                      href={link.href}
-                      className="text-[13px] font-light transition-all duration-200 hover:opacity-80"
-                      style={{ color: "rgba(10,10,5,0.45)" }}
-                    >
-                      {link.label}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
-        </div>
-
-        {/* Divider */}
-        <div
-          className="h-px w-full mb-8"
-          style={{
-            background: "linear-gradient(90deg, transparent, rgba(10,10,5,0.1), transparent)",
-          }}
-        />
-
-        {/* Bottom row */}
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p
-            className="text-[11px] font-light text-center sm:text-left"
-            style={{ color: "rgba(10,10,5,0.3)" }}
-          >
-            © {new Date().getFullYear()} AIDES-T2D · University of Massachusetts Boston ·
-            All rights reserved
-          </p>
-
-          <div className="flex items-center gap-4">
-            {[
-              { label: "IRB Approved", icon: "✅" },
-              { label: "HIPAA Compliant", icon: "🔐" },
-              { label: "Free to Participate", icon: "🎓" },
-            ].map(badge => (
+          {/* Footer Links */}
+          <div className="grid gap-9 sm:grid-cols-2 lg:grid-cols-3 lg:gap-10">
+            {footerColumns.map((column) => (
               <div
-                key={badge.label}
-                className="flex items-center gap-1.5"
+                key={column.title}
+                className="border-t border-white/15 pt-6 sm:border-l sm:border-t-0 sm:pl-7 sm:pt-0 lg:pl-9"
               >
-                <span className="text-[11px]">{badge.icon}</span>
-                <span
-                  className="text-[9px] uppercase tracking-[0.14em]"
-                  style={{
-                    color: "rgba(10,10,5,0.28)",
-                    fontFamily: "'JetBrains Mono', monospace",
-                  }}
-                >
-                  {badge.label}
-                </span>
+                <h3 className="mb-5 text-xs font-bold uppercase tracking-[0.18em] text-white sm:mb-6 sm:text-sm">
+                  {column.title}
+                </h3>
+
+                <ul className="space-y-3.5 sm:space-y-4">
+                  {column.links.map((link) => (
+                    <li key={link.label}>
+                      <Link
+                        href={link.href}
+                        className="border-b border-sky-300/50 text-base font-light text-sky-300 transition hover:border-white hover:text-white sm:text-lg"
+                      >
+                        {link.label}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
               </div>
             ))}
           </div>
         </div>
 
-        {/* Disclaimer */}
-        <div
-          className="mt-8 px-5 py-4 rounded-[14px]"
-          style={{
-            background: "rgba(255,255,255,0.25)",
-            border: "1px solid rgba(10,10,5,0.07)",
-          }}
-        >
-          <p
-            className="text-[11px] font-light leading-[1.7] text-center"
-            style={{ color: "rgba(10,10,5,0.32)" }}
-          >
+        {/* Bottom */}
+        <div className="mt-12 border-t border-white/20 pt-7 sm:mt-14">
+          <div className="flex flex-col justify-between gap-5 md:flex-row md:items-center">
+            <div className="flex flex-wrap gap-x-3 gap-y-2 text-sm text-white/80">
+              <Link href="/terms" className="hover:text-cyan-300">
+                Terms
+              </Link>
+              <span>|</span>
+              <Link href="/privacy" className="hover:text-cyan-300">
+                Privacy
+              </Link>
+              <span>|</span>
+              <Link href="/accessibility" className="hover:text-cyan-300">
+                Accessibility
+              </Link>
+              <span>|</span>
+              <Link href="/contact" className="hover:text-cyan-300">
+                Contact
+              </Link>
+            </div>
+
+            <p className="text-sm text-white/80">
+              © {new Date().getFullYear()} AIDES-T2D. All Rights Reserved.
+            </p>
+          </div>
+
+          <p className="mt-6 max-w-5xl text-xs leading-relaxed text-white/45">
             AIDES-T2D is a research study and is not a medical product or
-            therapeutic service. Stampley is an AI research companion and is
-            not a substitute for professional medical advice, diagnosis, or
-            treatment. Always consult your healthcare provider for medical
-            decisions. If you are experiencing a mental health emergency,
-            please call 988 (Suicide & Crisis Lifeline) or 911.
+            therapeutic service. Stampley is not a substitute for professional
+            medical advice, diagnosis, or treatment.
           </p>
         </div>
       </div>
