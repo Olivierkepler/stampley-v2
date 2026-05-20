@@ -9,14 +9,12 @@ export default async function DashboardPage() {
  if (!session?.user?.id) redirect("/login")
 
   if (session.user?.role === "PARTICIPANT") {
-    const preSurveyResult = await query(
-      "SELECT id FROM pre_survey_responses WHERE user_id = $1",
+    const ddsResult = await query(
+      "SELECT confirmed_domain FROM dds_responses WHERE user_id = $1",
       [session.user.id]
     )
-  
-    if (preSurveyResult.rows.length === 0) {
-      redirect("/survey/dds")
-    }
+    if (ddsResult.rows.length === 0) redirect("/survey/dds")
+    if (!ddsResult.rows[0].confirmed_domain) redirect("/survey/dds/results")
   }
 
   const todayCheckin = await query(

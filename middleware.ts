@@ -8,12 +8,13 @@ const { auth } = NextAuth({
 });
 
 export default auth;
-
 export const config = {
   matcher: [
     "/dashboard/:path*",
     "/admin/:path*",
     "/check-in/:path*",
+    "/survey/pre-survey/:path*",
+    "/survey/dds/:path*",
     "/survey/dds/results/:path*",
   ],
 };
