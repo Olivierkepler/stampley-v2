@@ -6,14 +6,14 @@ import Image from "next/image"
 
 export default async function DashboardPage() {
   const session = await auth()
- if (!session?.user?.id) redirect("/login")
+  if (!session?.user?.id) redirect("/login")
 
   if (session.user?.role === "PARTICIPANT") {
     const preSurveyResult = await query(
       "SELECT id FROM pre_survey_responses WHERE user_id = $1",
       [session.user.id]
     )
-  
+
     if (preSurveyResult.rows.length === 0) {
       redirect("/survey/dds")
     }
@@ -22,548 +22,490 @@ export default async function DashboardPage() {
   const todayCheckin = await query(
     `SELECT id FROM check_in_submissions
      WHERE user_id = $1 AND check_in_date = CURRENT_DATE`,
-    [session.user?.id]
+    [session.user.id]
   )
+
   const checkedInToday = todayCheckin.rows.length > 0
 
   const domainResult = await query(
     `SELECT domain FROM user_weekly_domains
      WHERE user_id = $1 ORDER BY week_number DESC LIMIT 1`,
-    [session.user?.id]
+    [session.user.id]
   )
+
   const currentDomain = domainResult.rows[0]?.domain ?? null
 
   const progressResult = await query(
     `SELECT total_checkins, current_week
      FROM user_study_progress WHERE user_id = $1`,
-    [session.user?.id]
+    [session.user.id]
   )
+
   const progress = progressResult.rows[0] ?? null
 
-  const firstName = session.user?.email?.split("@")[0]?.split(".")[0] ?? ""
+  const firstName = session.user.email?.split("@")[0]?.split(".")[0] ?? ""
   const formattedName = firstName.charAt(0).toUpperCase() + firstName.slice(1)
 
-  const DOMAIN_META: Record<string, {
-    emoji: string; label: string; desc: string
-    accent: string; accentRgb: string
-    bg: string; border: string; glow: string
-  }> = {
-    Emotional:     {
-      emoji: "💙", label: "Emotional Burden",  desc: "Managing feelings around diabetes",
-      accent: "#4a6080", accentRgb: "74,96,128",
-      bg: "linear-gradient(135deg,#f0f4f9 0%,#e8eef6 100%)",
-      border: "rgba(74,96,128,0.14)", glow: "rgba(74,96,128,0.08)",
+  const today = new Date().toLocaleDateString("en-US", {
+    weekday: "long",
+    month: "long",
+    day: "numeric",
+  })
+
+  const completedCheckins = progress?.total_checkins ?? 0
+  const remainingCheckins = Math.max(28 - completedCheckins, 0)
+
+  const checkinPct = progress
+    ? Math.min((progress.total_checkins / 28) * 100, 100)
+    : 0
+
+  const DOMAIN_META: Record<
+    string,
+    { emoji: string; label: string; desc: string }
+  > = {
+    Emotional: {
+      emoji: "💙",
+      label: "Emotional Burden",
+      desc: "Managing feelings around diabetes",
     },
-    Regimen:       {
-      emoji: "📋", label: "Regimen-Related",   desc: "Medications, blood sugar & meal planning",
-      accent: "#7c6a52", accentRgb: "124,106,82",
-      bg: "linear-gradient(135deg,#f5f0e8 0%,#ede5d6 100%)",
-      border: "rgba(124,106,82,0.14)", glow: "rgba(124,106,82,0.08)",
+    Regimen: {
+      emoji: "📋",
+      label: "Regimen-Related",
+      desc: "Medications, blood sugar, and meal planning",
     },
-    Physician:     {
-      emoji: "🩺", label: "Physician-Related", desc: "Your healthcare team relationship",
-      accent: "#4a6a52", accentRgb: "74,106,82",
-      bg: "linear-gradient(135deg,#eef4ef 0%,#e2ede4 100%)",
-      border: "rgba(74,106,82,0.14)", glow: "rgba(74,106,82,0.08)",
+    Physician: {
+      emoji: "🩺",
+      label: "Physician-Related",
+      desc: "Your relationship with your healthcare team",
     },
     Interpersonal: {
-      emoji: "🤝", label: "Interpersonal",     desc: "Support from family and friends",
-      accent: "#7a5a6a", accentRgb: "122,90,106",
-      bg: "linear-gradient(135deg,#f5eff3 0%,#ede2e9 100%)",
-      border: "rgba(122,90,106,0.14)", glow: "rgba(122,90,106,0.08)",
+      emoji: "🤝",
+      label: "Interpersonal",
+      desc: "Support from family, friends, and others",
     },
   }
 
   const domainMeta = currentDomain ? DOMAIN_META[currentDomain] : null
-  const checkinPct = progress ? Math.min((progress.total_checkins / 28) * 100, 100) : 0
-  const today = new Date().toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })
 
   return (
     <>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,300;1,9..144,400&family=JetBrains+Mono:wght@300;400;500&family=Outfit:wght@300;400;500;600&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,200;0,9..144,300;0,9..144,400;1,9..144,200;1,9..144,300;1,9..144,400&family=JetBrains+Mono:wght@300;400;500&family=Outfit:wght@300;400;500;600&display=swap');
 
-        * { box-sizing: border-box; }
-
-        .card {
-          background: rgba(255,252,246,0.85);
-          border: 1.5px solid rgba(10,10,5,0.07);
-          border-radius: 20px;
-          box-shadow:
-            0 1px 0 rgba(255,255,255,0.9) inset,
-            0 4px 24px rgba(10,10,5,0.05),
-            0 1px 4px rgba(10,10,5,0.04);
+        * {
+          box-sizing: border-box;
         }
 
-        .card-elevated {
-          background: rgba(255,252,246,0.95);
-          border: 1.5px solid rgba(10,10,5,0.08);
-          border-radius: 20px;
-          box-shadow:
-            0 1px 0 rgba(255,255,255,1) inset,
-            0 8px 32px rgba(10,10,5,0.07),
-            0 2px 8px rgba(10,10,5,0.05);
+        .font-body {
+          font-family: "'Poppins', sans-serif";
         }
 
-        .mono { font-family: 'JetBrains Mono', monospace; }
-        .serif { font-family: 'Fraunces', Georgia, serif; }
-        .sans { font-family: 'Outfit', system-ui, sans-serif; }
+        .font-display {
+          font-family: "'Poppins', sans-serif";
+        }
 
-        .btn-primary {
+        .font-mono {
+          font-family: "'Poppins', sans-serif";
+        }
+
+        .dashboard-card {
+          background: #ffffff;
+          border: 1px solid rgba(10, 10, 5, 0.09);
+          box-shadow: 0 1px 2px rgba(10, 10, 5, 0.04);
+        }
+
+        .dashboard-card-soft {
+          background: #fcfbf8;
+          border: 1px solid rgba(10, 10, 5, 0.08);
+        }
+
+        .label {
+          font-family: 'JetBrains Mono', monospace;
+          font-size: 10px;
+          letter-spacing: 0.18em;
+          text-transform: uppercase;
+          color: #0a0a05;
+        }
+
+        .primary-button {
           display: inline-flex;
           align-items: center;
-          gap: 6px;
-          background: linear-gradient(145deg, #1c1c1a, #0d0d0c);
-          color: rgba(255,252,245,0.92);
-          border-radius: 13px;
-          padding: 11px 22px;
+          justify-content: center;
+          gap: 8px;
+          background: #1c1c1a;
+          color: #ffffff;
+          padding: 13px 22px;
           font-size: 12px;
           font-weight: 600;
-          letter-spacing: 0.06em;
+          letter-spacing: 0.08em;
           text-transform: uppercase;
-          font-family: 'Outfit', system-ui, sans-serif;
           text-decoration: none;
-          border: none;
-          cursor: pointer;
-          box-shadow:
-            0 0 0 1px rgba(255,255,255,0.06) inset,
-            0 6px 20px rgba(10,10,5,0.22),
-            0 2px 6px rgba(10,10,5,0.12);
-          transition: transform 0.18s ease, box-shadow 0.18s ease;
-        }
-        .btn-primary:hover {
-          transform: translateY(-1.5px);
-          box-shadow:
-            0 0 0 1px rgba(255,255,255,0.06) inset,
-            0 10px 28px rgba(10,10,5,0.28),
-            0 3px 8px rgba(10,10,5,0.14);
+          transition: background 0.18s ease, transform 0.18s ease;
         }
 
-        .btn-ghost {
-          display: inline-flex;
-          align-items: center;
-          gap: 6px;
-          background: rgba(255,255,255,0.5);
-          color: rgba(10,10,5,0.5);
-          border: 1.5px solid rgba(10,10,5,0.1);
-          border-radius: 13px;
-          padding: 10px 20px;
-          font-size: 12px;
-          font-weight: 500;
-          letter-spacing: 0.04em;
-          text-transform: uppercase;
-          font-family: 'Outfit', system-ui, sans-serif;
-          text-decoration: none;
-          cursor: pointer;
-          transition: all 0.18s ease;
-          box-shadow: 0 2px 8px rgba(10,10,5,0.04);
-        }
-        .btn-ghost:hover {
-          background: rgba(255,255,255,0.8);
-          color: rgba(10,10,5,0.7);
+        .primary-button:hover {
+          background: #000000;
           transform: translateY(-1px);
         }
 
-        .divider {
-          height: 1px;
-          background: linear-gradient(90deg, transparent, rgba(10,10,5,0.06), transparent);
-        }
-
-        .pill {
+        .secondary-button {
           display: inline-flex;
           align-items: center;
-          padding: 3px 10px;
-          border-radius: 100px;
-          font-family: 'JetBrains Mono', monospace;
-          font-size: 10px;
-          background: rgba(10,10,5,0.045);
-          border: 1px solid rgba(10,10,5,0.07);
-          color: rgba(10,10,5,0.4);
+          justify-content: center;
+          background: #ffffff;
+          border: 1px solid rgba(10, 10, 5, 0.14);
+          color: rgba(10, 10, 5, 0.65);
+          padding: 10px 16px;
+          font-size: 11px;
+          font-weight: 500;
+          letter-spacing: 0.08em;
+          text-transform: uppercase;
+          transition: background 0.18s ease, color 0.18s ease;
         }
 
-        @keyframes checkPop {
-          0%   { transform: scale(0.8); opacity: 0; }
-          60%  { transform: scale(1.1); }
-          100% { transform: scale(1); opacity: 1; }
+        .secondary-button:hover {
+          background: #f5f2ec;
+          color: rgba(10, 10, 5, 0.85);
         }
-        .check-icon { animation: checkPop 0.4s cubic-bezier(0.34,1.56,0.64,1) both; }
-
-        @keyframes fadeSlideUp {
-          from { opacity: 0; transform: translateY(8px); }
-          to   { opacity: 1; transform: translateY(0); }
-        }
-        .s1 { animation: fadeSlideUp 0.4s ease both; }
-        .s2 { animation: fadeSlideUp 0.4s 0.06s ease both; }
-        .s3 { animation: fadeSlideUp 0.4s 0.12s ease both; }
-        .s4 { animation: fadeSlideUp 0.4s 0.18s ease both; }
-        .s5 { animation: fadeSlideUp 0.4s 0.24s ease both; }
       `}</style>
 
-      <div
-        className="min-h-screen sans"
-        style={{ background: "linear-gradient(155deg,#fefdfb 0%,#f6f2eb 60%,#f0ebe0 100%)" }}
-      >
-        {/* ── Navbar ── */}
-        <nav
-          style={{
-            background: "rgba(254,253,251,0.82)",
-            backdropFilter: "blur(20px)",
-            WebkitBackdropFilter: "blur(20px)",
-            borderBottom: "1px solid rgba(10,10,5,0.06)",
-            position: "sticky", top: 0, zIndex: 30,
-          }}
-        >
-          <div style={{
-            maxWidth: 680, margin: "0 auto", padding: "0 24px",
-            height: 80, display: "flex", alignItems: "center", justifyContent: "space-between",
-          }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-              {/* <div style={{
-                width: 28, height: 28, borderRadius: 8,
-                background: "linear-gradient(135deg,#1c1c1a,#3a3a36)",
-                display: "flex", alignItems: "center", justifyContent: "center",
-                boxShadow: "0 2px 8px rgba(10,10,5,0.2)", flexShrink: 0,
-              }}>
-                <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-                  <circle cx="7" cy="7" r="5" stroke="rgba(255,252,245,0.7)" strokeWidth="1.5"/>
-                  <path d="M7 4v3l2 1.5" stroke="rgba(255,252,245,0.7)" strokeWidth="1.5" strokeLinecap="round"/>
-                </svg>
-              </div> */}
-{/* 
+      <main className="min-h-screen bg-white font-body text-[#0a0a05]">
+        <header className="border-b border-black/[0.08] bg-white">
+          <div className="mx-auto flex h-24 max-w-6xl items-center justify-between px-6">
+            <Link href="/" className="flex items-center">
+              <Image
+                src="/images/stampleylogomain.webp"
+                alt="AIDES-T2D"
+                width={150}
+                height={50}
+                priority
+                className="h-auto w-[140px]"
+              />
+            </Link>
 
-              <span className="mono" style={{
-                fontSize: 11, letterSpacing: "0.28em",
-                color: "rgba(10,10,5,0.4)", textTransform: "uppercase", fontWeight: 500,
-              }}>
-                AIDES-T2D
-              </span> */}
-
-              <Link href="/" className="anim-brand flex items-center gap-3.5 hover:scale-105 transition-all duration-300">
-              <button
-          className="flex items-center focus:outline-none cursor-pointer hover:scale-105 transition-all duration-300"
- 
-          aria-label="Go to home page"
-          tabIndex={0}
-          type="button"
-        >
-          <Image
-            src="/images/stampleylogomain.webp"
-            alt="AIDES-T2D"
-            width={150}
-            height={50}
-            priority
-            className="h-auto w-[150px] sm:w-[100px] lg:w-[150px]"
-          />
-        </button>
-              </Link>
-            </div>
-
-            <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-              <form action={async () => {
+            <form
+              action={async () => {
                 "use server"
                 await signOut({ redirectTo: "/login" })
-              }}>
-                <button type="submit" className="btn-ghost" style={{ padding: "6px 14px", fontSize: 11 }}>
-                  Sign out
-                </button>
-              </form>
-            </div>
+              }}
+            >
+              <button type="submit" className="secondary-button">
+                Sign out
+              </button>
+            </form>
           </div>
-        </nav>
+        </header>
 
-        {/* ── Body ── */}
-        <div style={{ maxWidth: 680, margin: "0 auto", padding: "36px 24px 60px" , marginTop: "100px"}}>
+        <div className="bg-blue-900">
+          <div className="mx-auto grid max-w-7xl gap-10 px-6 py-12 lg:grid-cols-[1fr_240px] lg:items-center">
+            <div>
+              <p className="label" style={{ color: "#fff" }}>{today}</p>
 
-          {/* Header */}
-          <div className="s1" style={{ marginBottom: 32 }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10 }}>
-              <span style={{ width: 18, height: 1, background: "rgba(10,10,5,0.18)", display: "block" }} />
-              <span className="mono" style={{
-                fontSize: 9, letterSpacing: "0.28em",
-                color: "rgba(10,10,5,0.28)", textTransform: "uppercase",
-              }}>
-                {today}
-              </span>
+              <h1 className="font-display mt-4 max-w-3xl text-[24px] font-light leading-[1.12] tracking-[-0.03em] text-white md:text-[30px]">
+                Welcome back,{" "}
+                <em className="font-light italic text-white">
+                  {formattedName}
+                </em>
+              </h1>
+
+              {session.user?.role === "PARTICIPANT" && (
+                <p className="mt-4 max-w-xl text-[15px] leading-7 text-white/90">
+                  {checkedInToday
+                    ? "You’ve completed today’s check-in. Your progress has been recorded."
+                    : "Your daily check-in is ready. Take a few minutes to reflect on how you’re feeling today."}
+                </p>
+              )}
             </div>
-            <h1 className="serif" style={{
-              fontSize: 38, fontWeight: 300, lineHeight: 1.08,
-              letterSpacing: "-0.025em", color: "rgba(10,10,5,0.78)", margin: 0,
-            }}>
-              Welcome back,{" "}
-              <em style={{ fontStyle: "italic", color: "rgba(10,10,5,0.32)" }}>
-                {formattedName}
-              </em>
-            </h1>
-            {session.user?.role === "PARTICIPANT" && (
-              <p className="sans" style={{
-                fontSize: 13, color: "rgba(10,10,5,0.38)",
-                marginTop: 8, marginBottom: 0, lineHeight: 1.5,
-              }}>
-                {checkedInToday
-                  ? "You've completed today's check-in. Great consistency!"
-                  : "Your daily check-in is ready — it only takes a few minutes."}
-              </p>
-            )}
-          </div>
 
-          {/* Study Progress */}
-          {progress && session.user?.role === "PARTICIPANT" && (
-            <div className="card s2" style={{ padding: "22px 24px", marginBottom: 14 }}>
-              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 18 }}>
-                <span className="mono" style={{
-                  fontSize: 9, letterSpacing: "0.26em",
-                  color: "rgba(10,10,5,0.3)", textTransform: "uppercase",
-                }}>
-                  Study Progress
-                </span>
-                <div style={{ display: "flex", gap: 8 }}>
-                  <span className="pill">Week {progress.current_week} / 4</span>
-                  <span className="pill">{progress.total_checkins} / 28 check-ins</span>
+            <div className="flex justify-start lg:justify-end">
+              <div className="relative flex h-[180px] w-[180px] items-center justify-center">
+                <div
+                  className="absolute inset-0"
+                  style={{
+                    borderRadius: "9999px",
+                    background: `conic-gradient(
+                      #ffffff ${checkinPct}%,
+                      rgba(255,255,255,0.18) 0
+                    )`,
+                  }}
+                />
+
+                <div
+                  className="absolute inset-[18px] bg-blue-900"
+                  style={{ borderRadius: "9999px" }}
+                />
+
+                <div className="relative z-10 text-center">
+                  <p className="font-display text-[34px] font-light text-white">
+                    {Math.round(checkinPct)}%
+                  </p>
+
+                  <p className="mt-1 text-[10px] uppercase tracking-[0.18em] text-white/70">
+                    Complete
+                  </p>
+
+                  <p className="mt-2 text-xs text-white/60">
+                    {completedCheckins} / 28 check-ins
+                  </p>
                 </div>
               </div>
+            </div>
+          </div>
+        </div>
 
-              {/* Per-week segment bars */}
-              <div style={{ display: "flex", gap: 4, marginBottom: 12 }}>
-                {[1, 2, 3, 4].map((w) => {
-                  const weekCheckins = Math.min(Math.max(progress.total_checkins - (w - 1) * 7, 0), 7)
-                  const pct = (weekCheckins / 7) * 100
-                  const isPast = w < progress.current_week
-                  const isCurrent = w === progress.current_week
-                  return (
-                    <div key={w} style={{ flex: 1 }}>
-                      <div style={{
-                        height: 6, borderRadius: 100, overflow: "hidden",
-                        background: "rgba(10,10,5,0.07)", marginBottom: 6,
-                      }}>
-                        <div style={{
-                          height: "100%", borderRadius: 100,
-                          width: `${isPast ? 100 : isCurrent ? pct : 0}%`,
-                          background: isPast
-                            ? "rgba(10,10,5,0.45)"
-                            : "linear-gradient(90deg,rgba(10,10,5,0.3),rgba(10,10,5,0.55))",
-                          transition: "width 0.8s cubic-bezier(0.16,1,0.3,1)",
-                        }} />
+        <section className="mx-auto max-w-9xl px-6 py-12">
+          {session.user?.role === "PARTICIPANT" && (
+            <div className="grid gap-6 lg:grid-cols-[1.35fr_0.85fr]">
+
+<section className="dashboard-card overflow-hidden">
+  <div className="grid lg:grid-cols-[240px_1fr]">
+
+    {/* LEFT IMAGE */}
+    <div className="relative hidden min-h-[320px] border-r border-black/[0.08] bg-[#f8f6f2] lg:block">
+      <Image
+        src="/images/diabetictype2.jpg"
+        alt="Daily wellness check-in"
+        fill
+        className="object-cover"
+      />
+
+      {/* <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-black/10 to-transparent" />
+
+      <div className="absolute bottom-0 left-0 right-0 p-6">
+        <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-white/70">
+          Daily Reflection
+        </p>
+
+        <p className="mt-2 max-w-[180px] text-sm leading-6 text-white/90">
+          Consistent check-ins help track emotional well-being and diabetes distress over time.
+        </p>
+      </div> */}
+    </div>
+
+    {/* RIGHT CONTENT */}
+    <div className="p-8">
+      <p className="label">Daily Check-in</p>
+
+      <div className="mt-6 flex flex-col gap-8">
+        <div>
+          <h2 className="font-display text-[30px] font-light leading-tight tracking-[-0.03em] text-black/85">
+            {checkedInToday
+              ? "Today’s check-in is complete."
+              : "How are you feeling today?"}
+          </h2>
+
+          <p className="mt-4 max-w-lg text-[15px] leading-7 text-black/55">
+            {checkedInToday
+              ? "Thank you for checking in. Come back tomorrow to continue your daily reflection."
+              : "Record your distress, mood, energy, context, and reflection for today."}
+          </p>
+        </div>
+
+        <div>
+          {checkedInToday ? (
+            <div className="dashboard-card-soft inline-block px-5 py-4">
+              <p className="text-sm font-medium text-blue-900">
+                Completed today
+              </p>
+
+              <p className="mt-1 text-xs text-blue-900">
+                Your response has been saved.
+              </p>
+            </div>
+          ) : (
+            <Link href="/check-in" className="primary-button" style={{ background: "#003e73", color: "#fff" }}>
+              Start Check-in
+              <span aria-hidden="true">→</span>
+            </Link>
+          )}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+              <section className="dashboard-card overflow-hidden">
+                <div className="grid lg:grid-cols-[1fr_220px]">
+                  <div className="p-8">
+                    <p className="label">Study Progress</p>
+
+                    <div className="mt-6">
+                      <div className="flex items-end justify-between">
+                        <div>
+                          <p className="font-display text-[36px] font-light text-black/85">
+                            {completedCheckins} / 28
+                          </p>
+
+                          <p className="mt-1 text-sm text-black/45">
+                            Check-ins completed
+                          </p>
+                        </div>
+
+                        <div className="text-right">
+                          <p className="text-sm font-medium text-black/75">
+                            Week {progress?.current_week ?? 1} / 4
+                          </p>
+
+                          <p className="mt-1 text-xs text-black/45">
+                            {remainingCheckins} remaining
+                          </p>
+                        </div>
                       </div>
-                      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                        <span className="mono" style={{
-                          fontSize: 8, letterSpacing: "0.14em", textTransform: "uppercase",
-                          color: w <= progress.current_week ? "rgba(10,10,5,0.38)" : "rgba(10,10,5,0.18)",
-                        }}>
-                          W{w}
-                        </span>
-                        {isCurrent && (
-                          <span style={{
-                            width: 5, height: 5, borderRadius: "50%",
-                            background: "rgba(10,10,5,0.45)", display: "inline-block",
-                            boxShadow: "0 0 0 2px rgba(10,10,5,0.1)",
-                          }} />
-                        )}
+
+                      <div className="mt-6 h-2 bg-black/[0.06]">
+                        <div
+                          className="h-full bg-blue-900"
+                          style={{ width: `${checkinPct}%` }}
+                        />
+                      </div>
+
+                      <div className="mt-5 grid grid-cols-4 gap-2">
+                        {[1, 2, 3, 4].map((week) => {
+                          const active = progress
+                            ? week <= progress.current_week
+                            : week === 1
+
+                            return (
+                              <div
+                                key={week}
+                                className={`border px-3 py-3 text-center transition-colors ${
+                                  active
+                                    ? "border-blue-900 bg-blue-900 text-white"
+                                    : "border-blue-900/10 bg-white text-blue-900 hover:bg-blue-50"
+                                }`}
+                              >
+                                <p
+                                  className={`font-mono text-[10px] uppercase tracking-[0.14em] ${
+                                    active ? "text-white/70" : "text-blue-900/60"
+                                  }`}
+                                >
+                                  Week
+                                </p>
+                            
+                                <p
+                                  className={`mt-1 text-sm font-medium ${
+                                    active ? "text-white" : "text-blue-900"
+                                  }`}
+                                >
+                                  {week}
+                                </p>
+                              </div>
+                            ) 
+                          
+                        })}
                       </div>
                     </div>
-                  )
-                })}
-              </div>
+                  </div>
 
-              <div style={{ height: 2, borderRadius: 100, background: "rgba(10,10,5,0.06)", overflow: "hidden" }}>
-                <div style={{
-                  height: "100%", borderRadius: 100, width: `${checkinPct}%`,
-                  background: "linear-gradient(90deg,rgba(10,10,5,0.2),rgba(10,10,5,0.5))",
-                  transition: "width 1s cubic-bezier(0.16,1,0.3,1)",
-                }} />
-              </div>
-              <div style={{ textAlign: "right", marginTop: 6 }}>
-                <span className="mono" style={{ fontSize: 9, color: "rgba(10,10,5,0.28)", letterSpacing: "0.12em" }}>
-                  {Math.round(checkinPct)}% complete
-                </span>
-              </div>
-            </div>
-          )}
+                  <div className="relative hidden border-l border-black/[0.08] bg-[#faf8f4] lg:block">
+                    <Image
+                      src="/images/diabatics6.jpg"
+                      alt="Study progress"
+                      fill
+                      className="object-cover"
+                    />
 
-          {/* Weekly Domain */}
-          {domainMeta && session.user?.role === "PARTICIPANT" && (
-            <div className="s3" style={{
-              borderRadius: 20, padding: "22px 24px", marginBottom: 14,
-              position: "relative", overflow: "hidden",
-              border: `1.5px solid ${domainMeta.border}`,
-              background: domainMeta.bg,
-              boxShadow: `0 4px 24px ${domainMeta.glow}, 0 1px 0 rgba(255,255,255,0.7) inset`,
-            }}>
-              <div style={{
-                position: "absolute", top: -40, right: -40,
-                width: 140, height: 140, borderRadius: "50%", pointerEvents: "none",
-                background: `radial-gradient(circle, rgba(${domainMeta.accentRgb},0.12) 0%, transparent 70%)`,
-              }} />
-              <div style={{
-                position: "absolute", bottom: -20, left: -20,
-                width: 100, height: 100, borderRadius: "50%", pointerEvents: "none",
-                background: `radial-gradient(circle, rgba(${domainMeta.accentRgb},0.07) 0%, transparent 70%)`,
-              }} />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
+                  </div>
+                </div>
+              </section>
 
-              <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 16, position: "relative" }}>
-                <div style={{ flex: 1 }}>
-                  <span className="mono" style={{
-                    fontSize: 9, letterSpacing: "0.26em", color: "rgba(10,10,5,0.3)",
-                    textTransform: "uppercase", display: "block", marginBottom: 12,
-                  }}>
-                    This Week's Focus
-                  </span>
-                  <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-                    <span style={{ fontSize: 26, lineHeight: 1 }}>{domainMeta.emoji}</span>
+              <section className="dashboard-card p-8">
+                <p className="label">This Week’s Focus</p>
+
+                {domainMeta ? (
+                  <div className="mt-6 flex items-start gap-5">
+                    <div className="flex h-14 w-14 items-center justify-center border border-black/[0.08] bg-[#fcfbf8] text-2xl">
+                      {domainMeta.emoji}
+                    </div>
+
                     <div>
-                      <p className="serif" style={{
-                        fontSize: 17, fontWeight: 400, lineHeight: 1.25,
-                        letterSpacing: "-0.015em", color: "rgba(10,10,5,0.76)", margin: 0,
-                      }}>
+                      <h2 className="font-display text-[26px] font-light tracking-[-0.03em] text-black/85">
                         {domainMeta.label}
-                      </p>
-                      <p className="sans" style={{
-                        fontSize: 12, color: "rgba(10,10,5,0.4)", marginTop: 3, marginBottom: 0,
-                      }}>
+                      </h2>
+
+                      <p className="mt-3 max-w-md text-[14px] leading-7 text-black/55">
                         {domainMeta.desc}
                       </p>
                     </div>
                   </div>
-                </div>
-
-                {progress && (
-                  <div style={{
-                    flexShrink: 0, width: 48, height: 52, borderRadius: 14,
-                    background: "rgba(255,255,255,0.65)",
-                    border: "1.5px solid rgba(255,255,255,0.9)",
-                    boxShadow: "0 2px 8px rgba(10,10,5,0.08)",
-                    display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 1,
-                  }}>
-                    <span className="serif" style={{
-                      fontSize: 22, fontWeight: 300, color: "rgba(10,10,5,0.6)", lineHeight: 1,
-                    }}>
-                      {progress.current_week}
-                    </span>
-                    <span className="mono" style={{
-                      fontSize: 7, letterSpacing: "0.18em", color: "rgba(10,10,5,0.3)", textTransform: "uppercase",
-                    }}>
-                      week
-                    </span>
+                ) : (
+                  <div className="mt-6 border border-black/[0.08] bg-[#fcfbf8] p-5">
+                    <p className="text-sm font-medium text-black/70">
+                      No weekly focus selected yet.
+                    </p>
+                    <p className="mt-2 text-sm leading-6 text-black/50">
+                      Your focus area will appear here after your check-in flow
+                      identifies or records one.
+                    </p>
                   </div>
                 )}
-              </div>
+              </section>
+
+              <section className="dashboard-card p-8">
+                <p className="label">Study Record</p>
+
+                <div className="mt-6 space-y-4">
+                  <div className="flex items-center justify-between border-b border-black/[0.08] pb-4">
+                    <span className="text-sm text-black/55">Pre-survey</span>
+                    <span className="text-sm font-medium text-black/75">
+                      Completed
+                    </span>
+                  </div>
+
+                  <div className="flex items-center justify-between border-b border-black/[0.08] pb-4">
+                    <span className="text-sm text-black/55">
+                      Daily check-in
+                    </span>
+                    <span className="text-sm font-medium text-black/75">
+                      {checkedInToday ? "Completed today" : "Pending today"}
+                    </span>
+                  </div>
+
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-black/55">
+                      Participant role
+                    </span>
+                    <span className="text-sm font-medium text-black/75">
+                      {session.user?.role}
+                    </span>
+                  </div>
+                </div>
+              </section>
             </div>
           )}
 
-          {/* Daily Check-in */}
-          <div className="s4" style={{ marginBottom: 14 }}>
-            {checkedInToday ? (
-              <div className="card" style={{ padding: "22px 24px" }}>
-                <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-                  <div className="check-icon" style={{
-                    width: 44, height: 44, borderRadius: 14, flexShrink: 0,
-                    background: "linear-gradient(135deg,#edf4ef,#deeee2)",
-                    border: "1.5px solid rgba(74,107,90,0.2)",
-                    display: "flex", alignItems: "center", justifyContent: "center",
-                    boxShadow: "0 2px 8px rgba(74,107,90,0.1)",
-                  }}>
-                    <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-                      <path d="M4 9.5l3.5 3.5 6.5-7" stroke="rgba(50,100,70,0.8)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                    </svg>
-                  </div>
-                  <div>
-                    <p className="serif" style={{
-                      fontSize: 16, fontWeight: 400, margin: 0,
-                      letterSpacing: "-0.01em", color: "rgba(10,10,5,0.7)",
-                    }}>
-                      Check-in complete
-                    </p>
-                    <p className="sans" style={{
-                      fontSize: 12, color: "rgba(10,10,5,0.35)", marginTop: 3, marginBottom: 0,
-                    }}>
-                      You've checked in today. See you tomorrow 👋
-                    </p>
-                  </div>
-                </div>
-              </div>
-            ) : (
-              <div className="card-elevated" style={{ padding: "24px 26px" }}>
-                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 20 }}>
-                  <div>
-                    <span className="mono" style={{
-                      fontSize: 9, letterSpacing: "0.26em", color: "rgba(10,10,5,0.28)",
-                      textTransform: "uppercase", display: "block", marginBottom: 8,
-                    }}>
-                      Daily Check-in
-                    </span>
-                    <p className="serif" style={{
-                      fontSize: 18, fontWeight: 400, margin: "0 0 5px",
-                      letterSpacing: "-0.015em", color: "rgba(10,10,5,0.75)", lineHeight: 1.2,
-                    }}>
-                      How are you feeling today?
-                    </p>
-                    <p className="sans" style={{ fontSize: 12, color: "rgba(10,10,5,0.35)", margin: 0 }}>
-                      Takes about 5 minutes
-                    </p>
-                  </div>
-                  <Link href="/check-in" className="btn-primary">
-                    Start
-                    <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
-                      <path d="M2.5 6.5h8M7 3l3.5 3.5L7 10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                    </svg>
-                  </Link>
-                </div>
-              </div>
-            )}
-          </div>
-
-          {/* Admin Card */}
           {session.user?.role === "ADMIN" && (
-            <div className="card s5" style={{ padding: "20px 24px", marginBottom: 14 }}>
-              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 16 }}>
-                <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
-                  <div style={{
-                    width: 38, height: 38, borderRadius: 11, flexShrink: 0,
-                    background: "rgba(10,10,5,0.05)", border: "1.5px solid rgba(10,10,5,0.08)",
-                    display: "flex", alignItems: "center", justifyContent: "center",
-                  }}>
-                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                      <rect x="2" y="2" width="5" height="5" rx="1.5" stroke="rgba(10,10,5,0.4)" strokeWidth="1.4"/>
-                      <rect x="9" y="2" width="5" height="5" rx="1.5" stroke="rgba(10,10,5,0.4)" strokeWidth="1.4"/>
-                      <rect x="2" y="9" width="5" height="5" rx="1.5" stroke="rgba(10,10,5,0.4)" strokeWidth="1.4"/>
-                      <rect x="9" y="9" width="5" height="5" rx="1.5" stroke="rgba(10,10,5,0.25)" strokeWidth="1.4" strokeDasharray="2 1.5"/>
-                    </svg>
-                  </div>
-                  <div>
-                    <span className="mono" style={{
-                      fontSize: 9, letterSpacing: "0.24em", color: "rgba(10,10,5,0.28)",
-                      textTransform: "uppercase", display: "block", marginBottom: 4,
-                    }}>
-                      Admin Portal
-                    </span>
-                    <p className="serif" style={{
-                      fontSize: 15, fontWeight: 400, margin: 0,
-                      letterSpacing: "-0.01em", color: "rgba(10,10,5,0.65)",
-                    }}>
-                      Manage users &amp; study keys
-                    </p>
-                  </div>
+            <section className="dashboard-card p-8">
+              <p className="label">Admin Portal</p>
+
+              <div className="mt-6 flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+                <div>
+                  <h2 className="font-display text-[32px] font-light tracking-[-0.03em] text-black/85">
+                    Manage study operations.
+                  </h2>
+
+                  <p className="mt-4 max-w-xl text-[15px] leading-7 text-black/55">
+                    Review users, study keys, participant activity, and safety
+                    signals from the administrative dashboard.
+                  </p>
                 </div>
-                <Link href="/admin" className="btn-ghost" style={{ flexShrink: 0 }}>
-                  Open
-                  <svg width="11" height="11" viewBox="0 0 11 11" fill="none">
-                    <path d="M2 5.5h7M6 2.5l3 3-3 3" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
+
+                <Link href="/admin" className="primary-button">
+                  Open Admin
+                  <span aria-hidden="true">→</span>
                 </Link>
               </div>
-            </div>
+            </section>
           )}
 
-          {/* Footer */}
-          <div style={{ textAlign: "center", marginTop: 40 }}>
-            <div className="divider" style={{ marginBottom: 20 }} />
-            <p className="mono" style={{
-              fontSize: 10, color: "rgba(10,10,5,0.2)", letterSpacing: "0.14em", margin: 0,
-            }}>
+          <footer className="mt-16 border-t border-black/[0.08] pt-8 text-center">
+            <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-black/30">
               AIDES-T2D · University of Massachusetts Boston
             </p>
-          </div>
-        </div>
-      </div>
+          </footer>
+        </section>
+      </main>
     </>
   )
 }

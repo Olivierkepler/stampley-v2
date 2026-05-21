@@ -128,8 +128,9 @@ export default function HeroSection() {
           className="hero-float mb-4"
           style={{
             fontFamily: "'Poppins', sans-serif",
-            fontWeight: 500,
             fontSize: "clamp(25px, 3vw, 40px)",
+            fontWeight: 500,
+           
             lineHeight: 1.1,
             letterSpacing: "-0.03em",
             color: "rgba(255,255,255,0.96)",
