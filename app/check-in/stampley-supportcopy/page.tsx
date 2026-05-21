@@ -242,7 +242,7 @@ export default function StampleySupportPage() {
   const materialSpring = { type: "spring", stiffness: 300, damping: 30 };
 
   return (
-    <div className="flex h-[calc(100vh-64px)] w-full top-20 overflow-hidden bg-[#f5f2ec] text-[#0a0a0f] antialiased font-[Outfit,system-ui,sans-serif] selection:bg-[#3d5a80]/15">
+    <div className="flex h-[calc(100vh-64px)] w-full  overflow-hidden bg-white text-[#0a0a0f] antialiased font-[Outfit,system-ui,sans-serif] selection:bg-[#3d5a80]/15">
 
       <SupportSidebar
         isOpen={isSidebarOpen}

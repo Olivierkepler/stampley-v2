@@ -49,22 +49,22 @@ function NarrativeBox({
           initial={{ scale: 0, rotate: -15 }}
           animate={{ scale: 1, rotate: 0 }}
           transition={{ delay: delay + 0.2, type: "spring", stiffness: 260, damping: 20 }}
-          className="flex items-center justify-center w-9 h-9 rounded-[10px] bg-black/[0.04] border border-black/[0.06] text-black/40"
+          className="flex items-center justify-center w-9 h-9 rounded-[10px] bg-white border border-black/[0.06] text-black/40"
         >
           <Icon size={16} />
         </motion.div>
 
         <div>
-          <h2
-            className="text-[9px] uppercase tracking-[0.2em] text-[#3d5a80]/75 leading-none mb-1.5"
-            style={{ fontFamily: "'JetBrains Mono', monospace" }}
-          >
+        <h2
+              className="text-[9.5px] font-medium text-[#3d5a80] uppercase tracking-[0.2em] leading-none select-none"
+              style={{ fontFamily: "'Poppins', sans-serif", fontSize: "clamp(10px, 1vw, 12px)" }}
+            >
             {label}
           </h2>
           <h3
-            className="text-[16px] font-light tracking-[-0.01em] text-[#0a0a0f]/80 leading-none"
-            style={{ fontFamily: "'Fraunces', Georgia, serif" }}
-          >
+            className="text-[#0a0a0f] leading-snug"
+            style={{ fontFamily: "'Poppins', sans-serif", fontSize: "clamp(16px, 1vw, 16px)" }}
+            >
             {question}
           </h3>
         </div>
@@ -75,7 +75,7 @@ function NarrativeBox({
           <button
             type="button"
             onClick={() => scroll("left")}
-            className="flex-shrink-0 flex cursor-pointer items-center justify-center w-7 h-7 rounded-full border border-black/[0.08] bg-[#fefdfb] text-black/35 hover:border-[#3d5a80]/25 hover:text-[#3d5a80] hover:bg-[#3d5a80]/[0.03] transition-all duration-200 shadow-[0_1px_3px_rgba(10,10,15,0.04)]"
+            className="flex-shrink-0 flex cursor-pointer items-center justify-center w-7 h-7 rounded-full border border-black/[0.08] bg-white text-black/35 hover:border-[#3d5a80]/25 hover:text-[#3d5a80] hover:bg-[#3d5a80]/[0.03] transition-all duration-200 shadow-[0_1px_3px_rgba(10,10,15,0.04)]"
             aria-label="Scroll suggestions left"
           >
             <ChevronLeft size={13} />
@@ -90,7 +90,7 @@ function NarrativeBox({
                 key={index}
                 type="button"
                 onClick={() => onChange(suggestion)}
-                className="whitespace-nowrap cursor-pointer px-3.5 py-1.5 rounded-full border border-black/[0.08] bg-[#fefdfb] text-black/50 text-[12px] font-light hover:border-[#3d5a80]/30 hover:text-[#3d5a80] hover:bg-[#3d5a80]/[0.03] transition-all duration-200 flex-shrink-0 shadow-[0_1px_3px_rgba(10,10,15,0.04)]"
+                className="whitespace-nowrap cursor-pointer px-3.5 py-1.5 rounded-full border border-black/[0.08] bg-white text-[#0a0a0f] text-[12px] font-light hover:border-[#3d5a80]/30 hover:text-[#3d5a80] hover:bg-[#3d5a80]/[0.03] transition-all duration-200 flex-shrink-0 shadow-[0_1px_3px_rgba(10,10,15,0.04)]"
               >
                 {suggestion}
               </button>
@@ -115,11 +115,11 @@ function NarrativeBox({
           onChange={(e) => onChange(e.target.value)}
           placeholder={placeholder}
           className="w-full min-h-[150px] p-5 rounded-[18px] resize-none outline-none transition-all duration-300
-            bg-[#fefdfb] text-[#0a0a0f] text-[13.5px] font-light leading-[1.7] placeholder:text-black/30
+            bg-white text-[#0a0a0f] text-[13.5px] font-light leading-[1.7] placeholder:text-black/30
             border border-black/[0.08]
             hover:border-[#3d5a80]/25
             focus:border-[#3d5a80]/50 focus:ring-[3px] focus:ring-[#3d5a80]/10 focus:shadow-[0_4px_20px_rgba(61,90,128,0.08)]"
-          style={{ fontFamily: "'Outfit', system-ui, sans-serif" }}
+          style={{ fontFamily: "'Outfit', system-ui, sans-serif",  fontSize: "clamp(14px, 3.5vw, 16px)", }}
         />
         <div className="absolute bottom-4 right-4 pointer-events-none opacity-0 translate-y-1.5 group-focus-within:opacity-100 group-focus-within:translate-y-0 transition-all duration-300 ease-out">
           <PenLine size={14} className="text-[#3d5a80]/50" />
@@ -127,7 +127,7 @@ function NarrativeBox({
       </div>
 
       {id === "reflection" && (
-        <p className="text-[11px] text-black/35 text-right mt-2 font-light">
+        <p className="text-[11px] text-black text-right mt-2 font-light">
           {value.length} characters
         </p>
       )}
@@ -172,23 +172,32 @@ export default function ClinicalNarrativePage() {
           <div className="flex items-start justify-between gap-4">
             <div>
               <div className="flex items-center gap-2.5 mb-4">
-                <span className="h-px w-5 bg-[#3d5a80]/40" />
+                {/* <span className="h-px w-5 bg-[#3d5a80]/40" /> */}
                 <span
-                  className="text-[9px] uppercase tracking-[0.24em] text-[#3d5a80]/70 select-none"
-                  style={{ fontFamily: "'JetBrains Mono', monospace" }}
-                >
+              className="text-[9px] uppercase tracking-[0.24em] text-black select-none"
+              style={{ fontFamily: "'Poppins', sans-serif", fontSize: "clamp(10px, 5vw, 10px)" }}
+              >
                   Step 3 of 5
                 </span>
               </div>
 
               <h1
-                className="text-[30px] font-light tracking-[-0.02em] text-[#0a0a0f]/70 mb-2 leading-tight"
-                style={{ fontFamily: "'Fraunces', Georgia, serif" }}
-              >
-                Reflect on your <em className="italic font-light text-[#0a0a0f]/25">day</em>
+    className="font-light text-blue-900 mb-3 leading-[1.15] text-center sm:text-left"
+    style={{ fontFamily: "'Poppins', sans-serif", fontSize: "clamp(22px, 5vw, 30px)" }}
+  >
+                Reflect on your 
+                <span className="text-[#FFB100] font-light" style={{ fontFamily: "'Poppins', sans-serif" }}>
+ 
+                {" "} day</span>
               </h1>
 
-              <p className="text-[13.5px] font-light leading-[1.7] text-black/45">
+              <p
+    className="leading-[1.7] hidden sm:block "
+    style={{
+      fontFamily: "'Poppins', sans-serif",
+      fontSize: "clamp(14px, 3.5vw, 16px)",
+    }}
+  >
                 Share what was on your mind today. There are no right or wrong answers.
               </p>
             </div>
@@ -196,7 +205,7 @@ export default function ClinicalNarrativePage() {
             <button
               type="button"
               onClick={() => setShowContext((prev) => !prev)}
-              className="flex items-center cursor-pointer gap-1.5 shrink-0 mt-1 px-3.5 py-2 rounded-full border border-black/[0.08] bg-[#fefdfb] text-black/40 text-[11px] uppercase tracking-[0.14em] hover:border-[#3d5a80]/30 hover:text-[#3d5a80] hover:bg-[#3d5a80]/[0.03] transition-all duration-200 shadow-[0_1px_3px_rgba(10,10,15,0.04)]"
+              className="flex items-center cursor-pointer gap-1.5 shrink-0 mt-1 px-3.5 py-2 rounded-full border border-black/[0.08] bg-white text-black/40 text-[11px] uppercase tracking-[0.14em] hover:border-[#3d5a80]/30 hover:text-[#3d5a80] hover:bg-[#3d5a80]/[0.03] transition-all duration-200 shadow-[0_1px_3px_rgba(10,10,15,0.04)]"
               style={{ fontFamily: "'JetBrains Mono', monospace" }}
             >
               <Info size={12} />
@@ -213,7 +222,7 @@ export default function ClinicalNarrativePage() {
                 transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
                 className="overflow-hidden"
               >
-                <div className="mt-4 rounded-[16px] border border-[#3d5a80]/15 bg-[#3d5a80]/[0.03] px-5 py-4">
+                <div className="mt-4 rounded-[16px] border border-[#3d5a80]/15 bg-white px-5 py-4">
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex flex-col gap-3">
                       <p className="text-[12.5px] font-light leading-[1.75] text-black/60">
@@ -242,7 +251,7 @@ export default function ClinicalNarrativePage() {
                     <button
                       type="button"
                       onClick={() => setShowContext(false)}
-                      className="shrink-0 mt-0.5 text-black/25 hover:text-black/50 transition-colors"
+                      className="shrink-0 cursor-pointer mt-0.5 text-black/25 hover:text-black/50 transition-colors"
                     >
                       <X size={14} />
                     </button>

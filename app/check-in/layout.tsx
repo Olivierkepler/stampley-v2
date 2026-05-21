@@ -2,7 +2,7 @@ import { auth } from "@/lib/auth"
 import { redirect } from "next/navigation"
 import Link from "next/link"
 import CollapsibleSidebar from "@/components/check-in/CollapsibleSidebar"
-
+import Image from "next/image"
 export default async function CheckInLayout({
   children,
 }: {
@@ -10,34 +10,37 @@ export default async function CheckInLayout({
 }) {
   const session = await auth()
   if (!session) redirect("/login")
-
+{/* 
+        fontFamily: "'Poppins', sans-serif",
+        fontSize: "clamp(25px, 3vw, 40px)", */}
   return (
-    <div className="min-h-screen bg-[#f8f7f4] flex flex-col">
+    <div className="min-h-screen bg-white flex flex-col">
 
       {/* Top nav */}
       <header className="h-14 bg-white/80 backdrop-blur-sm border-b border-black/[0.06] flex items-center justify-between px-6 z-20 shrink-0">
         <div className="flex items-center gap-3">
           <Link
             href="/dashboard"
-            className="flex items-center gap-1.5 text-black/40 hover:text-black/70 transition text-sm"
+            className="flex items-center gap-1.5 text-black/40 hover:text-black/70 transition text-sm hover:scale-105"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
             </svg>
-            Dashboard
+            <Image src="/images/stampleyLogo.png" alt="AIDES-T2D" width={30} height={30} />
           </Link>
           <span className="text-black/20">·</span>
           <span
-            style={{ fontFamily: "JetBrains Mono, monospace" }}
-            className="text-[11px] uppercase tracking-[0.15em] text-black/30"
+        
+            className="text-[11px] uppercase font-bold tracking-[0.15em] text-black" style={{ fontFamily: "'Poppins', sans-serif", fontSize: "clamp(10px, 1vw, 12px)" }}
           >
-            Check-in Session
+            Dashboard
           </span>
         </div>
 
+
         <p
-          style={{ fontFamily: "JetBrains Mono, monospace" }}
-          className="text-[11px] text-black/30 uppercase tracking-[0.1em]"
+          style={{ fontFamily: "'Poppins', sans-serif", fontSize: "clamp(10px, 1vw, 12px)" }}
+          className="text-[11px] font-bold text-black uppercase tracking-[0.1em]"
         >
           {new Date().toLocaleDateString("en-US", {
             weekday: "short",

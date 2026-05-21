@@ -354,27 +354,33 @@ export default function StampleySupportPage() {
         @import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,300;1,9..144,400&family=JetBrains+Mono:wght@300;400;500&family=Outfit:wght@300;400;500;600&display=swap');
       `}</style>
 
-      <div className="max-w-3xl mx-auto w-full px-4 lg:px-0 py-8" style={{ fontFamily: "'Outfit', system-ui, sans-serif" }}>
+      <div className="max-w-6xl mx-auto w-full px-4 lg:px-0 py-8" style={{ fontFamily: "'Outfit', system-ui, sans-serif" }}>
         <div className={shell + " p-6 md:p-8 space-y-6"}>
           <div>
             <div className="flex items-center gap-2 mb-4">
               <span className="h-px w-6" style={{ background: `${brown}55` }} />
               <span
-                className="text-[9px] uppercase tracking-[0.24em]"
-                style={{ color: `${brown}CC`, fontFamily: "'JetBrains Mono', monospace" }}
+              className="text-[9px] uppercase tracking-[0.24em] text-black select-none"
+              style={{ fontFamily: "'Poppins', sans-serif", fontSize: "clamp(10px, 5vw, 10px)" }}
               >
                 Step 5 of 5
               </span>
             </div>
 
             <h2
-              className="text-[30px] font-light tracking-[-0.02em] text-[#0a0a0f]/75"
-              style={{ fontFamily: "'Fraunces', Georgia, serif" }}
+              className="text-[9.5px] font-medium text-[#3d5a80] uppercase tracking-[0.2em] leading-none select-none"
+              style={{ fontFamily: "'Poppins', sans-serif", fontSize: "clamp(10px, 1vw, 12px)" }}
             >
               Review & <em className="italic text-black/25">Submit</em>
             </h2>
 
-            <p className="text-[13.5px] font-light text-black/50 mt-2 leading-[1.7]">
+            <p
+    className="leading-[1.7] hidden sm:block "
+    style={{
+      fontFamily: "'Poppins', sans-serif",
+      fontSize: "clamp(14px, 3.5vw, 16px)",
+    }} >
+            
               Review your check-in, then submit to hear from Stampley.
             </p>
           </div>

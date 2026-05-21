@@ -30,7 +30,7 @@ export default function CheckInResults() {
   ];
 
   return (
-    <div className="flex-1 w-full bg-[#f5f2ec] overflow-y-auto font-[Outfit,system-ui,sans-serif]">
+    <div className="flex-1 w-full bg-white overflow-y-auto font-[Outfit,system-ui,sans-serif]">
       <div className="max-w-4xl mx-auto px-6 md:px-8 py-10">
 
         {/* ── Header ── */}
@@ -41,6 +41,7 @@ export default function CheckInResults() {
               Session Report
             </span>
           </div> */}
+          
           <h1 className="font-[Fraunces,Georgia,serif] text-[28px] font-light tracking-[-0.02em] text-[#0a0a0f]/75 mb-2">
             Check-in <em className="italic font-light text-[#0a0a0f]/25">Metrics</em>
           </h1>

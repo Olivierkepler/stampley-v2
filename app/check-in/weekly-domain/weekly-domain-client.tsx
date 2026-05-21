@@ -83,6 +83,7 @@ export function WeeklyDomainClient({ lockedDomain, weekNumber, isLocked }: Props
 
   return (
     <div className="space-y-5">
+   
 
       {/* Locked notice */}
       <AnimatePresence>
@@ -94,8 +95,9 @@ export function WeeklyDomainClient({ lockedDomain, weekNumber, isLocked }: Props
             transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
             className="relative overflow-hidden rounded-[18px] px-5 py-4"
             style={{
-              background: "linear-gradient(160deg, #fefdfb 0%, #f5f3ef 100%)",
-              border: "1px solid rgba(10,10,5,0.09)",
+              // background: "linear-gradient(160deg, #fefdfb 0%, #f5f3ef 100%)",
+              // border: "1px solid rgba(10,10,5,0.09)",
+            
             }}
           >
             {/* Corner accent */}
@@ -125,7 +127,8 @@ export function WeeklyDomainClient({ lockedDomain, weekNumber, isLocked }: Props
                   className="text-[12.5px] font-medium"
                   style={{
                     color: "rgba(10,10,5,0.6)",
-                    fontFamily: "'Outfit', system-ui, sans-serif",
+                      fontFamily: "'Poppins', sans-serif",
+      fontSize: "clamp(14px, 3.5vw, 16px)",
                   }}
                 >
                   Week {weekNumber} focus locked
@@ -134,7 +137,8 @@ export function WeeklyDomainClient({ lockedDomain, weekNumber, isLocked }: Props
                   className="text-[11px] mt-0.5"
                   style={{
                     color: "rgba(10,10,5,0.35)",
-                    fontFamily: "'Outfit', system-ui, sans-serif",
+                      fontFamily: "'Poppins', sans-serif",
+      fontSize: "clamp(14px, 3.5vw, 16px)",
                   }}
                 >
                   New domain available at Week {weekNumber + 1}
@@ -169,7 +173,7 @@ export function WeeklyDomainClient({ lockedDomain, weekNumber, isLocked }: Props
       </AnimatePresence>
 
       {/* Domain grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
         {DOMAINS.map((d, i) => {
           const isSelected = domain === d.id || lockedDomain === d.id
           const isDisabled = isLocked && lockedDomain !== d.id
@@ -177,196 +181,249 @@ export function WeeklyDomainClient({ lockedDomain, weekNumber, isLocked }: Props
 
           return (
             <motion.button
-              key={d.id}
-              type="button"
-              initial={{ opacity: 0, y: 14 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{
-                delay: i * 0.06,
-                duration: 0.5,
-                ease: [0.22, 1, 0.36, 1],
-              }}
-              onClick={() => {
-                if (!isLocked) {
-                  setDomain(d.id)
-                  setShowInsight(d.id)
-                  setTimeout(() => setShowInsight(null), 3000)
-                }
-              }}
-              onMouseEnter={() => setHoveredId(d.id)}
-              onMouseLeave={() => setHoveredId(null)}
-              disabled={isDisabled}
-              className="relative w-full text-left rounded-[22px] overflow-hidden transition-all duration-300"
+            key={d.id}
+            type="button"
+            initial={{ opacity: 0, y: 14 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{
+              delay: i * 0.06,
+              duration: 0.5,
+              ease: [0.22, 1, 0.36, 1],
+            }}
+            onClick={() => {
+              if (!isLocked) {
+                setDomain(d.id)
+                setShowInsight(d.id)
+                setTimeout(() => setShowInsight(null), 3000)
+              }
+            }}
+            onMouseEnter={() => setHoveredId(d.id)}
+            onMouseLeave={() => setHoveredId(null)}
+            disabled={isDisabled}
+            className="
+              relative 
+              w-full 
+              text-left 
+              rounded-[22px] 
+              overflow-hidden 
+              transition-all 
+              duration-300
+            "
+          style={{
+  background: isDisabled
+    ? "rgba(255,255,255,0.5)"
+    : "#ffffff",
+
+  border: isSelected
+    ? "1px solid rgba(255,255,255,0.45)"
+    : isHovered
+    ? "1px solid rgba(255,255,255,0.35)"
+    : "1px solid rgba(255,255,255,0.25)",
+
+  boxShadow: isSelected
+    ? "0 10px 30px rgba(0,0,0,0.08)"
+    : isHovered
+    ? "0 8px 24px rgba(0,0,0,0.06)"
+    : "0 4px 16px rgba(0,0,0,0.04)",
+}}
+          >
+            {/* Soft glow */}
+            <div
+              className="absolute inset-0 pointer-events-none transition-opacity duration-500"
               style={{
-                background: isSelected
-                  ? d.gradient
-                  : isDisabled
-                  ? "rgba(255,255,255,0.4)"
-                  : "linear-gradient(160deg, #fefdfb 0%, #f9f6f1 100%)",
-                border: isSelected
-                  ? `2px solid rgba(${d.accentRgb},0.2)`
-                  : isHovered
-                  ? `1.5px solid rgba(10,10,5,0.14)`
-                  : isDisabled
-                  ? "1.5px solid rgba(10,10,5,0.04)"
-                  : "1.5px solid rgba(10,10,5,0.08)",
-                opacity: isDisabled ? 0.28 : 1,
-                cursor: isDisabled ? "not-allowed" : isLocked ? "default" : "pointer",
-                boxShadow: isSelected
-                  ? `0 6px 28px rgba(10,10,5,0.08), 0 2px 8px rgba(10,10,5,0.05), inset 0 1px 0 rgba(255,255,255,0.95)`
-                  : isHovered
-                  ? `0 6px 20px rgba(10,10,5,0.07), inset 0 1px 0 rgba(255,255,255,0.95)`
-                  : "0 2px 12px rgba(10,10,5,0.04), inset 0 1px 0 rgba(255,255,255,0.9)",
-                transform: isHovered && !isSelected ? "translateY(-2px)" : "translateY(0)",
+                background:
+                  "radial-gradient(circle at top left, rgba(255,255,255,0.9), transparent 60%)",
+                opacity: isHovered || isSelected ? 1 : 0.5,
               }}
-            >
-              {/* Ambient warm glow */}
-              <div
-                className="absolute inset-0 pointer-events-none transition-opacity duration-500"
+            />
+          
+            {/* Selection bar */}
+            {isSelected && (
+              <motion.div
+                layoutId="selectedBar"
+                className="absolute left-0 top-5 bottom-5 w-[1px] rounded-r-full"
                 style={{
-                  background: "radial-gradient(ellipse at 15% 50%, rgba(255,252,245,0.6) 0%, transparent 65%)",
-                  opacity: isSelected || isHovered ? 1 : 0,
+                  background: "grey",
+                }}
+                transition={{
+                  type: "spring",
+                  stiffness: 400,
+                  damping: 30,
                 }}
               />
-
-              {/* Left selection bar */}
-              {isSelected && (
+            )}
+          
+            <div className="relative p-5 sm:p-6">
+              {/* TOP ROW */}
+              <div className="flex items-start justify-between mb-5">
+                {/* Icon */}
                 <motion.div
-                  layoutId="selectedBar"
-                  className="absolute left-0 top-5 bottom-5 w-[3px] rounded-r-full"
-                  style={{ background: `rgba(${d.accentRgb},0.45)` }}
-                  transition={{ type: "spring", stiffness: 400, damping: 30 }}
-                />
-              )}
-
-              <div className="relative p-5">
-
-                {/* Top row */}
-                <div className="flex items-start justify-between mb-4">
-
-                  {/* Icon box */}
-                  <motion.div
-                    animate={isSelected ? { scale: 1.04 } : { scale: 1 }}
-                    transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                    className="w-11 h-11 rounded-[14px] flex items-center justify-center text-[22px] shrink-0"
+                  animate={isSelected ? { scale: 1.05 } : { scale: 1 }}
+                  transition={{
+                    type: "spring",
+                    stiffness: 300,
+                    damping: 20,
+                  }}
+                  className="
+                    w-11 h-11
+                    rounded-[14px]
+                    flex items-center justify-center
+                    text-[22px]
+                    shrink-0
+                  "
+                  style={{
+                    background: "#ffffff",
+                    border: "0.5px solid rgba(255,255,255,0.6)",
+                    boxShadow: "0 2px 10px rgba(0,0,0,0.05)",
+                  }}
+                >
+                  {d.emoji}
+                </motion.div>
+          
+                {/* Tag */}
+                <div className="flex items-center gap-2">
+                  <span
+                    className="
+                      text-[8.5px]
+                      uppercase
+                      tracking-[0.2em]
+                      font-bold
+                      px-2 py-1
+                      rounded-full
+                    "
                     style={{
-                      background: isSelected
-                        ? "rgba(255,255,255,0.8)"
-                        : "rgba(255,255,255,0.55)",
-                      border: isSelected
-                        ? `1.5px solid rgba(10,10,5,0.1)`
-                        : "1.5px solid rgba(10,10,5,0.07)",
-                      boxShadow: isSelected
-                        ? "0 4px 12px rgba(10,10,5,0.08)"
-                        : "0 1px 4px rgba(10,10,5,0.04)",
+                      color: "rgba(0,0,0,0.45)",
+                      background: "rgba(0,0,0,0.03)",
+                      border: "1px solid rgba(0,0,0,0.05)",
+                      fontFamily: "'JetBrains Mono', monospace",
                     }}
                   >
-                    {d.emoji}
-                  </motion.div>
-
-                  {/* Tag + checkmark */}
-                  <div className="flex items-center gap-2">
-                    <span
-                      className="text-[8.5px] uppercase tracking-[0.2em] font-bold px-2 py-0.5 rounded-full"
-                      style={{
-                        color: isSelected
-                          ? "rgba(10,10,5,0.55)"
-                          : "rgba(10,10,5,0.25)",
-                        background: isSelected
-                          ? "rgba(255,255,255,0.7)"
-                          : "rgba(255,255,255,0.4)",
-                        border: isSelected
-                          ? "1px solid rgba(10,10,5,0.1)"
-                          : "1px solid rgba(10,10,5,0.06)",
-                        fontFamily: "'JetBrains Mono', monospace",
-                        transition: "all 0.2s ease",
-                      }}
-                    >
-                      {d.tag}
-                    </span>
-
-                    <AnimatePresence>
-                      {isSelected && (
-                        <motion.div
-                          initial={{ scale: 0, rotate: -20 }}
-                          animate={{ scale: 1, rotate: 0 }}
-                          exit={{ scale: 0, rotate: 20 }}
-                          transition={{ type: "spring", stiffness: 500, damping: 20 }}
-                          className="w-[22px] h-[22px] rounded-full flex items-center justify-center"
-                          style={{
-                            background: "rgba(10,10,5,0.75)",
-                            boxShadow: "0 2px 8px rgba(10,10,5,0.2)",
-                          }}
-                        >
-                          <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                          </svg>
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
-                  </div>
-                </div>
-
-                {/* Label */}
-                <p
-                  className="text-[15.5px] font-medium leading-snug mb-1.5"
-                  style={{
-                    color: isSelected ? "#0a0a0f" : "rgba(10,10,5,0.65)",
-                    fontFamily: "'Fraunces', Georgia, serif",
-                    letterSpacing: "-0.015em",
-                    transition: "color 0.2s ease",
-                  }}
-                >
-                  {d.label}
-                </p>
-
-                {/* Description */}
-                <p
-                  className="text-[12px] leading-[1.65]"
-                  style={{
-                    color: isSelected
-                      ? "rgba(10,10,5,0.48)"
-                      : "rgba(10,10,5,0.34)",
-                    fontFamily: "'Outfit', system-ui, sans-serif",
-                    transition: "color 0.2s ease",
-                  }}
-                >
-                  {d.description}
-                </p>
-
-                {/* Insight toast */}
-                <AnimatePresence>
-                  {showInsight === d.id && (
-                    <motion.div
-                      initial={{ opacity: 0, height: 0, marginTop: 0 }}
-                      animate={{ opacity: 1, height: "auto", marginTop: 10 }}
-                      exit={{ opacity: 0, height: 0, marginTop: 0 }}
-                      transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-                      className="overflow-hidden"
-                    >
-                      <div
-                        className="rounded-[10px] px-3 py-2 flex items-start gap-2"
+                    {d.tag}
+                  </span>
+          
+                  <AnimatePresence>
+                    {isSelected && (
+                      <motion.div
+                        initial={{ scale: 0, rotate: -20 }}
+                        animate={{ scale: 1, rotate: 0 }}
+                        exit={{ scale: 0, rotate: 20 }}
+                        transition={{
+                          type: "spring",
+                          stiffness: 500,
+                          damping: 20,
+                        }}
+                        className="
+                          w-[22px]
+                          h-[22px]
+                          rounded-full
+                          flex items-center justify-center
+                        "
                         style={{
-                          background: "rgba(255,255,255,0.65)",
-                          border: "1px solid rgba(10,10,5,0.08)",
+                          background: "#0a0a0f",
+                          boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
                         }}
                       >
-                        <span className="text-[11px] mt-0.5 shrink-0">💡</span>
-                        <p
-                          className="text-[11px] leading-relaxed"
-                          style={{
-                            color: "rgba(10,10,5,0.5)",
-                            fontFamily: "'Outfit', system-ui, sans-serif",
-                          }}
+                        <svg
+                          className="w-3 h-3 text-white"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
                         >
-                          {d.insight}
-                        </p>
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={3}
+                            d="M5 13l4 4L19 7"
+                          />
+                        </svg>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
               </div>
-            </motion.button>
+          
+              {/* LABEL */}
+              <p
+                className="
+                  text-[16px]
+                  sm:text-[17px]
+                  font-medium
+                  leading-snug
+                  mb-2
+                "
+                style={{
+                  color: "#0a0a0f",
+                  fontFamily: "'Fraunces', Georgia, serif",
+                  letterSpacing: "-0.015em",
+                }}
+              >
+                {d.label}
+              </p>
+          
+              {/* DESCRIPTION */}
+              <p
+                className="
+                  text-[13px]
+                  sm:text-[14px]
+                  leading-[1.7]
+                "
+                style={{
+                  color: "rgba(0,0,0,0.55)",
+                    fontFamily: "'Poppins', sans-serif",
+      fontSize: "clamp(14px, 3.5vw, 16px)",
+                }}
+              >
+                {d.description}
+              </p>
+          
+              {/* INSIGHT */}
+              <AnimatePresence>
+                {showInsight === d.id && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0, marginTop: 0 }}
+                    animate={{ opacity: 1, height: "auto", marginTop: 12 }}
+                    exit={{ opacity: 0, height: 0, marginTop: 0 }}
+                    transition={{
+                      duration: 0.3,
+                      ease: [0.22, 1, 0.36, 1],
+                    }}
+                    className="overflow-hidden"
+                  >
+                    <div
+                      className="
+                        rounded-[12px]
+                        px-3 py-3
+                        flex items-start gap-2
+                      "
+                      style={{
+                        background: "rgba(0,0,0,0.025)",
+                        border: "1px solid rgba(0,0,0,0.05)",
+                      }}
+                    >
+                      <span className="text-[12px] mt-0.5 shrink-0">
+                        💡
+                      </span>
+          
+                      <p
+                        className="
+                          text-[11px]
+                          sm:text-[12px]
+                          leading-relaxed
+                        "
+                        style={{
+                          color: "rgba(0,0,0,0.55)",
+                            fontFamily: "'Poppins', sans-serif",
+      fontSize: "clamp(14px, 3.5vw, 16px)",
+                        }}
+                      >
+                        {d.insight}
+                      </p>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+          </motion.button>
           )
         })}
       </div>
@@ -381,7 +438,7 @@ export function WeeklyDomainClient({ lockedDomain, weekNumber, isLocked }: Props
             transition={{ duration: 0.3 }}
             className="rounded-[16px] px-4 py-3 flex items-center gap-3"
             style={{
-              background: "linear-gradient(160deg, #fefdfb 0%, #f5f3ef 100%)",
+              background: "white",
               border: "1px solid rgba(10,10,5,0.08)",
             }}
           >
@@ -390,7 +447,8 @@ export function WeeklyDomainClient({ lockedDomain, weekNumber, isLocked }: Props
               className="text-[12px]"
               style={{
                 color: "rgba(10,10,5,0.4)",
-                fontFamily: "'Outfit', system-ui, sans-serif",
+                  fontFamily: "'Poppins', sans-serif",
+      fontSize: "clamp(14px, 3.5vw, 16px)",
               }}
             >
               Stampley will focus on{" "}
@@ -415,7 +473,8 @@ export function WeeklyDomainClient({ lockedDomain, weekNumber, isLocked }: Props
             border: "1.5px solid rgba(10,10,5,0.09)",
             color: "rgba(10,10,5,0.38)",
             background: "linear-gradient(160deg, #fefdfb 0%, #f9f6f1 100%)",
-            fontFamily: "'Outfit', system-ui, sans-serif",
+              fontFamily: "'Poppins', sans-serif",
+      fontSize: "clamp(14px, 3.5vw, 16px)",
           }}
         >
           ← Back
@@ -433,7 +492,8 @@ export function WeeklyDomainClient({ lockedDomain, weekNumber, isLocked }: Props
             boxShadow: domain || lockedDomain
               ? "0 6px 20px rgba(10,10,5,0.22), 0 2px 6px rgba(10,10,5,0.12)"
               : "none",
-            fontFamily: "'Outfit', system-ui, sans-serif",
+              fontFamily: "'Poppins', sans-serif",
+      fontSize: "clamp(14px, 3.5vw, 16px)",
           }}
         >
           {/* Warm shimmer */}
