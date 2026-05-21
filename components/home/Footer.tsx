@@ -1,5 +1,5 @@
 import Link from "next/link"
-
+import Image from "next/image"
 const footerColumns = [
   {
     title: "Study",
@@ -49,9 +49,15 @@ export default function Footer() {
           {/* Brand */}
           <div>
             <Link href="/" className="inline-flex flex-col">
-              <span className="text-3xl font-semibold tracking-[0.16em] sm:text-4xl sm:tracking-[0.18em]">
-                AIDES
-              </span>
+              <Image
+                src="/images/stampleyLogo.png"
+                alt="Stampley Logo"
+                width={64}
+                height={64}
+                className="mb-3"
+                priority
+              />
+        
 
               <span className="mt-1 text-[10px] uppercase tracking-[0.22em] text-cyan-200/80 sm:text-xs sm:tracking-[0.28em]">
                 T2D Support Study

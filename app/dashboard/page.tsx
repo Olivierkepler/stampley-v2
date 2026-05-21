@@ -3,6 +3,7 @@ import { redirect } from "next/navigation"
 import { query } from "@/lib/db"
 import Link from "next/link"
 import Image from "next/image"
+import Footer from "@/components/home/Footer"
 
 export default async function DashboardPage() {
   const session = await auth()
@@ -96,17 +97,17 @@ export default async function DashboardPage() {
           box-sizing: border-box;
         }
 
-        .font-body {
-          font-family: "'Poppins', sans-serif";
-        }
+       .font-body {
+  font-family: 'Outfit', system-ui, sans-serif;
+}
 
-        .font-display {
-          font-family: "'Poppins', sans-serif";
-        }
+.font-display {
+  font-family: 'Fraunces', Georgia, serif;
+}
 
-        .font-mono {
-          font-family: "'Poppins', sans-serif";
-        }
+.font-mono {
+  font-family: 'JetBrains Mono', monospace;
+}
 
         .dashboard-card {
           background: #ffffff;
@@ -167,9 +168,60 @@ export default async function DashboardPage() {
           background: #f5f2ec;
           color: rgba(10, 10, 5, 0.85);
         }
+
+        @keyframes heroFadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes donutPop {
+  from {
+    opacity: 0;
+    transform: scale(0.92);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes slowSpin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.hero-fade-1 {
+  animation: heroFadeUp 0.55s ease both;
+}
+
+.hero-fade-2 {
+  animation: heroFadeUp 0.55s 0.08s ease both;
+}
+
+.hero-fade-3 {
+  animation: heroFadeUp 0.55s 0.16s ease both;
+}
+
+.hero-donut {
+  animation: donutPop 0.65s 0.22s ease both;
+}
+
+.hero-donut-ring {
+  animation: slowSpin 18s linear infinite;
+}
       `}</style>
 
-      <main className="min-h-screen bg-white font-body text-[#0a0a05]">
+      <main className="min-h-screen bg-white font-body text-[#0a0a05] ">
         <header className="border-b border-black/[0.08] bg-white">
           <div className="mx-auto flex h-24 max-w-6xl items-center justify-between px-6">
             <Link href="/" className="flex items-center">
@@ -196,64 +248,90 @@ export default async function DashboardPage() {
           </div>
         </header>
 
-        <div className="bg-blue-900">
-          <div className="mx-auto grid max-w-7xl gap-10 px-6 py-12 lg:grid-cols-[1fr_240px] lg:items-center">
-            <div>
-              <p className="label" style={{ color: "#fff" }}>{today}</p>
+        <div className="relative overflow-hidden bg-[#003e73]">
 
-              <h1 className="font-display mt-4 max-w-3xl text-[24px] font-light leading-[1.12] tracking-[-0.03em] text-white md:text-[30px]">
-                Welcome back,{" "}
-                <em className="font-light italic text-white">
-                  {formattedName}
-                </em>
-              </h1>
+{/* Decorative Logo-Inspired Background */}
+<div className="pointer-events-none absolute inset-0 overflow-hidden">
 
-              {session.user?.role === "PARTICIPANT" && (
-                <p className="mt-4 max-w-xl text-[15px] leading-7 text-white/90">
-                  {checkedInToday
-                    ? "You’ve completed today’s check-in. Your progress has been recorded."
-                    : "Your daily check-in is ready. Take a few minutes to reflect on how you’re feeling today."}
-                </p>
-              )}
-            </div>
+  {/* Large White Arc */}
+  <div className="absolute left-[-120px] top-[-80px] h-[420px] w-[420px] rounded-full border-[2px] border-white/20" />
 
-            <div className="flex justify-start lg:justify-end">
-              <div className="relative flex h-[180px] w-[180px] items-center justify-center">
-                <div
-                  className="absolute inset-0"
-                  style={{
-                    borderRadius: "9999px",
-                    background: `conic-gradient(
-                      #ffffff ${checkinPct}%,
-                      rgba(255,255,255,0.18) 0
-                    )`,
-                  }}
-                />
+  {/* Yellow swoosh */}
+  {/* <div className="absolute right-[18%] top-[22%] h-[140px] w-[340px] rotate-[-18deg] rounded-[100%] border-t-[22px] border-[#f6b800]/70 blur-[0.4px]" /> */}
 
-                <div
-                  className="absolute inset-[18px] bg-blue-900"
-                  style={{ borderRadius: "9999px" }}
-                />
+  {/* White swoosh */}
+  {/* <div className="absolute right-[12%] top-[35%] h-[220px] w-[420px] rotate-[-22deg] rounded-[100%] border-l-[16px] border-white/20" /> */}
 
-                <div className="relative z-10 text-center">
-                  <p className="font-display text-[34px] font-light text-white">
-                    {Math.round(checkinPct)}%
-                  </p>
+  {/* Top dot */}
+  {/* <div className="absolute right-[18%] top-[18%] h-5 w-5 rounded-full bg-white/50" /> */}
 
-                  <p className="mt-1 text-[10px] uppercase tracking-[0.18em] text-white/70">
-                    Complete
-                  </p>
+  {/* Soft glow */}
+  {/* <div className="absolute right-[-120px] top-[-100px] h-[320px] w-[320px] rounded-full bg-blue-300/10 blur-3xl" /> */}
 
-                  <p className="mt-2 text-xs text-white/60">
-                    {completedCheckins} / 28 check-ins
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+ 
+</div>
 
-        <section className="mx-auto max-w-9xl px-6 py-12">
+{/* Content */}
+<div className="relative z-10 mx-auto grid max-w-7xl gap-10 px-6 py-14 lg:grid-cols-[1fr_240px] lg:items-center">
+
+  <div>
+    <p className="label text-white/70" style={{ color: "#fff" }}>{today}</p>
+
+    <h1 className="font-display mt-4 max-w-3xl text-[clamp(2rem,5vw,3.25rem)] font-light leading-[1.08] tracking-[-0.04em] text-white">
+         Welcome back,{" "}
+      <em className="font-light italic text-white/90">
+        {formattedName}
+      </em>
+    </h1>
+
+    {session.user?.role === "PARTICIPANT" && (
+     <p className="mt-5 max-w-xl text-[clamp(0.95rem,1.5vw,1.05rem)] leading-7 text-white/85">
+        {checkedInToday
+          ? "You’ve completed today’s check-in. Your progress has been recorded."
+          : "Your daily check-in is ready. Take a few minutes to reflect on how you’re feeling today."}
+      </p>
+    )}
+  </div>
+
+  {/* Donut Progress */}
+  <div className="flex justify-start lg:justify-end">
+    <div className="relative flex h-[190px] w-[190px] items-center justify-center">
+
+      <div
+        className="absolute inset-0"
+        style={{
+          borderRadius: "9999px",
+          background: `conic-gradient(
+            #ffffff ${checkinPct}%,
+            rgba(255,255,255,0.12) 0
+          )`,
+        }}
+      />
+
+      <div
+        className="absolute inset-[18px] bg-[#003e73]"
+        style={{ borderRadius: "9999px" }}
+      />
+
+      <div className="relative z-10 text-center">
+        <p className="font-display text-[40px] font-light text-white">
+          {Math.round(checkinPct)}%
+        </p>
+
+        <p className="mt-1 text-[20px] uppercase tracking-[0.18em] text-white/60">
+          Complete
+        </p>
+
+        <p className="mt-2 text-xs text-white/55">
+          {completedCheckins} / 28 check-ins
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+        <section className="mx-auto max-w-8xl px-6 py-30">
           {session.user?.role === "PARTICIPANT" && (
             <div className="grid gap-6 lg:grid-cols-[1.35fr_0.85fr]">
 
@@ -288,13 +366,12 @@ export default async function DashboardPage() {
 
       <div className="mt-6 flex flex-col gap-8">
         <div>
-          <h2 className="font-display text-[30px] font-light leading-tight tracking-[-0.03em] text-black/85">
+        <h2 className="font-display text-[clamp(1.55rem,3vw,2rem)] font-light leading-tight tracking-[-0.03em] text-black/85">
             {checkedInToday
               ? "Today’s check-in is complete."
               : "How are you feeling today?"}
           </h2>
-
-          <p className="mt-4 max-w-lg text-[15px] leading-7 text-black/55">
+          <p className="mt-4 max-w-lg text-[clamp(0.95rem,1.3vw,1rem)] leading-7 text-black/55">
             {checkedInToday
               ? "Thank you for checking in. Come back tomorrow to continue your daily reflection."
               : "Record your distress, mood, energy, context, and reflection for today."}
@@ -485,7 +562,7 @@ export default async function DashboardPage() {
                     Manage study operations.
                   </h2>
 
-                  <p className="mt-4 max-w-xl text-[15px] leading-7 text-black/55">
+                  <p className="mt-4 max-w-xl text-[20px] leading-7 text-black/55">
                     Review users, study keys, participant activity, and safety
                     signals from the administrative dashboard.
                   </p>
@@ -499,13 +576,9 @@ export default async function DashboardPage() {
             </section>
           )}
 
-          <footer className="mt-16 border-t border-black/[0.08] pt-8 text-center">
-            <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-black/30">
-              AIDES-T2D · University of Massachusetts Boston
-            </p>
-          </footer>
+        
         </section>
-      </main>
+      </main>  <Footer />
     </>
   )
 }
