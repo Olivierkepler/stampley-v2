@@ -20,10 +20,6 @@ import {
 } from "@/lib/stampley-prompt"
 import type { Domain } from "@/store/checkin-store"
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-})
-
 function safeErrorInfo(error: unknown) {
   if (error instanceof Error) {
     return { message: error.message, name: error.name }
@@ -61,6 +57,7 @@ export async function POST(req: NextRequest) {
   try {
     const body = await req.json()
     console.error("[stampley/generate] request body parsed successfully")
+
     const {
       distress,
       mood,
@@ -75,15 +72,17 @@ export async function POST(req: NextRequest) {
 
     let userResult
     try {
-      userResult = await query(
-        "SELECT email FROM users WHERE id = $1",
-        [session.user.id]
-      )
+      userResult = await query("SELECT email FROM users WHERE id = $1", [
+        session.user.id,
+      ])
       console.error("[stampley/generate] user lookup success", {
         found: userResult.rows.length > 0,
       })
     } catch (error) {
-      console.error("[stampley/generate] user lookup failure", safeErrorInfo(error))
+      console.error(
+        "[stampley/generate] user lookup failure",
+        safeErrorInfo(error)
+      )
       throw error
     }
 
@@ -105,7 +104,10 @@ export async function POST(req: NextRequest) {
         hasContext: liveStudyContext != null,
       })
     } catch (error) {
-      console.error("[stampley/generate] study context failure", safeErrorInfo(error))
+      console.error(
+        "[stampley/generate] study context failure",
+        safeErrorInfo(error)
+      )
       throw error
     }
 
@@ -128,7 +130,10 @@ export async function POST(req: NextRequest) {
       longitudinalContext = await loadLongitudinalContext(session.user.id)
       console.error("[stampley/generate] memory DB query success")
     } catch (error) {
-      console.error("[stampley/generate] memory DB query failure", safeErrorInfo(error))
+      console.error(
+        "[stampley/generate] memory DB query failure",
+        safeErrorInfo(error)
+      )
       throw error
     }
 
@@ -143,6 +148,11 @@ export async function POST(req: NextRequest) {
     )
 
     console.error("[stampley/generate] OpenAI call start")
+
+    const openai = new OpenAI({
+      apiKey: process.env.OPENAI_API_KEY,
+    })
+
     let completion
     try {
       completion = await openai.chat.completions.create({
@@ -152,6 +162,7 @@ export async function POST(req: NextRequest) {
         temperature: 0.7,
         response_format: { type: "json_object" },
       })
+
       console.error("[stampley/generate] OpenAI call success")
     } catch (error) {
       console.error(
@@ -196,6 +207,7 @@ async function loadLiveStudyContext(userId: string, domain: Domain) {
     "SELECT study_start_date FROM user_study_progress WHERE user_id = $1",
     [userId]
   )
+
   return buildCheckInStudyContext(
     domain,
     progressResult.rows[0]?.study_start_date ?? null
@@ -241,8 +253,7 @@ async function loadLongitudinalContext(userId: string) {
       userMessageCount: Number(row.user_message_count) || 0,
       assistantMessageCount: Number(row.assistant_message_count) || 0,
       domain: typeof row.domain === "string" ? row.domain : null,
-      stressLevel:
-        row.stress_level != null ? Number(row.stress_level) : null,
+      stressLevel: row.stress_level != null ? Number(row.stress_level) : null,
     })
   )
 
@@ -254,12 +265,14 @@ function resolvePhase(
   clientPhase: unknown
 ): StampleyPhase {
   const derived = deriveConversationPhase(history)
+
   const validPhases: StampleyPhase[] = [
     "opening",
     "exploration",
     "coping",
     "closure",
   ]
+
   if (
     typeof clientPhase === "string" &&
     validPhases.includes(clientPhase as StampleyPhase) &&
@@ -267,6 +280,7 @@ function resolvePhase(
   ) {
     return clientPhase as StampleyPhase
   }
+
   return derived
 }
 
@@ -309,12 +323,16 @@ function getFallbackResponse(
     case "opening":
       return {
         greeting: `Hi ${name}, thank you for checking in today. This space is just for you — no judgment, no pressure.`,
-        validation: `I can see today had its challenges. What you're feeling makes complete sense given everything you're managing.`,
-        reflection_question: `What's one thing from today you'd like to leave behind as you move into tomorrow?`,
+        validation:
+          "I can see today had its challenges. What you're feeling makes complete sense given everything you're managing.",
+        reflection_question:
+          "What's one thing from today you'd like to leave behind as you move into tomorrow?",
         micro_skill: microSkill,
         education_chip: educationChip,
-        closure: `You've already done something meaningful today by checking in. For tomorrow, try giving yourself one small moment of kindness.`,
+        closure:
+          "You've already done something meaningful today by checking in. For tomorrow, try giving yourself one small moment of kindness.",
       }
+
     case "exploration":
       return {
         greeting: "",
@@ -326,6 +344,7 @@ function getFallbackResponse(
         education_chip: educationChip,
         closure: "I'm glad you're continuing to reflect.",
       }
+
     case "coping":
       return {
         greeting: "",
@@ -337,6 +356,7 @@ function getFallbackResponse(
         education_chip: educationChip,
         closure: "Even a tiny step counts. Be gentle with yourself.",
       }
+
     case "closure":
       return {
         greeting: "",
