@@ -24,14 +24,43 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 })
 
+function safeErrorInfo(error: unknown) {
+  if (error instanceof Error) {
+    return { message: error.message, name: error.name }
+  }
+  return { message: String(error) }
+}
+
+function safeOpenAIErrorInfo(error: unknown) {
+  const base = safeErrorInfo(error)
+  const status =
+    typeof (error as { status?: unknown })?.status === "number"
+      ? (error as { status: number }).status
+      : undefined
+  return { ...base, status }
+}
+
 export async function POST(req: NextRequest) {
+  console.error("[stampley/generate] route entered")
+  console.error("[stampley/generate] env flags", {
+    hasDatabaseUrl: !!process.env.DATABASE_URL?.trim(),
+    hasOpenAiApiKey: !!process.env.OPENAI_API_KEY?.trim(),
+  })
+
   const session = await auth()
+  console.error("[stampley/generate] auth flags", {
+    sessionExists: !!session,
+    hasUserId: !!session?.user?.id,
+    hasUserEmail: !!session?.user?.email,
+  })
+
   if (!session?.user?.id) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
   }
 
   try {
     const body = await req.json()
+    console.error("[stampley/generate] request body parsed successfully")
     const {
       distress,
       mood,
@@ -44,10 +73,20 @@ export async function POST(req: NextRequest) {
       conversationPhase,
     } = body
 
-    const userResult = await query(
-      "SELECT email FROM users WHERE id = $1",
-      [session.user.id]
-    )
+    let userResult
+    try {
+      userResult = await query(
+        "SELECT email FROM users WHERE id = $1",
+        [session.user.id]
+      )
+      console.error("[stampley/generate] user lookup success", {
+        found: userResult.rows.length > 0,
+      })
+    } catch (error) {
+      console.error("[stampley/generate] user lookup failure", safeErrorInfo(error))
+      throw error
+    }
+
     const email = userResult.rows[0]?.email ?? ""
     const firstName = email.split("@")[0].split(".")[0]
     const formattedName = firstName.charAt(0).toUpperCase() + firstName.slice(1)
@@ -56,10 +95,19 @@ export async function POST(req: NextRequest) {
     const stressLevel = Number(distress) || 5
     const highStress = isHighStress(stressLevel)
 
-    const liveStudyContext = await loadLiveStudyContext(
-      session.user.id,
-      resolvedDomain
-    )
+    let liveStudyContext
+    try {
+      liveStudyContext = await loadLiveStudyContext(
+        session.user.id,
+        resolvedDomain
+      )
+      console.error("[stampley/generate] study context success", {
+        hasContext: liveStudyContext != null,
+      })
+    } catch (error) {
+      console.error("[stampley/generate] study context failure", safeErrorInfo(error))
+      throw error
+    }
 
     const input: StampleyInput = {
       firstName: formattedName,
@@ -75,9 +123,14 @@ export async function POST(req: NextRequest) {
       weekNumber: liveStudyContext?.weekNumber ?? 1,
     }
 
-    const longitudinalContext = await loadLongitudinalContext(
-      session.user.id
-    )
+    let longitudinalContext
+    try {
+      longitudinalContext = await loadLongitudinalContext(session.user.id)
+      console.error("[stampley/generate] memory DB query success")
+    } catch (error) {
+      console.error("[stampley/generate] memory DB query failure", safeErrorInfo(error))
+      throw error
+    }
 
     const history = sanitizeHistory(messageHistory)
     const phase = resolvePhase(history, conversationPhase)
@@ -89,13 +142,24 @@ export async function POST(req: NextRequest) {
       longitudinalContext
     )
 
-    const completion = await openai.chat.completions.create({
-      model: "gpt-4o",
-      messages,
-      max_tokens: 800,
-      temperature: 0.7,
-      response_format: { type: "json_object" },
-    })
+    console.error("[stampley/generate] OpenAI call start")
+    let completion
+    try {
+      completion = await openai.chat.completions.create({
+        model: "gpt-4o",
+        messages,
+        max_tokens: 800,
+        temperature: 0.7,
+        response_format: { type: "json_object" },
+      })
+      console.error("[stampley/generate] OpenAI call success")
+    } catch (error) {
+      console.error(
+        "[stampley/generate] OpenAI call failure",
+        safeOpenAIErrorInfo(error)
+      )
+      throw error
+    }
 
     const raw = completion.choices[0]?.message?.content ?? ""
 
@@ -103,7 +167,7 @@ export async function POST(req: NextRequest) {
     try {
       stampleyResponse = JSON.parse(raw)
     } catch {
-      console.error("[stampley] JSON parse failed:", raw)
+      console.error("[stampley/generate] JSON parse failed")
       stampleyResponse = getFallbackResponse(
         formattedName,
         resolvedDomain,
@@ -119,7 +183,7 @@ export async function POST(req: NextRequest) {
       highStress,
     })
   } catch (error) {
-    console.error("[stampley/generate]", error)
+    console.error("[stampley/generate] final catch", safeErrorInfo(error))
     return NextResponse.json(
       { error: "Failed to generate response" },
       { status: 500 }
