@@ -1,23 +1,20 @@
 import { auth, signOut } from "@/lib/auth"
 import { redirect } from "next/navigation"
 import { query } from "@/lib/db"
+import { redirectIfOnboardingIncomplete } from "@/lib/check-in-flow-guard"
 import Link from "next/link"
 import Image from "next/image"
+import ParticipantCharts from "@/components/dashboard/ParticipantCharts"
+import DonutProgress from "@/components/dashboard/DonutProgress"
 import Footer from "@/components/home/Footer"
+import { UnsavedTranscriptResend } from "@/components/stampley/unsaved-transcript-resend"
 
 export default async function DashboardPage() {
   const session = await auth()
   if (!session?.user?.id) redirect("/login")
 
   if (session.user?.role === "PARTICIPANT") {
-    const preSurveyResult = await query(
-      "SELECT id FROM pre_survey_responses WHERE user_id = $1",
-      [session.user.id]
-    )
-
-    if (preSurveyResult.rows.length === 0) {
-      redirect("/survey/dds")
-    }
+    await redirectIfOnboardingIncomplete()
   }
 
   const todayCheckin = await query(
@@ -41,6 +38,42 @@ export default async function DashboardPage() {
      FROM user_study_progress WHERE user_id = $1`,
     [session.user.id]
   )
+
+  const chartResult = await query(
+    `
+    SELECT
+      check_in_date,
+      distress,
+      mood,
+      energy,
+      domain
+    FROM check_in_submissions
+    WHERE user_id = $1
+    ORDER BY check_in_date ASC
+    `,
+    [session.user.id]
+  )
+  
+  const trendData = chartResult.rows.map((row) => ({
+    date: new Date(row.check_in_date).toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+    }),
+    distress: row.distress,
+    mood: row.mood,
+    energy: row.energy,
+  }))
+  
+  const domainCounts = chartResult.rows.reduce((acc: Record<string, number>, row) => {
+    const domain = row.domain ?? "Unknown"
+    acc[domain] = (acc[domain] ?? 0) + 1
+    return acc
+  }, {})
+  
+  const domainData = Object.entries(domainCounts).map(([domain, count]) => ({
+    domain,
+    count,
+  }))
 
   const progress = progressResult.rows[0] ?? null
 
@@ -90,6 +123,7 @@ export default async function DashboardPage() {
 
   return (
     <>
+      <UnsavedTranscriptResend />
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,200;0,9..144,300;0,9..144,400;1,9..144,200;1,9..144,300;1,9..144,400&family=JetBrains+Mono:wght@300;400;500&family=Outfit:wght@300;400;500;600&display=swap');
 
@@ -219,6 +253,35 @@ export default async function DashboardPage() {
 .hero-donut-ring {
   animation: slowSpin 18s linear infinite;
 }
+
+
+@keyframes sectionScrollFadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(32px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.scroll-section {
+  opacity: 0;
+  animation: sectionScrollFadeUp 0.75s ease-out both;
+  animation-timeline: view();
+  animation-range: entry 12% cover 32%;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scroll-section {
+    opacity: 1;
+    transform: none;
+    animation: none;
+  }
+}
+
+
       `}</style>
 
       <main className="min-h-screen bg-white font-body text-[#0a0a05] ">
@@ -272,7 +335,7 @@ export default async function DashboardPage() {
 </div>
 
 {/* Content */}
-<div className="relative z-10 mx-auto grid max-w-7xl gap-10 px-6 py-14 lg:grid-cols-[1fr_240px] lg:items-center">
+<div className="relative z-10 mx-auto grid max-w-8xl gap-10 px-6 md:px-30 py-14 lg:grid-cols-[1fr_240px] lg:items-center">
 
   <div>
     <p className="label text-white/70" style={{ color: "#fff" }}>{today}</p>
@@ -294,48 +357,20 @@ export default async function DashboardPage() {
   </div>
 
   {/* Donut Progress */}
-  <div className="flex justify-start lg:justify-end">
-    <div className="relative flex h-[190px] w-[190px] items-center justify-center">
-
-      <div
-        className="absolute inset-0"
-        style={{
-          borderRadius: "9999px",
-          background: `conic-gradient(
-            #ffffff ${checkinPct}%,
-            rgba(255,255,255,0.12) 0
-          )`,
-        }}
-      />
-
-      <div
-        className="absolute inset-[18px] bg-[#003e73]"
-        style={{ borderRadius: "9999px" }}
-      />
-
-      <div className="relative z-10 text-center">
-        <p className="font-display text-[40px] font-light text-white">
-          {Math.round(checkinPct)}%
-        </p>
-
-        <p className="mt-1 text-[20px] uppercase tracking-[0.18em] text-white/60">
-          Complete
-        </p>
-
-        <p className="mt-2 text-xs text-white/55">
-          {completedCheckins} / 28 check-ins
-        </p>
-      </div>
-    </div>
-  </div>
+  <DonutProgress
+  percent={checkinPct}
+  completed={completedCheckins}
+  total={28}
+/>
 </div>
 </div>
 
-        <section className="mx-auto max-w-8xl px-6 py-30">
+
+<section className="mx-auto max-w-full px-4 py-10 md:py-20 scroll-section">
           {session.user?.role === "PARTICIPANT" && (
             <div className="grid gap-6 lg:grid-cols-[1.35fr_0.85fr]">
 
-<section className="dashboard-card overflow-hidden">
+<section className="dashboard-card overflow-hidden scroll-section">
   <div className="grid lg:grid-cols-[240px_1fr]">
 
     {/* LEFT IMAGE */}
@@ -401,7 +436,7 @@ export default async function DashboardPage() {
   </div>
 </section>
 
-              <section className="dashboard-card overflow-hidden">
+<section className="dashboard-card p-8 scroll-section">
                 <div className="grid lg:grid-cols-[1fr_220px]">
                   <div className="p-8">
                     <p className="label">Study Progress</p>
@@ -487,14 +522,20 @@ export default async function DashboardPage() {
                 </div>
               </section>
 
-              <section className="dashboard-card p-8">
+            <section className="dashboard-card p-8 scroll-section">
                 <p className="label">This Week’s Focus</p>
 
                 {domainMeta ? (
                   <div className="mt-6 flex items-start gap-5">
-                    <div className="flex h-14 w-14 items-center justify-center border border-black/[0.08] bg-[#fcfbf8] text-2xl">
-                      {domainMeta.emoji}
-                    </div>
+                   <div className="relative border-l border-black/[0.08] bg-[#faf8f4] w-24 h-24"
+                   style={{
+                    maxWidth: "100%",
+                    maxHeight: "100%",
+                    objectFit: "cover",
+                   }}
+                   >
+                    <Image src="/images/diabetics23.jpg" alt="Study progress" fill className="object-cover" />
+                   </div>
 
                     <div>
                       <h2 className="font-display text-[26px] font-light tracking-[-0.03em] text-black/85">

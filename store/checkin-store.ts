@@ -1,6 +1,19 @@
 import { create } from "zustand"
+import { createJSONStorage, persist } from "zustand/middleware"
 
 export type Domain = "Emotional" | "Regimen" | "Physician" | "Interpersonal"
+
+const CHECK_IN_DRAFT_KEY = "stampley-checkin-draft"
+
+export const checkInInitialState = {
+  distress: 5,
+  mood: 5,
+  energy: 5,
+  contextTags: [] as string[],
+  reflection: "",
+  copingAction: "",
+  domain: null as Domain | null,
+}
 
 export interface CheckInState {
   // Step 1 — Daily Metrics
@@ -25,28 +38,42 @@ export interface CheckInState {
   reset: () => void
 }
 
-export const useCheckInStore = create<CheckInState>((set) => ({
-  distress: 5,
-  mood: 5,
-  energy: 5,
-  contextTags: [],
-  reflection: "",
-  copingAction: "",
-  domain: null,
-  setDistress: (v) => set({ distress: v }),
-  setMood: (v) => set({ mood: v }),
-  setEnergy: (v) => set({ energy: v }),
-  setContextTags: (tags) => set({ contextTags: tags }),
-  setReflection: (v) => set({ reflection: v }),
-  setCopingAction: (v) => set({ copingAction: v }),
-  setDomain: (d) => set({ domain: d }),
-  reset: () => set({
-    distress: 5,
-    mood: 5,
-    energy: 5,
-    contextTags: [],
-    reflection: "",
-    copingAction: "",
-    domain: null,
-  }),
-}))
+export const useCheckInStore = create<CheckInState>()(
+  persist(
+    (set) => ({
+      ...checkInInitialState,
+      setDistress: (v) => set({ distress: v }),
+      setMood: (v) => set({ mood: v }),
+      setEnergy: (v) => set({ energy: v }),
+      setContextTags: (tags) => set({ contextTags: tags }),
+      setReflection: (v) => set({ reflection: v }),
+      setCopingAction: (v) => set({ copingAction: v }),
+      setDomain: (d) => set({ domain: d }),
+      reset: () => {
+        set({ ...checkInInitialState })
+        void useCheckInStore.persist.clearStorage()
+      },
+    }),
+    {
+      name: CHECK_IN_DRAFT_KEY,
+      storage: createJSONStorage(() =>
+        typeof window !== "undefined"
+          ? sessionStorage
+          : {
+              getItem: () => null,
+              setItem: () => {},
+              removeItem: () => {},
+            }
+      ),
+      partialize: (state) => ({
+        distress: state.distress,
+        mood: state.mood,
+        energy: state.energy,
+        contextTags: state.contextTags,
+        reflection: state.reflection,
+        copingAction: state.copingAction,
+        domain: state.domain,
+      }),
+    }
+  )
+)

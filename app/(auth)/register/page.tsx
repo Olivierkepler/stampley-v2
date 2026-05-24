@@ -115,8 +115,8 @@ export default function RegisterPage() {
         ::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.08); border-radius: 4px; }
       `}</style>
 
-      <div className="f-body relative flex min-h-screen overflow-hidden bg-[#f5f2ec]">
-        <div className="absolute left-6 top-6 z-20">
+      <div className="f-body relative flex min-h-screen overflow-hidden bg-white">
+        {/* <div className="absolute left-6 top-6 z-20">
           <a
             href="/login"
             className="flex items-center gap-2 px-3 py-3 rounded-full cursor-pointer hover:scale-105 transition text-[#0a0a0f] text-sm font-medium shadow border border-white/10 hover:border-white/20"
@@ -137,7 +137,7 @@ export default function RegisterPage() {
               <path d="M15 18l-6-6 6-6" />
             </svg>
           </a>
-        </div>
+        </div> */}
 
         {/* LEFT — Dark editorial panel */}
        {/* LEFT — Project themed editorial panel */}
@@ -225,13 +225,19 @@ export default function RegisterPage() {
     <div className="anim-brand flex items-center gap-3.5">
      
 
-      <Link href="/" className="anim-brand flex items-center gap-3.5 hover:scale-105 transition-all duration-300">
+      <Link href="/" className="anim-brand flex items-center gap-3.5 hover:scale-110 transition-all duration-300">
               {/* <div className="h-10 w-10 rounded-full border border-white/10 bg-white/5 flex items-center justify-center">
                 <span className="f-mono text-[10px] tracking-[0.2em] text-white/60">APP</span>
               </div> */}
 
               <Image src="/images/stampleyLogo.png" alt="AIDES-T2D" width={32} height={32} />
-              <span className="f-mono text-[10.5px] font-medium uppercase tracking-[0.2em] text-white/40 select-none">
+              <span className=" text-[12px] font-medium uppercase tracking-[0.2em] text-white select-none "
+              
+              style ={{
+                fontFamily: "'Inter', sans-serif",
+                  
+               }}
+              >
                 AIDES-T2D
               </span>
             </Link>
@@ -239,20 +245,35 @@ export default function RegisterPage() {
 
     {/* Hero */}
     <div className="anim-hero max-w-[520px]">
-      <p className="f-mono mb-7 flex items-center gap-3 text-[9.5px] uppercase tracking-[0.28em] text-[#FFB100]">
-        <span className="inline-block h-px w-7 bg-[#FFB100] opacity-60" />
+      <p className=" mb-7 flex items-center gap-3 text-[12px] uppercase tracking-[0.28em] text-[#FFB100]"
+     style ={{
+      fontFamily: "'Inter', sans-serif",
+        
+     }}
+      
+      >
+        {/* <span className="inline-block h-px w-7 bg-[#FFB100] opacity-60" /> */}
         Participant Enrollment
       </p>
 
       <h1
         className="f-display mb-6 font-light leading-[1.08] text-white/[0.96] select-none"
         style={{
-          fontSize: "clamp(38px, 4.2vw, 62px)",
+       
           letterSpacing: "-0.02em",
+
+          fontFamily: "'Poppins', sans-serif",
+          fontSize: "clamp(25px, 3vw, 40px)",
         }}
+
+
+        
       >
         Begin your journey{" "}
-        <em className="italic font-light text-white/35">
+        <em className="italic  text-white/35"  
+        
+       
+        > <br />
           with the study.
         </em>
       </h1>
@@ -314,7 +335,11 @@ export default function RegisterPage() {
     </div>
 
     {/* Bottom badges */}
-    <div className="anim-badges flex items-center gap-6">
+    <div className="anim-badges flex items-center gap-6"
+    style= {{
+      fontFamily: "'Inter', sans-serif",
+    }}
+    >
       {[
         { value: "ID", label: "Required" },
         { value: "SSL", label: "Protected" },
@@ -346,18 +371,34 @@ export default function RegisterPage() {
         {/* RIGHT — Form panel */}
         <div className="dot-pattern relative flex w-full items-center justify-center px-6 py-12 lg:w-[520px] lg:shrink-0 lg:bg-[#fefdfb] lg:px-14 lg:py-16 lg:shadow-[inset_1px_0_0_rgba(10,10,15,0.04),-32px_0_80px_rgba(10,10,15,0.04)]">
           <div className="anim-form relative z-10 w-full max-w-[380px]">
-            <div className="mb-10">
-              <div className="f-mono mb-4 flex items-center gap-2 text-[9px] uppercase tracking-[0.24em] text-black/60 select-none">
+          <Image
+         
+          src="/images/stampleyLogo.png" alt="AIDES-T2D" width={32} height={32} 
+           style ={{
+            position: "absolute",
+            top : -70,
+            right: 0,
+
+           }}
+          />
+           
+          
+           <div className="mb-10">
+              {/* <div className="f-mono mb-4 flex items-center gap-2 text-[9px] uppercase tracking-[0.24em] text-black select-none">
                 <span className="inline-block h-2 w-2 rounded-[3px] border-[1.5px] border-[#3d5a80] opacity-50" />
                 Participant Registration
-              </div>
+              </div> */}
               <h2
-                className="f-display mb-2 text-[36px] font-normal leading-[1.1] text-[#0a0a0f]"
-                style={{ letterSpacing: "-0.02em" }}
+                className="mb-2 text-[36px] font-normal leading-[1.1] text-[#0a0a0f]"
+                style={{ letterSpacing: "-0.02em",     fontFamily: "'Inter', sans-serif", }}
               >
                 Join the study.
               </h2>
-              <p className="text-[13px] font-light leading-[1.6] text-black/60">
+              <p className="text-[14px] font-light leading-[1.6] text-black"
+              style  ={{
+                fontFamily: "'Inter', sans-serif",
+              }}
+              >
                 Enter your Study ID to create your account.
               </p>
             </div>
@@ -384,7 +425,7 @@ export default function RegisterPage() {
               <div className="flex flex-col gap-2">
                 <label
                   htmlFor="studyId"
-                  className="f-mono text-[9.5px] uppercase tracking-[0.16em] text-black/70 select-none"
+                  className="f-mono text-[12px] uppercase tracking-[0.16em] text-black/70 select-none"
                 >
                   Study ID
                 </label>
@@ -405,10 +446,10 @@ export default function RegisterPage() {
                     placeholder="AIDES-XXXXXX"
                     required
                     disabled={loading}
-                    className="styled-input f-mono w-full rounded-[10px] border border-black/[0.12] bg-[#f5f2ec] py-[13px] pl-[42px] pr-4 text-[13px] uppercase tracking-[0.1em] text-[#0a0a0f] outline-none transition-all duration-200 placeholder:text-black/30 placeholder:normal-case placeholder:tracking-normal focus:border-[#3d5a80] focus:bg-[#fefdfb] focus:shadow-[0_0_0_3.5px_rgba(61,90,128,0.12)] disabled:cursor-not-allowed disabled:opacity-40"
+                    className="styled-input f-mono w-full rounded-[10px] border border-black/[0.12] bg-white py-[13px] pl-[42px] pr-4 text-[13px] uppercase tracking-[0.1em] text-[#0a0a0f] outline-none transition-all duration-200 placeholder:text-black/30 placeholder:normal-case placeholder:tracking-normal focus:border-[#3d5a80] focus:bg-[#fefdfb] focus:shadow-[0_0_0_3.5px_rgba(61,90,128,0.12)] disabled:cursor-not-allowed disabled:opacity-40"
                   />
                 </div>
-                <p className="text-[10.5px] text-black/35 font-light pl-1">
+                <p className="text-[12px] text-black font-light pl-1">
                   Provided by your research coordinator
                 </p>
               </div>
@@ -416,7 +457,7 @@ export default function RegisterPage() {
               <div className="flex flex-col gap-2">
                 <label
                   htmlFor="email"
-                  className="f-mono text-[9.5px] uppercase tracking-[0.16em] text-black/70 select-none"
+                  className="f-mono text-[12px] uppercase tracking-[0.16em] text-black/70 select-none"
                 >
                   Email Address
                 </label>
@@ -438,7 +479,7 @@ export default function RegisterPage() {
                     placeholder="you@email.com"
                     required
                     disabled={loading}
-                    className="styled-input f-body w-full rounded-[10px] border border-black/[0.12] bg-[#f5f2ec] py-[13px] pl-[42px] pr-4 text-[13.5px] text-[#0a0a0f] outline-none transition-all duration-200 placeholder:text-black/40 focus:border-[#3d5a80] focus:bg-[#fefdfb] focus:shadow-[0_0_0_3.5px_rgba(61,90,128,0.12)] disabled:cursor-not-allowed disabled:opacity-40"
+                    className="styled-input f-body w-full rounded-[10px] border border-black/[0.12] bg-white py-[13px] pl-[42px] pr-4 text-[13.5px] text-[#0a0a0f] outline-none transition-all duration-200 placeholder:text-black/40 focus:border-[#3d5a80] focus:bg-[#fefdfb] focus:shadow-[0_0_0_3.5px_rgba(61,90,128,0.12)] disabled:cursor-not-allowed disabled:opacity-40"
                   />
                 </div>
               </div>
@@ -446,7 +487,7 @@ export default function RegisterPage() {
               <div className="flex flex-col gap-2">
                 <label
                   htmlFor="password"
-                  className="f-mono text-[9.5px] uppercase tracking-[0.16em] text-black/70 select-none"
+                  className="f-mono text-[12px] uppercase tracking-[0.16em] text-black/70 select-none"
                 >
                   Password
                 </label>
@@ -469,7 +510,7 @@ export default function RegisterPage() {
                     required
                     minLength={8}
                     disabled={loading}
-                    className="styled-input f-body w-full rounded-[10px] border border-black/[0.12] bg-[#f5f2ec] py-[13px] pl-[42px] pr-11 text-[13.5px] text-[#0a0a0f] outline-none transition-all duration-200 placeholder:text-black/40 focus:border-[#3d5a80] focus:bg-[#fefdfb] focus:shadow-[0_0_0_3.5px_rgba(61,90,128,0.12)] disabled:cursor-not-allowed disabled:opacity-40"
+                    className="styled-input f-body w-full rounded-[10px] border border-black/[0.12] bg-white py-[13px] pl-[42px] pr-11 text-[13.5px] text-[#0a0a0f] outline-none transition-all duration-200 placeholder:text-black/40 focus:border-[#3d5a80] focus:bg-[#fefdfb] focus:shadow-[0_0_0_3.5px_rgba(61,90,128,0.12)] disabled:cursor-not-allowed disabled:opacity-40"
                   />
                   <button
                     type="button"
@@ -509,7 +550,7 @@ export default function RegisterPage() {
                     )}
                   </button>
                 </div>
-                <p className="text-[10.5px] text-black/35 font-light pl-1">
+                <p className="text-[12px] text-black font-light pl-1">
                   Minimum 8 characters
                 </p>
               </div>
@@ -517,7 +558,7 @@ export default function RegisterPage() {
               <button
                 type="submit"
                 disabled={loading}
-                className="btn-shimmer relative mt-1 w-full cursor-pointer overflow-hidden rounded-[10px] border-none bg-[#0a0a0f] px-6 py-[14px] f-body text-[13px] font-semibold uppercase tracking-[0.06em] text-white shadow-[0_4px_16px_rgba(10,10,15,0.18),0_1px_3px_rgba(10,10,15,0.12)] transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:not-disabled:-translate-y-px hover:not-disabled:bg-[#1a1a24] hover:not-disabled:shadow-[0_8px_28px_rgba(10,10,15,0.25),0_2px_6px_rgba(10,10,15,0.15)] active:not-disabled:translate-y-0 active:not-disabled:scale-[0.985] disabled:cursor-not-allowed disabled:opacity-40"
+                className="btn-shimmer relative mt-1 w-full cursor-pointer overflow-hidden rounded-[10px] border-none bg-blue-900 px-6 py-[14px] f-body text-[13px] font-semibold uppercase tracking-[0.06em] text-white shadow-[0_4px_16px_rgba(10,10,15,0.18),0_1px_3px_rgba(10,10,15,0.12)] transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:not-disabled:-translate-y-px hover:not-disabled:bg-blue-800 hover:not-disabled:shadow-[0_8px_28px_rgba(10,10,15,0.25),0_2px_6px_rgba(10,10,15,0.15)] active:not-disabled:translate-y-0 active:not-disabled:scale-[0.985] disabled:cursor-not-allowed disabled:opacity-40"
               >
                 <span className="relative z-10 flex items-center justify-center gap-2">
                   {loading ? (

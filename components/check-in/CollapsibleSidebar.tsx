@@ -51,8 +51,9 @@ export default function CollapsibleSidebar() {
 
       <aside className={`
         f-body sidebar-grain
-        relative hidden lg:flex flex-col shrink-0 z-30
-        bg-[#fefdfb] border-r border-black/[0.07]
+       relative hidden h-screen lg:flex flex-col shrink-0 z-30
+        
+        bg-white border-r border-black/[0.07]
         ${SIDEBAR_CONFIG.TRANSITION}
         ${isCollapsed ? SIDEBAR_CONFIG.COLLAPSED : SIDEBAR_CONFIG.EXPANDED}
       `}>
@@ -83,11 +84,16 @@ export default function CollapsibleSidebar() {
                 transition={{ duration: 0.2 }}
                 className="overflow-hidden"
               >
-                <Link href="/dashboard" className="flex flex-col outline-none rounded-md">
-                  <span className="f-mono text-[9px] uppercase tracking-[0.2em] text-black/30">
+                <Link href="/dashboard" className="flex flex-col outline-none rounded-md hover:scale-105 transition-all duration-300">
+                  <span className="f-mono text-[9px] uppercase tracking-[0.2em] text-black/30"
+                  
+                  >
                     AIDES-T2D
                   </span>
-                  <span className="f-body text-[13px] font-semibold text-[#0a0a0f]">
+                  <span className=" font-semibold text-[#0a0a0f]"
+                  
+                  style={{ fontFamily: "'Poppins', sans-serif", fontSize: "clamp(10px, 1vw, 12px)" }}
+                  >
                     Daily Check-in
                   </span>
                 </Link>
@@ -100,7 +106,7 @@ export default function CollapsibleSidebar() {
             onClick={() => setIsCollapsed((prev) => !prev)}
             className={`
               toggle-btn relative flex items-center justify-center
-              w-9 h-9 rounded-[9px] border border-black/[0.08]
+              w-9 h-9 rounded-md border border-black/[0.08] cursor-pointer
               text-black/35 outline-none
               focus-visible:ring-2 focus-visible:ring-[#3d5a80]/30
             `}

@@ -16,10 +16,10 @@ type SearchParams = {
 }
 
 const SORT_MAP: Record<string, string> = {
-  created_at_desc: "created_at DESC",
-  created_at_asc: "created_at ASC",
-  email_asc: "email ASC",
-  email_desc: "email DESC",
+  created_at_desc: "u.created_at DESC",
+  created_at_asc: "u.created_at ASC",
+  email_asc: "u.email ASC",
+  email_desc: "u.email DESC",
 }
 
 export default async function AdminUsersPage({
@@ -41,12 +41,12 @@ export default async function AdminUsersPage({
   if (q) {
     values.push(`%${q}%`)
     const i = values.length
-    where.push(`(email ILIKE $${i} OR CAST(study_id AS TEXT) ILIKE $${i})`)
+    where.push(`(u.email ILIKE $${i} OR CAST(u.study_id AS TEXT) ILIKE $${i})`)
   }
 
   if (role !== "ALL") {
     values.push(role)
-    where.push(`role = $${values.length}`)
+    where.push(`u.role = $${values.length}`)
   }
 
   const whereClause = where.length ? `WHERE ${where.join(" AND ")}` : ""
@@ -60,8 +60,23 @@ export default async function AdminUsersPage({
 
   const usersResult = await query(
     `
-      SELECT id, email, role, study_id, created_at
-      FROM users
+      SELECT
+        u.id,
+        u.email,
+        u.role,
+        u.study_id,
+        u.created_at,
+        p.completed_at AS pre_survey_completed_at,
+        COALESCE(c.checkin_count, 0)::int AS checkin_count
+      FROM users u
+      LEFT JOIN pre_survey_responses p
+        ON p.user_id = u.id
+      LEFT JOIN (
+        SELECT user_id, COUNT(*) AS checkin_count
+        FROM check_in_submissions
+        GROUP BY user_id
+      ) c
+        ON c.user_id = u.id
       ${whereClause}
       ORDER BY ${orderBy}
       LIMIT $${limitIndex}
@@ -75,7 +90,7 @@ export default async function AdminUsersPage({
   const countResult = await query(
     `
       SELECT COUNT(*)::int AS count
-      FROM users
+      FROM users u
       ${whereClause}
     `,
     countValues
@@ -97,11 +112,13 @@ export default async function AdminUsersPage({
 
       <AddUserForm />
 
-      <section className="overflow-hidden rounded-xl border border-gray-200/80 bg-white ">
+      <section className="overflow-hidden  border border-gray-200/80 bg-white">
         <div className="border-b border-gray-100 bg-gradient-to-b from-gray-50 to-white px-6 py-5">
           <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
             <div>
-              <h2 className="text-base font-semibold text-gray-900">All Users</h2>
+              <h2 className="text-base font-semibold text-gray-900">
+                All Users
+              </h2>
               <p className="mt-1 text-sm text-gray-500">
                 {totalUsers} total user{totalUsers === 1 ? "" : "s"}
               </p>

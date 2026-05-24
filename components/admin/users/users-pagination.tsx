@@ -30,7 +30,7 @@ export function UsersPagination({
       <div className="flex items-center gap-2">
         <Link
           href={page > 1 ? buildHref(page - 1) : "#"}
-          className={`inline-flex h-10 items-center rounded-xl border px-4 text-sm font-medium ${
+          className={`inline-flex h-10 items-center  border px-4 text-sm font-medium ${
             page > 1
               ? "border-gray-200 bg-white text-gray-700 hover:bg-gray-50"
               : "pointer-events-none border-gray-100 bg-gray-50 text-gray-300"
@@ -45,7 +45,7 @@ export function UsersPagination({
 
         <Link
           href={page < totalPages ? buildHref(page + 1) : "#"}
-          className={`inline-flex h-10 items-center rounded-xl border px-4 text-sm font-medium ${
+          className={`inline-flex h-10 items-center  border px-4 text-sm font-medium ${
             page < totalPages
               ? "border-gray-200 bg-white text-gray-700 hover:bg-gray-50"
               : "pointer-events-none border-gray-100 bg-gray-50 text-gray-300"

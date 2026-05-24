@@ -49,7 +49,7 @@ export default function TopBar() {
         >
           <span className="text-[11px]">📋</span>
           <span
-            className="text-[11px] font-medium whitespace-nowrap group-hover:text-black transition-colors"
+            className="text-[11px] font-medium whitespace-nowrap group-hover:text-black transition-colors "
             style={{ color: "#8B6F47" }}
           >
             Volunteer Application

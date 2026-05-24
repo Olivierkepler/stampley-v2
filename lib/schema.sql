@@ -1,7 +1,7 @@
 -- ================================================
 -- AIDES-T2D / Stampley V2 — Complete Database Schema
 -- Database: stampley_db3
--- Last updated: April 11, 2026
+-- Last updated: May 22, 2026
 -- ================================================
 
 -- Extensions
@@ -60,7 +60,27 @@ CREATE TABLE IF NOT EXISTS check_in_submissions (
   day_number INTEGER DEFAULT 1,                -- Day within week (1-7)
   check_in_date DATE DEFAULT CURRENT_DATE,     -- Exact date of check-in
   created_at TIMESTAMP DEFAULT NOW(),
-  updated_at TIMESTAMP DEFAULT NOW()
+  updated_at TIMESTAMP DEFAULT NOW(),
+  CONSTRAINT check_in_submissions_user_id_check_in_date_key UNIQUE (user_id, check_in_date)
+);
+
+-- ================================================
+-- TABLE: stampley_chat_sessions
+-- Stampley chat transcript linked to a daily check-in (saved on Complete Check-in)
+-- ================================================
+CREATE TABLE IF NOT EXISTS stampley_chat_sessions (
+  id TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
+  user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  check_in_submission_id TEXT REFERENCES check_in_submissions(id) ON DELETE CASCADE,
+  domain TEXT,
+  stress_level INTEGER,
+  mood INTEGER,
+  energy INTEGER,
+  user_message_count INTEGER DEFAULT 0,
+  assistant_message_count INTEGER DEFAULT 0,
+  summary TEXT,
+  messages JSONB DEFAULT '[]'::jsonb,
+  created_at TIMESTAMP DEFAULT NOW()
 );
 
 -- ================================================
@@ -84,6 +104,41 @@ CREATE TABLE IF NOT EXISTS password_reset_tokens (
   user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
   token_hash TEXT UNIQUE NOT NULL,
   expires_at TIMESTAMP NOT NULL,
+  created_at TIMESTAMP DEFAULT NOW()
+);
+
+-- ================================================
+-- TABLE: dds_responses
+-- Baseline Diabetes Distress Scale (DDS17) per participant
+-- One row per user (UNIQUE user_id); upserted by submitDDS
+-- ================================================
+CREATE TABLE IF NOT EXISTS dds_responses (
+  id TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
+  user_id TEXT NOT NULL UNIQUE REFERENCES users(id) ON DELETE CASCADE,
+  q1 INTEGER,
+  q2 INTEGER,
+  q3 INTEGER,
+  q4 INTEGER,
+  q5 INTEGER,
+  q6 INTEGER,
+  q7 INTEGER,
+  q8 INTEGER,
+  q9 INTEGER,
+  q10 INTEGER,
+  q11 INTEGER,
+  q12 INTEGER,
+  q13 INTEGER,
+  q14 INTEGER,
+  q15 INTEGER,
+  q16 INTEGER,
+  q17 INTEGER,
+  emotional_score NUMERIC,
+  physician_score NUMERIC,
+  regimen_score NUMERIC,
+  interpersonal_score NUMERIC,
+  total_score NUMERIC,
+  recommended_domain TEXT,
+  confirmed_domain TEXT,
   created_at TIMESTAMP DEFAULT NOW()
 );
 

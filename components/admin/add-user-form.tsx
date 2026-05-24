@@ -33,7 +33,7 @@ function StatCard({
 }) {
   return (
     <div
-      className="relative overflow-hidden rounded-[24px] border border-white/30 p-6 shadow-[0_10px_24px_rgba(15,23,42,0.05)]"
+      className="relative overflow-hidden  border border-white/30 p-6 shadow-[0_10px_24px_rgba(15,23,42,0.05)]"
       style={{
         backgroundImage: `url('${backgroundImage}')`,
         backgroundSize: "cover",
@@ -57,9 +57,9 @@ function StatCard({
 
 export function AddUserForm() {
   return (
-    <section className="rounded-[28px] border border-slate-200/70 bg-white/80 shadow-[0_10px_30px_rgba(15,23,42,0.04)] backdrop-blur-sm">
+    <section className=" border border-slate-200/70 bg-white/80 shadow-[0_10px_30px_rgba(15,23,42,0.04)] backdrop-blur-sm">
       <details
-        className="group overflow-hidden rounded-[28px]"
+        className="group overflow-hidden "
         open
       >
         <summary className="flex cursor-pointer list-none items-start justify-between gap-4 bg-gradient-to-b from-slate-50 to-white px-6 py-5"
@@ -79,7 +79,7 @@ export function AddUserForm() {
             </p>
           </div>
 
-          <span className="mt-0.5 inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border border-slate-200 bg-white text-slate-400 shadow-sm transition duration-200 group-hover:text-slate-600 group-open:rotate-180">
+          <span className="mt-0.5 inline-flex h-10 w-10 rounded-md shrink-0 items-center justify-center  border border-slate-200 bg-white text-slate-400 shadow-sm transition duration-200 group-hover:text-slate-600 group-open:rotate-180">
             <svg
               className="h-4 w-4"
               viewBox="0 0 20 20"
@@ -118,7 +118,7 @@ export function AddUserForm() {
                 type="email"
                 placeholder="Enter email address"
                 required
-                className="h-12 rounded-[18px] border border-slate-200 bg-white/90 px-4 text-sm text-slate-900 shadow-sm outline-none transition placeholder:text-slate-400 focus:border-blue-300 focus:ring-4 focus:ring-blue-100"
+                className="h-12  border border-slate-200 bg-white/90 px-4 text-sm text-slate-900 shadow-sm outline-none transition placeholder:text-slate-400 focus:border-blue-300 focus:ring-4 focus:ring-blue-100"
               />
             </div>
 
@@ -134,7 +134,7 @@ export function AddUserForm() {
               <select
                 id="role"
                 name="role"
-                className="h-12 rounded-[18px] border border-slate-200 bg-white/90 px-4 text-sm text-slate-900 shadow-sm outline-none transition focus:border-blue-300 focus:ring-4 focus:ring-blue-100"
+                className="h-12  border border-slate-200 bg-white/90 px-4 text-sm text-slate-900 shadow-sm outline-none transition focus:border-blue-300 focus:ring-4 focus:ring-blue-100"
               >
                 <option value="PARTICIPANT">Participant</option>
                 <option value="ADMIN">Admin</option>
@@ -144,7 +144,7 @@ export function AddUserForm() {
             <div className="flex flex-col justify-end lg:col-span-2">
               <button
                 type="submit"
-                className="inline-flex h-12 items-center justify-center rounded-[18px] bg-slate-950 px-5 text-sm font-medium text-white shadow-sm transition hover:bg-slate-800 focus:outline-none focus:ring-4 focus:ring-slate-200"
+                className="inline-flex h-12 items-center justify-center  bg-slate-950 px-5 text-sm font-medium text-white shadow-sm transition hover:bg-slate-800 focus:outline-none focus:ring-4 focus:ring-slate-200"
               >
                 Add User
               </button>
@@ -158,7 +158,7 @@ export function AddUserForm() {
 
 function QuickSummaryCard() {
   return (
-    <section className="rounded-[28px] border border-slate-200/70 bg-white/80 p-6 shadow-[0_10px_30px_rgba(15,23,42,0.04)] backdrop-blur-sm">
+    <section className=" border border-slate-200/70 bg-white/80 p-6 shadow-[0_10px_30px_rgba(15,23,42,0.04)] backdrop-blur-sm">
       <div className="flex items-start justify-between gap-4">
         <div>
           <h2 className="text-xl font-semibold text-slate-900">Quick Summary</h2>
@@ -167,7 +167,7 @@ function QuickSummaryCard() {
           </p>
         </div>
 
-        <span className="inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-slate-200 bg-white text-slate-400 shadow-sm">
+        <span className="inline-flex h-10 w-10 items-center justify-center  border border-slate-200 bg-white text-slate-400 shadow-sm">
           <svg
             className="h-4 w-4"
             viewBox="0 0 20 20"
@@ -185,7 +185,7 @@ function QuickSummaryCard() {
       </div>
 
       <div className="mt-6 space-y-4">
-        <div className="rounded-[20px] border border-slate-100 bg-slate-50/70 p-4">
+        <div className=" border border-slate-100 bg-slate-50/70 p-4">
           <p className="text-xs uppercase tracking-[0.16em] text-slate-500">
             Account Status
           </p>
@@ -197,7 +197,7 @@ function QuickSummaryCard() {
           </p>
         </div>
 
-        <div className="rounded-[20px] border border-slate-100 bg-slate-50/70 p-4">
+        <div className=" border border-slate-100 bg-slate-50/70 p-4">
           <p className="text-xs uppercase tracking-[0.16em] text-slate-500">
             Recommendations
           </p>
@@ -232,7 +232,7 @@ function UsersTable() {
   ]
 
   return (
-    <section className="rounded-[28px] border border-slate-200/70 bg-white/80 shadow-[0_10px_30px_rgba(15,23,42,0.04)] backdrop-blur-sm">
+    <section className=" border border-slate-200/70 bg-white/80 shadow-[0_10px_30px_rgba(15,23,42,0.04)] backdrop-blur-sm">
       <div className="flex flex-col gap-4 border-b border-slate-100 px-6 py-5 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h2 className="text-xl font-semibold text-slate-900">Users</h2>
@@ -245,11 +245,11 @@ function UsersTable() {
           <input
             type="text"
             placeholder="Search users"
-            className="h-11 rounded-[18px] border border-slate-200 bg-white px-4 text-sm text-slate-900 shadow-sm outline-none transition placeholder:text-slate-400 focus:border-blue-300 focus:ring-4 focus:ring-blue-100"
+            className="h-11  border border-slate-200 bg-white px-4 text-sm text-slate-900 shadow-sm outline-none transition placeholder:text-slate-400 focus:border-blue-300 focus:ring-4 focus:ring-blue-100"
           />
           <button
             type="button"
-            className="inline-flex h-11 items-center justify-center rounded-[18px] border border-slate-200 bg-white px-4 text-sm font-medium text-slate-700 shadow-sm transition hover:bg-slate-50"
+            className="inline-flex h-11 items-center justify-center  border border-slate-200 bg-white px-4 text-sm font-medium text-slate-700 shadow-sm transition hover:bg-slate-50"
           >
             Filter
           </button>
@@ -284,7 +284,7 @@ function UsersTable() {
                 <td className="px-6 py-4 text-sm text-slate-800">{user.email}</td>
                 <td className="px-6 py-4">
                   <span
-                    className={`inline-flex rounded-full px-3 py-1 text-xs font-medium ${
+                    className={`inline-flex  px-3 py-1 text-xs font-medium ${
                       user.role === "Admin"
                         ? "bg-violet-50 text-violet-700"
                         : "bg-blue-50 text-blue-700"
@@ -295,7 +295,7 @@ function UsersTable() {
                 </td>
                 <td className="px-6 py-4">
                   <span
-                    className={`inline-flex rounded-full px-3 py-1 text-xs font-medium ${
+                    className={`inline-flex  px-3 py-1 text-xs font-medium ${
                       user.status === "Active"
                         ? "bg-emerald-50 text-emerald-700"
                         : "bg-amber-50 text-amber-700"
@@ -307,7 +307,7 @@ function UsersTable() {
                 <td className="px-6 py-4 text-right">
                   <button
                     type="button"
-                    className="inline-flex h-9 items-center justify-center rounded-xl border border-slate-200 bg-white px-3 text-sm font-medium text-slate-700 shadow-sm transition hover:bg-slate-50"
+                    className="inline-flex h-9 items-center justify-center  border border-slate-200 bg-white px-3 text-sm font-medium text-slate-700 shadow-sm transition hover:bg-slate-50"
                   >
                     View
                   </button>

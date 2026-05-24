@@ -21,14 +21,14 @@ export function PasswordInput() {
           type={show ? "text" : "password"}
           placeholder="Enter password"
           required
-          className="h-12 w-full rounded-[18px] border border-slate-200 bg-white/90 px-4 pr-11 text-sm text-slate-900 shadow-sm outline-none transition duration-200 placeholder:text-slate-400 focus:border-blue-300 focus:ring-4 focus:ring-blue-100"
+          className="h-12 w-full  border border-slate-200 bg-white/90 px-4 pr-11 text-sm text-slate-900 shadow-sm outline-none transition duration-200 placeholder:text-slate-400 focus:border-blue-300 focus:ring-4 focus:ring-blue-100"
         />
 
         {/* Toggle Button */}
         <button
           type="button"
           onClick={() => setShow((s) => !s)}
-          className="absolute right-3 top-1/2 -translate-y-1/2 rounded-md p-1 text-slate-400 transition hover:bg-slate-100 hover:text-slate-600"
+          className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-slate-400 transition hover:bg-slate-100 hover:text-slate-600"
           aria-label="Toggle password visibility"
         >
           {show ? (

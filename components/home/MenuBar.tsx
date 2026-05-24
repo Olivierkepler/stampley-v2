@@ -68,6 +68,7 @@ const dropdowns = {
       {
         icon: Microscope,
         title: "Explore Research",
+        // href = "",
         text: "See our latest diabetes studies and findings",
       },
       {
@@ -140,7 +141,7 @@ export default function MenuBar() {
                     href={href}
                     className="group relative flex h-full items-center px-3 text-[15px] font-medium tracking-[-0.01em] transition-colors duration-200 hover:text-blue-600 focus-visible:text-blue-600 focus-visible:outline-none sm:px-4 xl:px-5"
                   >
-                    <span className="relative  text-blue-900 font-bold">
+                    <span className="relative   ">
                       {item}
 
                       <span className="absolute -bottom-[22px] left-0 right-0 h-[2px] origin-center scale-x-0 bg-blue-600 transition-transform duration-300 group-hover:scale-x-100" />
@@ -178,7 +179,7 @@ export default function MenuBar() {
                       {/* Links */}
                       <div className="grid grid-cols-2 gap-6 px-6 py-8 sm:gap-10 sm:px-10 sm:py-12 xl:gap-14 xl:px-14 xl:py-14">
                         <div>
-                          <h3 className="mb-5 text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-400">
+                          <h3 className="mb-5 text-[16px] font-semibold uppercase tracking-[0.18em] text-blue-900">
                             {dropdown.title}
                           </h3>
 
@@ -187,7 +188,7 @@ export default function MenuBar() {
                               <li key={link}>
                                 <a
                                   href="#"
-                                  className="group/link inline-flex items-center text-[15px] font-medium leading-[1.4] tracking-[-0.01em] text-slate-700 transition-colors duration-200 hover:text-blue-600"
+                                  className="group/link inline-flex items-center text-[17px] font-medium leading-[1.4] tracking-[-0.01em] text-black transition-colors duration-200 hover:text-blue-600"
                                 >
                                   <span className="relative">
                                     {link}
@@ -206,7 +207,7 @@ export default function MenuBar() {
                               <li key={link}>
                                 <a
                                   href="#"
-                                  className="group/link inline-flex items-center text-[15px] font-medium leading-[1.4] tracking-[-0.01em] text-slate-700 transition-colors duration-200 hover:text-blue-600"
+                                  className="group/link inline-flex items-center text-[18px] font-medium leading-[1.4] tracking-[-0.01em] text-black transition-colors duration-200 hover:text-blue-600"
                                 >
                                   <span className="relative">
                                     {link}
@@ -221,20 +222,48 @@ export default function MenuBar() {
                       </div>
 
                       {/* Cards */}
-                      <div className="hidden border-l border-slate-100 bg-slate-50/60 px-6 py-8 sm:px-8 sm:py-12 xl:px-12 xl:py-14 lg:block">
+                      <div className="hidden  bg-blue-900 px-6 py-8 sm:px-8 sm:py-12 xl:px-12 xl:py-14 lg:block">
+
+{/* Decorative Logo-Inspired Background */}
+<div className="pointer-events-none absolute inset-0 overflow-hidden">
+
+  {/* Large White Arc */}
+  <div className="absolute left-[-120px] top-[-80px] h-[420px] w-[420px] rounded-full border-[2px] border-white/20" />
+
+  {/* Yellow swoosh */}
+  <div className="absolute right-[1%] top-[22%] h-[140px] w-[340px] rotate-[-18deg] rounded-[100%] border-t-[22px] border-[#f6b800]/30 blur-[0.4px]" />
+
+  {/* White swoosh */}
+  <div className="absolute right-[12%] top-[35%] h-[220px] w-[420px] rotate-[-22deg] rounded-[100%] border-l-[16px] border-white/20" />
+
+  {/* Top dot */}
+  <div className="absolute right-[18%] top-[18%] h-5 w-5 rounded-full bg-white/50" />
+
+  {/* Soft glow */}
+  <div className="absolute right-[-120px] top-[-100px] h-[320px] w-[320px] rounded-full bg-blue-300/10 blur-3xl" />
+
+ 
+</div>
+
+
                         <ul className="space-y-2">
                           {dropdown.cards.map(({ icon: Icon, title, text }) => (
                             <li key={title}>
                               <a
                                 href="#"
-                                className="group/card flex items-start gap-4 rounded-xl p-3 transition-all duration-200 hover:bg-white hover:shadow-sm"
+                                className="group/card flex items-start gap-4 rounded-xl p-3 transition-all duration-200 hover:bg-transparent hover:shadow-sm"
                               >
-                                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white text-blue-600 shadow-sm ring-1 ring-slate-100 transition-all duration-200 group-hover/card:bg-blue-50 group-hover/card:ring-blue-100">
+                                {/* <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white text-blue-600 shadow-sm ring-1 ring-slate-100 transition-all duration-200 group-hover/card:bg-blue-50 group-hover/card:ring-blue-100">
+                                  <Icon size={20} strokeWidth={1.8} />
+                                </div> */}
+
+                                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-trasparent text-white shadow-sm ring-1 ring-slate-100 transition-all duration-200  group-hover/card:ring-[#FFB100]">
                                   <Icon size={20} strokeWidth={1.8} />
                                 </div>
+                               
 
                                 <div className="flex-1 pt-0.5">
-                                  <h4 className="mb-1 flex items-center gap-1.5 text-[14px] font-semibold tracking-[-0.015em] text-slate-900 transition-colors duration-200 group-hover/card:text-blue-600">
+                                  <h4 className="mb-1 flex items-center gap-1.5 text-[18px] font-semibold tracking-[-0.015em] text-white transition-colors duration-200 group-hover/card:text-[#FFB100]">
                                     {title}
 
                                     <ArrowRight
@@ -244,7 +273,7 @@ export default function MenuBar() {
                                     />
                                   </h4>
 
-                                  <p className="text-[13px] font-normal leading-[1.65] tracking-[-0.01em] text-slate-500">
+                                  <p className="text-[14px] font-normal leading-[1.65] tracking-[-0.01em] text-white">
                                     {text}
                                   </p>
                                 </div>

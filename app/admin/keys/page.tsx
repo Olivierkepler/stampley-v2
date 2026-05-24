@@ -119,19 +119,13 @@ export default async function AdminKeysPage({
             await generateStudyKey()
           }}
         >
-          <button
-            type="submit"
-            className="inline-flex h-11 items-center justify-center gap-2 rounded-2xl bg-gray-900 px-5 text-sm font-medium text-white shadow-sm transition hover:bg-gray-800"
-          >
-            <span className="text-base leading-none">+</span>
-            Generate New Key
-          </button>
+        
         </form>
       </div>
 
       <section className="grid grid-cols-1 gap-4 sm:grid-cols-3">
       <div
-    className="rounded-2xl border border-gray-100 p-5 relative overflow-hidden"
+    className=" border border-gray-100 p-5 relative overflow-hidden"
     style={{
       backgroundImage: "url('/images/gradient5.jpg')",
       backgroundSize: "cover",
@@ -148,7 +142,7 @@ export default async function AdminKeysPage({
         </div>
 
       <div
-    className="rounded-2xl border border-gray-100 p-5 relative overflow-hidden"
+    className=" border border-gray-100 p-5 relative overflow-hidden"
     style={{
       backgroundImage: "url('/images/gradient4.jpg')",
       backgroundSize: "cover",
@@ -165,7 +159,7 @@ export default async function AdminKeysPage({
         </div>
 
         <div
-    className="rounded-2xl border border-gray-100 p-5 relative overflow-hidden"
+    className=" border border-gray-100 p-5 relative overflow-hidden"
     style={{
       backgroundImage: "url('/images/gradient3.jpg')",
       backgroundSize: "cover",
@@ -181,8 +175,15 @@ export default async function AdminKeysPage({
           </p>
         </div>
       </section>
+      <button
+            type="submit"
+            className="inline-flex h-11 items-center justify-center gap-2  bg-gray-900 px-5 text-sm font-medium text-white shadow-sm transition hover:bg-gray-800"
+          >
+            <span className="text-base leading-none">+</span>
+            Generate New Key
+          </button>
 
-      <section className="overflow-hidden rounded-3xl border border-gray-200/80 bg-white shadow-sm">
+      <section className="overflow-hidden  border border-gray-200/80 bg-white shadow-sm">
         <div className="border-b border-gray-100 bg-gradient-to-b from-gray-50 to-white px-6 py-5">
           <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
             <div>

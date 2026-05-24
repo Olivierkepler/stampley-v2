@@ -114,7 +114,7 @@ export default async function AdminDashboardPage() {
 {/* Participants */}
 <Link
   href="/admin/users"
-  className="group relative overflow-hidden rounded-[24px] border border-white/20 p-5 text-left shadow-[0_10px_24px_rgba(15,23,42,0.05)] transition duration-200 hover:-translate-y-[2px] hover:shadow-md"
+  className="group relative overflow-hidden  border border-white/20 p-5 text-left shadow-[0_10px_24px_rgba(15,23,42,0.05)] transition duration-200 hover:-translate-y-[2px] hover:shadow-md"
   style={{
     backgroundImage: "url('/images/gradient1.jpg')",
     backgroundSize: "cover",
@@ -136,7 +136,7 @@ export default async function AdminDashboardPage() {
 {/* Check-ins */}
 <Link
   href="/admin/check-ins"
-  className="group relative overflow-hidden rounded-[24px] border border-white/20 p-5 shadow-[0_10px_24px_rgba(15,23,42,0.05)] transition duration-200 hover:-translate-y-[2px] hover:shadow-md"
+  className="group relative overflow-hidden  border border-white/20 p-5 shadow-[0_10px_24px_rgba(15,23,42,0.05)] transition duration-200 hover:-translate-y-[2px] hover:shadow-md"
   style={{
     backgroundImage: "url('/images/gradient4.jpg')",
     backgroundSize: "cover",
@@ -158,7 +158,7 @@ export default async function AdminDashboardPage() {
 {/* Keys */}
 <Link
   href="/admin/keys"
-  className="group relative overflow-hidden rounded-[24px] border border-white/20 p-5 shadow-[0_10px_24px_rgba(15,23,42,0.05)] transition duration-200 hover:-translate-y-[2px] hover:shadow-md"
+  className="group relative overflow-hidden  border border-white/20 p-5 shadow-[0_10px_24px_rgba(15,23,42,0.05)] transition duration-200 hover:-translate-y-[2px] hover:shadow-md"
   style={{
     backgroundImage: "url('/images/gradient5.jpg')",
     backgroundSize: "cover",
@@ -180,7 +180,7 @@ export default async function AdminDashboardPage() {
 {/* Safety */}
 <Link
   href="/admin/safety"
-  className="group relative overflow-hidden rounded-[24px] border border-white/20 p-5 shadow-[0_10px_24px_rgba(15,23,42,0.05)] transition duration-200 hover:-translate-y-[2px] hover:shadow-md"
+  className="group relative overflow-hidden  border border-white/20 p-5 shadow-[0_10px_24px_rgba(15,23,42,0.05)] transition duration-200 hover:-translate-y-[2px] hover:shadow-md"
   style={{
     backgroundImage: "url('/images/gradient3.jpg')",
     backgroundSize: "cover",
@@ -206,7 +206,7 @@ export default async function AdminDashboardPage() {
 </div>
 
           {/* Safety Status */}
-          <section className="relative overflow-hidden rounded-[28px] border border-slate-200/60 bg-white/80 text-slate-900 shadow-[0_10px_30px_rgba(15,23,42,0.04)] backdrop-blur-sm">
+          <section className="relative overflow-hidden  border border-slate-200/60 bg-white/80 text-slate-900 shadow-[0_10px_30px_rgba(15,23,42,0.04)] backdrop-blur-sm">
 
 {/* subtle neutral glow */}
 <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(148,163,184,0.15),transparent_45%)]" />
@@ -214,7 +214,7 @@ export default async function AdminDashboardPage() {
 <div className="relative flex items-start gap-4 px-6 py-5">
   
   {/* icon */}
-  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-slate-100 text-slate-700 ring-1 ring-slate-200">
+  <div className="flex h-11 w-11 shrink-0 items-center justify-center  bg-slate-100 text-slate-700 ring-1 ring-slate-200">
     <svg
       className="h-5 w-5"
       fill="none"
@@ -248,7 +248,7 @@ export default async function AdminDashboardPage() {
 
           {/* Charts Row */}
           <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-            <div className="rounded-[28px] border border-slate-200/60 bg-white/80 p-6 shadow-[0_10px_30px_rgba(15,23,42,0.04)] backdrop-blur-sm">
+            <div className=" border border-slate-200/60 bg-white/80 p-6 shadow-[0_10px_30px_rgba(15,23,42,0.04)] backdrop-blur-sm">
               <div className="mb-4">
                 <h2 className="text-sm font-semibold text-slate-900">
                   Check-in Activity
@@ -264,7 +264,7 @@ export default async function AdminDashboardPage() {
               )}
             </div>
 
-            <div className="rounded-[28px] border border-slate-200/60 bg-white/80 p-6 shadow-[0_10px_30px_rgba(15,23,42,0.04)] backdrop-blur-sm">
+            <div className=" border border-slate-200/60 bg-white/80 p-6 shadow-[0_10px_30px_rgba(15,23,42,0.04)] backdrop-blur-sm">
               <div className="mb-4">
                 <h2 className="text-sm font-semibold text-slate-900">
                   Distress Distribution
@@ -285,7 +285,7 @@ export default async function AdminDashboardPage() {
 
           {/* Bottom Row */}
           <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-            <div className="rounded-[28px]  border border-slate-200/60 bg-white/80 p-6 shadow-[0_10px_30px_rgba(15,23,42,0.04)] backdrop-blur-sm"
+            <div className="  border border-slate-200/60 bg-white/80 p-6 shadow-[0_10px_30px_rgba(15,23,42,0.04)] backdrop-blur-sm"
             style={{
               backgroundImage: "url('/images/gradient5.jpg')",
               backgroundSize: "cover",
@@ -302,7 +302,7 @@ export default async function AdminDashboardPage() {
                 ) : (
                   recentUsersResult.rows.map((u: any) => (
                     <div key={u.email} className="flex items-center gap-3">
-                      <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-slate-100 text-sm font-medium text-slate-700">
+                      <div className="flex h-9 w-9 items-center justify-center  bg-slate-100 text-sm font-medium text-slate-700">
                         {u.email[0].toUpperCase()}
                       </div>
 
@@ -321,7 +321,7 @@ export default async function AdminDashboardPage() {
             </div>
 
             <div
-  className="relative overflow-hidden rounded-[32px] border border-black/[0.06] bg-white/85 p-6 shadow-[0_12px_40px_rgba(15,23,42,0.06)] backdrop-blur-xl"
+  className="relative overflow-hidden  border border-black/[0.06] bg-white/85 p-6 shadow-[0_12px_40px_rgba(15,23,42,0.06)] backdrop-blur-xl"
   style={{
     backgroundImage: "url('/images/light_white_gradient.png')",
     backgroundSize: "cover",
@@ -332,7 +332,7 @@ export default async function AdminDashboardPage() {
   <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.88)_0%,rgba(255,255,255,0.72)_100%)]" />
 
   {/* subtle glow */}
-  <div className="pointer-events-none absolute -right-10 -top-10 h-40 w-40 rounded-full bg-white/40 blur-3xl" />
+  <div className="pointer-events-none absolute -right-10 -top-10 h-40 w-40  bg-white/40 blur-3xl" />
 
   <div className="relative z-10">
     <div className="mb-6 flex items-start justify-between">
@@ -348,13 +348,13 @@ export default async function AdminDashboardPage() {
         </p>
       </div>
 
-      <div className="rounded-full border border-black/[0.06] bg-white/70 px-3 py-1 text-[11px] font-medium text-black/45 shadow-sm">
+      <div className=" border border-black/[0.06] bg-white/70 px-3 py-1 text-[11px] font-medium text-black/45 shadow-sm">
         Live
       </div>
     </div>
 
     <div className="space-y-5">
-      <div className="rounded-2xl border border-black/[0.05] bg-white/55 p-4">
+      <div className=" border border-black/[0.05] bg-white/55 p-4">
         <div className="mb-3 flex items-center justify-between">
           <div>
             <p className="text-[11px] uppercase tracking-[0.14em] text-black/35">
@@ -367,9 +367,9 @@ export default async function AdminDashboardPage() {
           <span className="text-xs font-medium text-black/40">/ 100 target</span>
         </div>
 
-        <div className="h-2 overflow-hidden rounded-full bg-slate-200/70">
+        <div className="h-2 overflow-hidden  bg-slate-200/70">
           <div
-            className="h-full rounded-full bg-gradient-to-r from-slate-900 via-slate-800 to-slate-700 shadow-[0_0_12px_rgba(15,23,42,0.18)]"
+            className="h-full  bg-gradient-to-r from-slate-900 via-slate-800 to-slate-700 shadow-[0_0_12px_rgba(15,23,42,0.18)]"
             style={{
               width: `${Math.min((totalCheckins / 100) * 100, 100)}%`,
             }}
@@ -377,7 +377,7 @@ export default async function AdminDashboardPage() {
         </div>
       </div>
 
-      <div className="rounded-2xl border border-black/[0.05] bg-white/55 p-4">
+      <div className=" border border-black/[0.05] bg-white/55 p-4">
         <div className="mb-3 flex items-center justify-between">
           <div>
             <p className="text-[11px] uppercase tracking-[0.14em] text-black/35">
@@ -390,9 +390,9 @@ export default async function AdminDashboardPage() {
           <span className="text-xs font-medium text-black/40">/ 20 active</span>
         </div>
 
-        <div className="h-2 overflow-hidden rounded-full bg-emerald-100/80">
+        <div className="h-2 overflow-hidden  bg-emerald-100/80">
           <div
-            className="h-full rounded-full bg-gradient-to-r from-emerald-500 via-emerald-400 to-emerald-300 shadow-[0_0_12px_rgba(16,185,129,0.18)]"
+            className="h-full  bg-gradient-to-r from-emerald-500 via-emerald-400 to-emerald-300 shadow-[0_0_12px_rgba(16,185,129,0.18)]"
             style={{
               width: `${Math.min((participants / 20) * 100, 100)}%`,
             }}
@@ -400,7 +400,7 @@ export default async function AdminDashboardPage() {
         </div>
       </div>
 
-      <div className="rounded-2xl border border-black/[0.05] bg-white/55 p-4">
+      <div className=" border border-black/[0.05] bg-white/55 p-4">
         <div className="mb-3 flex items-center justify-between">
           <div>
             <p className="text-[11px] uppercase tracking-[0.14em] text-black/35">
@@ -417,9 +417,9 @@ export default async function AdminDashboardPage() {
           <span className="text-xs font-medium text-black/40">/ 10 threshold</span>
         </div>
 
-        <div className="h-2 overflow-hidden rounded-full bg-rose-100/80">
+        <div className="h-2 overflow-hidden  bg-rose-100/80">
           <div
-            className="h-full rounded-full bg-gradient-to-r from-red-500 via-rose-500 to-rose-400 shadow-[0_0_12px_rgba(239,68,68,0.18)]"
+            className="h-full  bg-gradient-to-r from-red-500 via-rose-500 to-rose-400 shadow-[0_0_12px_rgba(239,68,68,0.18)]"
             style={{
               width: `${Math.min((safetyAlerts / 10) * 100, 100)}%`,
             }}

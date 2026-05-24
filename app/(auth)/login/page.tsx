@@ -109,7 +109,7 @@ export default function LoginPage() {
         ::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.08); border-radius: 4px; }
       `}</style>
 
-      <div className="f-body relative flex min-h-screen overflow-hidden bg-[#f5f2ec]">
+      <div className="f-body relative flex min-h-screen overflow-hidden bg-white">
         {/* Left panel */}
       {/* Left panel */}
 <div
@@ -177,19 +177,25 @@ export default function LoginPage() {
     {/* Hero */}
     <div className="anim-hero max-w-[520px]">
       <p className="f-mono mb-7 flex items-center gap-3 text-[9.5px] uppercase tracking-[0.28em] text-[#FFB100]">
-        <span className="inline-block h-px w-7 bg-[#FFB100] opacity-60" />
+        {/* <span className="inline-block h-px w-7 bg-[#FFB100] opacity-60" /> */}
         Secure Authentication
       </p>
 
       <h1
-        className="f-display mb-6 font-light leading-[1.08] text-white/[0.94] select-none"
+        className="f-display mb-6 font-light leading-[1.08] text-white/[0.96] select-none"
         style={{
-          fontSize: "clamp(40px, 4.5vw, 66px)",
+       
           letterSpacing: "-0.02em",
+
+          fontFamily: "'Poppins', sans-serif",
+          fontSize: "clamp(25px, 3vw, 40px)",
         }}
       >
         Welcome back,{" "}
-        <em className="italic font-light text-white/35">
+        <em 
+        
+        className="italic font-light text-white/35"
+        > <br />
           sign in securely.
         </em>
       </h1>
@@ -213,7 +219,10 @@ export default function LoginPage() {
             i === 0 ? "pl-0" : "border-l border-white/[0.08]"
           }`}
         >
-          <span className="f-display text-[28px] font-normal leading-none tracking-[-0.02em] text-white/[0.92]">
+          <span className="f-display text-[20px] font-normal leading-none tracking-[-0.02em] text-white/[0.92]"
+          
+
+          >
             {stat.value}
           </span>
 
@@ -234,6 +243,17 @@ export default function LoginPage() {
         {/* Right panel */}
         <div className="dot-pattern relative flex w-full items-center justify-center px-6 py-12 lg:w-[520px] lg:shrink-0 lg:bg-[#fefdfb] lg:px-14 lg:py-16 lg:shadow-[inset_1px_0_0_rgba(10,10,15,0.04),-32px_0_80px_rgba(10,10,15,0.04)]">
           <div className="anim-form relative z-10 w-full max-w-[380px]">
+          <Image
+         
+         src="/images/stampleyLogo.png" alt="AIDES-T2D" width={32} height={32} 
+          style ={{
+           position: "absolute",
+           top : -110,
+           right: 0,
+
+          }}
+         />
+            
             <div className="mb-10">
               <div className="f-mono mb-4 flex items-center gap-2 text-[9px] uppercase tracking-[0.24em] text-black/60 select-none">
                 <span className="inline-block h-2 w-2 rounded-[3px] border-[1.5px] border-[#3d5a80] opacity-50" />
@@ -241,13 +261,20 @@ export default function LoginPage() {
               </div>
 
               <h2
-                className="f-display mb-2 text-[36px] font-normal leading-[1.1] text-[#0a0a0f]"
-                style={{ letterSpacing: "-0.02em" }}
+                className=" mb-2 leading-[1.1] text-[#0a0a0f]"
+                style={{
+                  fontFamily: "'Inter', sans-serif",
+                  fontSize: "2.25rem",
+                }}
               >
                 Welcome back.
               </h2>
 
-              <p className="text-[13px] font-light leading-[1.6] text-black/60">
+              <p className="text-[14px] font-light leading-[1.6] text-black"
+              style  ={{
+                fontFamily: "'Inter', sans-serif",
+              }}
+              >
                 Sign in to your account to continue.
               </p>
             </div>
@@ -272,9 +299,9 @@ export default function LoginPage() {
 
             <form onSubmit={handleSubmit} className="flex flex-col gap-5">
               <div className="flex flex-col gap-2">
-                <label
-                  htmlFor="email"
-                  className="f-mono text-[9.5px] uppercase tracking-[0.16em] text-black/70 select-none"
+              <label
+                  htmlFor="studyId"
+                  className="f-mono text-[12px] uppercase tracking-[0.16em] text-black/70 select-none"
                 >
                   Email Address
                 </label>
@@ -297,17 +324,17 @@ export default function LoginPage() {
                     placeholder="you@email.com"
                     required
                     disabled={loading}
-                    className="styled-input f-body w-full rounded-[10px] border border-black/[0.12] bg-[#f5f2ec] py-[13px] pl-[42px] pr-4 text-[13.5px] text-[#0a0a0f] outline-none transition-all duration-200 placeholder:text-black/40 focus:border-[#3d5a80] focus:bg-[#fefdfb] focus:shadow-[0_0_0_3.5px_rgba(61,90,128,0.12)] disabled:cursor-not-allowed disabled:opacity-40"
+                    className="styled-input f-body w-full rounded-[10px] border border-black/[0.12] bg-white py-[13px] pl-[42px] pr-4 text-[13.5px] text-[#0a0a0f] outline-none transition-all duration-200 placeholder:text-black/40 focus:border-[#3d5a80] focus:bg-[#fefdfb] focus:shadow-[0_0_0_3.5px_rgba(61,90,128,0.12)] disabled:cursor-not-allowed disabled:opacity-40"
                   />
                 </div>
               </div>
 
               <div className="flex flex-col gap-2">
                 <div className="flex items-center justify-between">
-                  <label
-                    htmlFor="password"
-                    className="f-mono text-[9.5px] uppercase tracking-[0.16em] text-black/70 select-none"
-                  >
+                <label
+                  htmlFor="studyId"
+                  className="f-mono text-[12px] uppercase tracking-[0.16em] text-black/70 select-none"
+                >
                     Password
                   </label>
                   <Link
@@ -338,7 +365,7 @@ export default function LoginPage() {
                     placeholder="••••••••"
                     required
                     disabled={loading}
-                    className="styled-input f-body w-full rounded-[10px] border border-black/[0.12] bg-[#f5f2ec] py-[13px] pl-[42px] pr-11 text-[13.5px] text-[#0a0a0f] outline-none transition-all duration-200 placeholder:text-black/40 focus:border-[#3d5a80] focus:bg-[#fefdfb] focus:shadow-[0_0_0_3.5px_rgba(61,90,128,0.12)] disabled:cursor-not-allowed disabled:opacity-40"
+                    className="styled-input f-body w-full rounded-[10px] border border-black/[0.12] bg-white py-[13px] pl-[42px] pr-11 text-[13.5px] text-[#0a0a0f] outline-none transition-all duration-200 placeholder:text-black/40 focus:border-[#3d5a80] focus:bg-[#fefdfb] focus:shadow-[0_0_0_3.5px_rgba(61,90,128,0.12)] disabled:cursor-not-allowed disabled:opacity-40"
                   />
 
                   <button
@@ -384,7 +411,7 @@ export default function LoginPage() {
               <button
                 type="submit"
                 disabled={loading}
-                className="btn-shimmer relative mt-1 w-full overflow-hidden rounded-[10px] border-none bg-[#0a0a0f] px-6 py-[14px] f-body text-[13px] font-semibold uppercase tracking-[0.06em] text-white shadow-[0_4px_16px_rgba(10,10,15,0.18),0_1px_3px_rgba(10,10,15,0.12)] transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:not-disabled:-translate-y-px hover:not-disabled:bg-[#1a1a24] hover:not-disabled:shadow-[0_8px_28px_rgba(10,10,15,0.25),0_2px_6px_rgba(10,10,15,0.15)] active:not-disabled:translate-y-0 active:not-disabled:scale-[0.985] disabled:cursor-not-allowed disabled:opacity-40"
+                className="btn-shimmer relative mt-1 w-full cursor-pointer overflow-hidden rounded-[10px] border-none bg-blue-900 px-6 py-[14px] f-body text-[13px] font-semibold uppercase tracking-[0.06em] text-white shadow-[0_4px_16px_rgba(10,10,15,0.18),0_1px_3px_rgba(10,10,15,0.12)] transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:not-disabled:-translate-y-px hover:not-disabled:bg-blue-800 hover:not-disabled:shadow-[0_8px_28px_rgba(10,10,15,0.25),0_2px_6px_rgba(10,10,15,0.15)] active:not-disabled:translate-y-0 active:not-disabled:scale-[0.985] disabled:cursor-not-allowed disabled:opacity-40"
               >
                 <span className="relative z-10 flex items-center justify-center gap-2">
                   {loading ? (

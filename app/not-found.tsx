@@ -6,7 +6,7 @@ export default function NotFound() {
         `}</style>
   
         <div
-          className="relative min-h-screen overflow-hidden bg-[linear-gradient(180deg,#faf7f2_0%,#f7f3ed_45%,#fefdfb_100%)]"
+          className="relative min-h-screen overflow-hidden bg-white"
           style={{ fontFamily: "'Outfit', system-ui, sans-serif" }}
         >
           <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.9),transparent_32%),radial-gradient(circle_at_bottom_left,rgba(255,255,255,0.55),transparent_30%)]" />
@@ -25,7 +25,7 @@ export default function NotFound() {
                 </div>
   
                 <h1
-                  className="text-[42px] font-medium leading-[0.98] tracking-[-0.04em] text-black/85 sm:text-[56px]"
+                  className="text-[42px] font-medium leading-[0.98] tracking-[-0.04em] text-black/85 sm:text-[30px]"
                   style={{ fontFamily: "'Fraunces', Georgia, serif" }}
                 >
                   This page
@@ -41,7 +41,7 @@ export default function NotFound() {
                 <div className="mt-7 flex flex-col gap-3 sm:flex-row">
                   <a
                     href="/dashboard"
-                    className="inline-flex items-center justify-center rounded-[18px] bg-[#1f1a17] px-6 py-3.5 text-sm font-medium text-white transition hover:bg-[#2a231f] shadow-[0_8px_20px_rgba(31,26,23,0.16)]"
+                    className="inline-flex items-center justify-center rounded-[18px] bg-white px-6 py-3.5 text-sm font-medium text-black transition hover:bg-[#2a231f] shadow-[0_8px_20px_rgba(31,26,23,0.16)]"
                   >
                     Go to dashboard
                   </a>
@@ -54,7 +54,7 @@ export default function NotFound() {
                   </a> */}
                 </div>
   
-                <div className="mt-8 rounded-[22px] border border-[#e7dac8] bg-[#f6efe4]/65 p-4">
+                <div className="mt-8 rounded-[22px] border border-[#e7dac8] bg-white p-4">
                   <p className="text-[11px] uppercase tracking-[0.16em] text-[#8B6F47]/80">
                     Helpful note
                   </p>
@@ -65,9 +65,9 @@ export default function NotFound() {
                 </div>
               </section>
   
-              <aside className="rounded-[36px] border border-black/[0.06] bg-[#1f1a17] p-8 text-white shadow-[0_18px_60px_rgba(15,23,42,0.08)] sm:p-10">
+              <aside className="rounded-[36px] border border-black/[0.06] bg-white p-8 text-black shadow-[0_18px_60px_rgba(15,23,42,0.08)] sm:p-10">
                 <p
-                  className="text-[10px] uppercase tracking-[0.22em] text-white/35"
+                  className="text-[10px] uppercase tracking-[0.22em] text-black"
                   style={{ fontFamily: "'JetBrains Mono', monospace" }}
                 >
                   Navigation options
@@ -96,17 +96,17 @@ export default function NotFound() {
                       className="rounded-[24px] border border-white/10 bg-white/[0.04] p-5"
                     >
                       <div className="flex items-start gap-4">
-                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white/10 text-[11px] font-medium text-white/70">
+                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white/10 text-[11px] font-medium text-black">
                           {item.step}
                         </div>
                         <div>
                           <h2
-                            className="text-[18px] font-medium tracking-[-0.02em] text-white"
+                            className="text-[18px] font-medium tracking-[-0.02em]text-black"
                             style={{ fontFamily: "'Fraunces', Georgia, serif" }}
                           >
                             {item.title}
                           </h2>
-                          <p className="mt-2 text-[13px] leading-6 text-white/58">
+                          <p className="mt-2 text-[13px] leading-6 text-black">
                             {item.text}
                           </p>
                         </div>

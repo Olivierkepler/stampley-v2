@@ -181,7 +181,7 @@ export default function HeroSection() {
           }}
         >
           <Link
-            href="/register"
+            href="/login"
             className="group hero-float inline-flex items-center gap-2 rounded-full transition-all duration-200 hover:-translate-y-1"
             style={{
               padding: "10px 20px",

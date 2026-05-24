@@ -3,6 +3,8 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
+
+
 interface GlucometerProps {
   value: number;
   unit?: string;
@@ -171,15 +173,7 @@ const WhiteGlucometer = ({
             transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
           />
 
-          <text 
-            textAnchor="middle" 
-            y="3" 
-            fontSize="6" 
-            fill="#64748b" 
-            className="pointer-events-none font-bold tracking-[0.15em] uppercase"
-          >
-            Measure
-          </text>
+       
         </g>
 
         {/* Strip Entry Port */}

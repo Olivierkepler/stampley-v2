@@ -50,7 +50,7 @@ export function KeysTableToolbar({
             if (e.key === "Enter") submitSearch()
           }}
           placeholder="Search key or participant"
-          className="h-11 w-72 rounded-2xl border border-gray-200 bg-white px-4 pr-10 text-sm text-gray-900 shadow-sm outline-none transition placeholder:text-gray-400 focus:border-gray-300 focus:ring-4 focus:ring-gray-100"
+          className="h-11 w-72 border border-gray-200 bg-white px-4 pr-10 text-sm text-gray-900 shadow-sm outline-none transition placeholder:text-gray-400 focus:border-gray-300 focus:ring-4 focus:ring-gray-100"
         />
         <button
           type="button"
@@ -72,7 +72,7 @@ export function KeysTableToolbar({
       <select
         value={status}
         onChange={(e) => updateParam("status", e.target.value)}
-        className="h-11 rounded-2xl border border-gray-200 bg-white px-4 text-sm text-gray-900 shadow-sm outline-none focus:border-gray-300 focus:ring-4 focus:ring-gray-100"
+        className="h-11 border border-gray-200 bg-white px-4 text-sm text-gray-900 shadow-sm outline-none focus:border-gray-300 focus:ring-4 focus:ring-gray-100"
       >
         <option value="ALL">All statuses</option>
         <option value="AVAILABLE">Available</option>
@@ -82,7 +82,7 @@ export function KeysTableToolbar({
       <select
         value={sort}
         onChange={(e) => updateParam("sort", e.target.value)}
-        className="h-11 rounded-2xl border border-gray-200 bg-white px-4 text-sm text-gray-900 shadow-sm outline-none focus:border-gray-300 focus:ring-4 focus:ring-gray-100"
+        className="h-11 border border-gray-200 bg-white px-4 text-sm text-gray-900 shadow-sm outline-none focus:border-gray-300 focus:ring-4 focus:ring-gray-100"
       >
         <option value="created_at_desc">Newest</option>
         <option value="created_at_asc">Oldest</option>
@@ -93,7 +93,7 @@ export function KeysTableToolbar({
       <select
         value={String(pageSize)}
         onChange={(e) => updateParam("pageSize", e.target.value)}
-        className="h-11 rounded-2xl border border-gray-200 bg-white px-4 text-sm text-gray-900 shadow-sm outline-none focus:border-gray-300 focus:ring-4 focus:ring-gray-100"
+        className="h-11 border border-gray-200 bg-white px-4 text-sm text-gray-900 shadow-sm outline-none focus:border-gray-300 focus:ring-4 focus:ring-gray-100"
       >
         <option value="10">10 / page</option>
         <option value="20">20 / page</option>

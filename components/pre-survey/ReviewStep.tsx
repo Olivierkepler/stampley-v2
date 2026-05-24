@@ -13,7 +13,7 @@ export default function ReviewStep({ formData, prevStep }: any) {
     try {
       setIsSubmitting(true);
       await submitPreSurvey(formData);
-      window.location.href = "/check-in";
+      window.location.href = "/survey/dds";
     } catch (error) {
       console.error("Pre-survey submit failed:", error);
       setIsSubmitting(false);

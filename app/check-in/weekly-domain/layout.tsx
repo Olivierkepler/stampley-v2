@@ -1,0 +1,10 @@
+import { redirectIfAlreadyCheckedInToday } from "@/lib/check-in-flow-guard"
+
+export default async function WeeklyDomainLayout({
+  children,
+}: {
+  children: React.ReactNode
+}) {
+  await redirectIfAlreadyCheckedInToday()
+  return children
+}

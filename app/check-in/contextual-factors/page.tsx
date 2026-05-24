@@ -1,8 +1,8 @@
 "use client"
 
-import { motion, styleEffect } from "framer-motion"
-import { useRouter } from "next/navigation"
+import { motion } from "framer-motion"
 import { useCheckInStore } from "@/store/checkin-store"
+import CheckInSubHeader from "@/components/check-in/CheckInSubHeader"
 import {
   Stethoscope,
   Activity,
@@ -25,7 +25,6 @@ const CONTEXT_TAGS = [
 ]
 
 export default function ContextualFactorsPage() {
-  const router = useRouter()
   const { contextTags, setContextTags } = useCheckInStore()
 
   function toggleTag(tag: string) {
@@ -43,44 +42,16 @@ export default function ContextualFactorsPage() {
       `}</style>
 
       <div
-        className="max-w-3xl mx-auto w-full pb-10 pt-10 px-4 lg:px-0"
+        className="mx-auto w-full max-w-full pb-10  "
         style={{ fontFamily: "'Outfit', system-ui, sans-serif" }}
       >
-        <motion.div
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mb-10"
-        >
-          <div className="flex items-center gap-2.5 mb-4">
-            {/* <span className="h-px w-5 bg-[#3d5a80]/40" /> */}
-            <span
-              className="text-[9px] uppercase tracking-[0.24em] text-black select-none"
-              style={{ fontFamily: "'Poppins', sans-serif", fontSize: "clamp(10px, 5vw, 10px)" }}
-              >
-              Step 2 of 5
-            </span>
-          </div>
+        <CheckInSubHeader
+          eyebrow="Step 2 of 5"
+          title="What shaped your day?"
+          description="Select all that applied to your day with diabetes."
+        />
 
-          <h1
-           className="font-light text-blue-900 mb-3 leading-[1.15] text-center sm:text-left"
-           style={{ fontFamily: "'Poppins', sans-serif", fontSize: "clamp(22px, 5vw, 30px)" }}
- 
-          >
-            What shaped your <span className="text-[#FFB100] font-light" style={{ fontFamily: "'Poppins', sans-serif" }}>
-            day?</span>
-          </h1>
-
-          <p
-    className="leading-[1.7] hidden sm:block "
-    style={{
-      fontFamily: "'Poppins', sans-serif",
-      fontSize: "clamp(14px, 3.5vw, 16px)",
-    }}
-  > Select all that applied to your day with diabetes.
-          </p>
-        </motion.div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+        <div className="mt-10 md:mt-20 grid grid-cols-1 px-4 md:px-20 gap-3 md:grid-cols-2">
           {CONTEXT_TAGS.map((tag, index) => {
             const selected = contextTags.includes(tag.id)
             const Icon = tag.icon
@@ -95,10 +66,11 @@ export default function ContextualFactorsPage() {
                 whileTap={{ scale: 0.98 }}
                 onClick={() => toggleTag(tag.id)}
                 className={`
-                  relative w-full p-5 rounded-[18px] border transition-all duration-300 text-left flex items-center gap-4 overflow-hidden
-                  ${selected
-                    ? "bg-white border-[#3d5a80]/50 shadow-[0_4px_16px_rgba(61,90,128,0.1)]"
-                    : "bg-white border-black/[0.08] hover:border-[#3d5a80]/25 hover:bg-[#3d5a80]/[0.02] shadow-[0_1px_4px_rgba(10,10,15,0.04)]"
+                  relative flex w-full items-center gap-4 overflow-hidden border p-5 text-left transition-all duration-300
+                  ${
+                    selected
+                      ? "border-[#3d5a80]/50 bg-white shadow-[0_4px_16px_rgba(61,90,128,0.1)]"
+                      : "border-black/[0.08] bg-white shadow-[0_1px_4px_rgba(10,10,15,0.04)] hover:border-[#3d5a80]/25 hover:bg-[#3d5a80]/[0.02]"
                   }
                 `}
               >
@@ -112,10 +84,11 @@ export default function ContextualFactorsPage() {
                     damping: 20,
                   }}
                   className={`
-                    flex items-center justify-center shrink-0 w-11 h-11 rounded-[12px] transition-all duration-300
-                    ${selected
-                      ? "bg-blue-900 text-white shadow-[0_2px_8px_rgba(61,90,128,0.25)]"
-                      : "bg-black/[0.04] text-black/40 border border-black/[0.06]"
+                    flex h-11 w-11 shrink-0 items-center justify-center rounded-[12px] transition-all duration-300
+                    ${
+                      selected
+                        ? "bg-blue-900 text-white shadow-[0_2px_8px_rgba(61,90,128,0.25)]"
+                        : "border border-black/[0.06] bg-black/[0.04] text-black/40"
                     }
                   `}
                 >
@@ -124,26 +97,32 @@ export default function ContextualFactorsPage() {
 
                 <span
                   className={`
-                    flex-1  leading-snug transition-colors duration-300
-                    ${selected ? "text-[#0a0a0f] font-medium" : "text-[#0a0a0f]/70 font-normal"}
+                    flex-1 leading-snug transition-colors duration-300
+                    ${
+                      selected
+                        ? "font-medium text-[#0a0a0f]"
+                        : "font-normal text-[#0a0a0f]/70"
+                    }
                   `}
-                  style={{ fontFamily: "'Poppins', sans-serif", fontSize: "clamp(16px, 1vw, 16px)" }}
-          
+                  style={{
+                    fontFamily: "'Poppins', sans-serif",
+                    fontSize: "clamp(16px, 1vw, 16px)",
+                  }}
                 >
                   {tag.label}
                 </span>
 
                 <div
                   className={`
-                    transition-all duration-300 transform shrink-0
-                    ${selected ? "opacity-100 scale-100" : "opacity-0 scale-50"}
+                    shrink-0 transform transition-all duration-300
+                    ${selected ? "scale-100 opacity-100" : "scale-50 opacity-0"}
                   `}
                 >
                   <CheckCircle2 size={18} className="text-[#0a0a0f]" />
                 </div>
 
                 {selected && (
-                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent skew-x-12 pointer-events-none" />
+                  <div className="pointer-events-none absolute inset-0 skew-x-12 bg-gradient-to-r from-transparent via-white/30 to-transparent" />
                 )}
               </motion.button>
             )
@@ -151,26 +130,10 @@ export default function ContextualFactorsPage() {
         </div>
 
         {contextTags.length === 0 && (
-          <p className="text-[12px] text-black/35 text-center mt-6 font-light">
+          <p className="mt-6 text-center text-[12px] font-light text-black/35">
             Nothing applied today? That&apos;s okay — you can continue without selecting anything.
           </p>
         )}
-
-        <div className="flex gap-3 mt-8">
-          <button
-            onClick={() => router.push("/check-in/daily-metrics")}
-            className="flex-1 border border-black/[0.08] bg-[#fefdfb] text-black/60 rounded-[16px] py-[14px] text-[13px] font-medium transition-all duration-200 hover:bg-black/[0.02] hover:border-[#3d5a80]/25 hover:text-[#0a0a0f]"
-          >
-            ← Back
-          </button>
-
-          <button
-            onClick={() => router.push("/check-in/clinical-narrative")}
-            className="flex-1 bg-[#0a0a0f] text-white rounded-[16px] py-[14px] text-[13px] font-semibold uppercase tracking-[0.06em] transition-all duration-300 hover:bg-[#1a1a24]"
-          >
-            Continue →
-          </button>
-        </div>
       </div>
     </>
   )

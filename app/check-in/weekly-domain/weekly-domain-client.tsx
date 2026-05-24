@@ -1,6 +1,5 @@
 "use client"
 
-import { useRouter } from "next/navigation"
 import { useLayoutEffect, useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { useCheckInStore, type Domain } from "@/store/checkin-store"
@@ -70,7 +69,6 @@ interface Props {
 }
 
 export function WeeklyDomainClient({ lockedDomain, weekNumber, isLocked }: Props) {
-  const router = useRouter()
   const { domain, setDomain } = useCheckInStore()
   const [hoveredId, setHoveredId] = useState<string | null>(null)
   const [showInsight, setShowInsight] = useState<string | null>(null)
@@ -82,8 +80,42 @@ export function WeeklyDomainClient({ lockedDomain, weekNumber, isLocked }: Props
   const activeDomain = DOMAINS.find(d => d.id === (domain || lockedDomain))
 
   return (
-    <div className="space-y-5">
-   
+    <div className="space-y-10">
+       {/* Selection summary */}
+       <AnimatePresence>
+        {(domain || lockedDomain) && activeDomain && (
+          <motion.div
+            initial={{ opacity: 0, y: 6 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 6 }}
+            transition={{ duration: 0.3 }}
+            className=" px-4 py-3 flex items-center gap-3 "
+            style={{
+              background: "white",
+              border: "1px solid rgba(10,10,5,0.08)",
+            }}
+          >
+            <span className="text-base text-blue-900">{activeDomain.emoji}</span>
+            <p
+              className="text-[12px]"
+              style={{
+                color: "rgba(10,10,5,0.4)",
+                  fontFamily: "'Poppins', sans-serif",
+      fontSize: "clamp(14px, 3.5vw, 16px)",
+              }}
+            >
+              Stampley will focus on{" "}
+              <span
+                className="font-semibold"
+                style={{ color: "rgba(10,10,5,0.65)" }}
+              >
+                {activeDomain.label}
+              </span>{" "}
+              for the next 4 days
+            </p>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Locked notice */}
       <AnimatePresence>
@@ -93,7 +125,7 @@ export function WeeklyDomainClient({ lockedDomain, weekNumber, isLocked }: Props
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -8 }}
             transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-            className="relative overflow-hidden rounded-[18px] px-5 py-4"
+            className="relative overflow-hidden  px-5 py-4"
             style={{
               // background: "linear-gradient(160deg, #fefdfb 0%, #f5f3ef 100%)",
               // border: "1px solid rgba(10,10,5,0.09)",
@@ -103,17 +135,14 @@ export function WeeklyDomainClient({ lockedDomain, weekNumber, isLocked }: Props
             {/* Corner accent */}
             <div
               className="absolute top-0 right-0 w-28 h-28 rounded-full pointer-events-none"
-              style={{
-                background: "radial-gradient(circle, rgba(10,10,5,0.04) 0%, transparent 70%)",
-                transform: "translate(30%, -30%)",
-              }}
+             
             />
 
             <div className="flex items-center gap-3 relative">
               <div
-                className="w-8 h-8 rounded-[10px] flex items-center justify-center shrink-0"
+                className="w-8 h-8  flex items-center justify-center shrink-0"
                 style={{
-                  background: "rgba(10,10,5,0.05)",
+                  background: "white",
                   border: "1px solid rgba(10,10,5,0.09)",
                 }}
               >
@@ -148,14 +177,14 @@ export function WeeklyDomainClient({ lockedDomain, weekNumber, isLocked }: Props
               {/* Active domain pill */}
               {activeDomain && (
                 <div
-                  className="ml-auto flex items-center gap-1.5 px-3 py-1.5 rounded-full shrink-0"
+                  className="ml-auto flex items-center gap-1.5 px-3 py-1.5  shrink-0"
                   style={{
                     background: "rgba(255,255,255,0.7)",
                     border: "1px solid rgba(10,10,5,0.1)",
                     backdropFilter: "blur(4px)",
                   }}
                 >
-                  <span className="text-sm">{activeDomain.emoji}</span>
+                  {/* <span className="text-sm">{activeDomain.emoji}</span> */}
                   <span
                     className="text-[9.5px] font-semibold uppercase tracking-[0.16em]"
                     style={{
@@ -171,6 +200,8 @@ export function WeeklyDomainClient({ lockedDomain, weekNumber, isLocked }: Props
           </motion.div>
         )}
       </AnimatePresence>
+
+      
 
       {/* Domain grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
@@ -204,7 +235,7 @@ export function WeeklyDomainClient({ lockedDomain, weekNumber, isLocked }: Props
               relative 
               w-full 
               text-left 
-              rounded-[22px] 
+               cursor-pointer
               overflow-hidden 
               transition-all 
               duration-300
@@ -274,7 +305,7 @@ export function WeeklyDomainClient({ lockedDomain, weekNumber, isLocked }: Props
                   style={{
                     background: "#ffffff",
                     border: "0.5px solid rgba(255,255,255,0.6)",
-                    boxShadow: "0 2px 10px rgba(0,0,0,0.05)",
+               
                   }}
                 >
                   {d.emoji}
@@ -319,8 +350,9 @@ export function WeeklyDomainClient({ lockedDomain, weekNumber, isLocked }: Props
                           flex items-center justify-center
                         "
                         style={{
-                          background: "#0a0a0f",
+                          background: "#223e65", // dark blue
                           boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
+                     
                         }}
                       >
                         <svg
@@ -428,92 +460,7 @@ export function WeeklyDomainClient({ lockedDomain, weekNumber, isLocked }: Props
         })}
       </div>
 
-      {/* Selection summary */}
-      <AnimatePresence>
-        {(domain || lockedDomain) && activeDomain && (
-          <motion.div
-            initial={{ opacity: 0, y: 6 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 6 }}
-            transition={{ duration: 0.3 }}
-            className="rounded-[16px] px-4 py-3 flex items-center gap-3"
-            style={{
-              background: "white",
-              border: "1px solid rgba(10,10,5,0.08)",
-            }}
-          >
-            <span className="text-base">{activeDomain.emoji}</span>
-            <p
-              className="text-[12px]"
-              style={{
-                color: "rgba(10,10,5,0.4)",
-                  fontFamily: "'Poppins', sans-serif",
-      fontSize: "clamp(14px, 3.5vw, 16px)",
-              }}
-            >
-              Stampley will focus on{" "}
-              <span
-                className="font-semibold"
-                style={{ color: "rgba(10,10,5,0.65)" }}
-              >
-                {activeDomain.label}
-              </span>{" "}
-              for the next 7 days
-            </p>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* Navigation */}
-      <div className="flex gap-3 pt-1">
-        <button
-          onClick={() => router.push("/check-in/clinical-narrative")}
-          className="flex-1 rounded-[16px] py-[14px] text-[13px] font-medium transition-all duration-200 hover:-translate-y-px active:translate-y-0"
-          style={{
-            border: "1.5px solid rgba(10,10,5,0.09)",
-            color: "rgba(10,10,5,0.38)",
-            background: "linear-gradient(160deg, #fefdfb 0%, #f9f6f1 100%)",
-              fontFamily: "'Poppins', sans-serif",
-      fontSize: "clamp(14px, 3.5vw, 16px)",
-          }}
-        >
-          ← Back
-        </button>
-
-        <motion.button
-          onClick={() => router.push("/check-in/stampley-support")}
-          disabled={!domain && !lockedDomain}
-          whileHover={domain || lockedDomain ? { y: -2 } : {}}
-          whileTap={domain || lockedDomain ? { scale: 0.98 } : {}}
-          className="flex-1 rounded-[16px] py-[14px] text-[13px] font-semibold uppercase tracking-[0.07em] relative overflow-hidden transition-all duration-300 disabled:opacity-20 disabled:cursor-not-allowed"
-          style={{
-            background: "linear-gradient(135deg, #1a1a18 0%, #0a0a0f 100%)",
-            color: "rgba(255,252,245,0.9)",
-            boxShadow: domain || lockedDomain
-              ? "0 6px 20px rgba(10,10,5,0.22), 0 2px 6px rgba(10,10,5,0.12)"
-              : "none",
-              fontFamily: "'Poppins', sans-serif",
-      fontSize: "clamp(14px, 3.5vw, 16px)",
-          }}
-        >
-          {/* Warm shimmer */}
-          <motion.div
-            className="absolute inset-0 pointer-events-none"
-            animate={{ x: ["-100%", "200%"] }}
-            transition={{
-              duration: 2.8,
-              repeat: Infinity,
-              ease: "linear",
-              repeatDelay: 1.5,
-            }}
-            style={{
-              background: "linear-gradient(105deg, transparent 40%, rgba(255,248,235,0.12) 50%, transparent 60%)",
-              width: "60%",
-            }}
-          />
-          <span className="relative">Continue →</span>
-        </motion.button>
-      </div>
+  
     </div>
   )
 }

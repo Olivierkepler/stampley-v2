@@ -2,14 +2,13 @@
 
 import { motion } from "framer-motion"
 import { Smile, Zap, Frown, BatteryWarning } from "lucide-react"
-import { useRouter } from "next/navigation"
 import { useCheckInStore } from "@/store/checkin-store"
 import DailyWellnessRadar from "@/components/daily-metrics/DailyWellnessRadar"
 import BioMonitor from "@/components/daily-metrics/BioMonitor"
 import WhiteGlucometer from "@/components/daily-metrics/glucometer"
+import CheckInSubHeader from "@/components/check-in/CheckInSubHeader"
 
 export default function DailyMetricsPage() {
-  const router = useRouter()
   const { distress, mood, energy, setDistress, setMood, setEnergy } = useCheckInStore()
 
   const affect = {
@@ -48,10 +47,12 @@ export default function DailyMetricsPage() {
         initial={{ opacity: 0, y: 15 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, ease: [0.2, 0.8, 0.2, 1] }}
-        className="relative border border-black/[0.08] p-7 md:p-8 rounded-[28px] mb-6 shadow-[0_2px_16px_rgba(10,10,15,0.06),inset_0_1px_0_rgba(255,255,255,0.9)] transition-all duration-300 hover:shadow-[0_8px_32px_rgba(10,10,15,0.1)] hover:border-[#3d5a80]/25 group w-full"
+        className="relative border border-black/[0.08] p-7 md:p-8  mb-6 shadow-[0_2px_16px_rgba(10,10,15,0.06),inset_0_1px_0_rgba(255,255,255,0.9)] transition-all duration-300 hover:shadow-[0_8px_32px_rgba(10,10,15,0.1)] hover:border-[#3d5a80]/25 group w-full"
         // style={{ background: "linear-gradient(160deg, #fefdfb 0%, #f9f6f1 100%)" }}
         style={{ background: "#fff" }}
       >
+
+      
         <div className="mb-1">
           <div className="flex items-center gap-2 mb-2">
             <div className="w-1.5 h-1.5 rounded-full bg-[#3d5a80] shadow-[0_0_5px_rgba(61,90,128,0.45)]" />
@@ -165,52 +166,20 @@ export default function DailyMetricsPage() {
       `}</style>
 
       <div
-        className="max-w-full mx-auto w-full pb-16 pt-6 "
+        className="max-w-full mx-auto w-full  "
         style={{ fontFamily: "'Poppins', sans-serif", fontSize: "clamp(10px, 1vw, 12px)" }}
       >
-        <motion.div
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mb-8 flex flex-col items-center justify-between gap-8 lg:flex-row lg:items-center"
-     
-     
-        >
-     <div className="w-full max-w-[600px] px-4 sm:px-0 mx-auto">
-  <div className="flex items-center gap-2 mb-4">
-    {/* <span className="h-px w-6 bg-[#3d5a80]/40" /> */}
-    <span
-              className="text-[9px] uppercase tracking-[0.24em] text-black select-none"
-              style={{ fontFamily: "'Poppins', sans-serif", fontSize: "clamp(10px, 5vw, 10px)" }}
-              >
-      Step 1 of 5
-    </span>
-  </div>
-  <h1
-    className="font-light text-blue-900 mb-3 leading-[1.15] text-center sm:text-left"
-    style={{ fontFamily: "'Poppins', sans-serif", fontSize: "clamp(22px, 5vw, 30px)" }}
-  >
-    How are you feeling{" "}
-    <span className="text-[#FFB100] font-light" style={{ fontFamily: "'Poppins', sans-serif" }}>
-      today?
-    </span>
-  </h1>c 
-  <p
-    className="leading-[1.7] hidden sm:block "
-    style={{
-      fontFamily: "'Poppins', sans-serif",
-      fontSize: "clamp(14px, 3.5vw, 16px)",
-    }}
-  >
-    Take a moment to check in with yourself. Move each slider to reflect your experience before continuing.
-  </p>
-</div>
 
-          <div className="w-full max-w-[300px] hidden sm:block">
-            <DailyWellnessRadar affect={affect} />
-          </div>
-        </motion.div>
+<CheckInSubHeader
+  eyebrow="Step 1 of 5"
+  title="How are you feeling today?"
+  description="Take a moment to check in with yourself. Move each slider to reflect your experience before continuing."
+/>
 
-        <div className="max-w-full mx-auto w-full">
+
+       
+
+        <div className="max-w-full mx-auto px-4 md:px-20 w-full my-20">
           <div className="flex flex-col lg:flex-row gap-6 w-full items-start">
             <div className="flex-1 w-full ">
               {renderSlider({
@@ -229,7 +198,7 @@ export default function DailyMetricsPage() {
             <div className="relative hidden lg:block w-[200px] shrink-0 translate-y-[-22px]">
               <WhiteGlucometer
                 value={distress}
-                unit="Distress Lvl"
+                unit="Stress Level"
                 label="Sys_Live"
               />
             </div>
@@ -270,15 +239,6 @@ export default function DailyMetricsPage() {
               <BioMonitor mood={mood} energy={energy} />
             </div>
           </div>
-        </div>
-
-        <div className="flex justify-center w-full">
-          <button
-            onClick={() => router.push("/check-in/contextual-factors")}
-            className="btn-shimmer relative mt-4 max-w-3xl mx-auto overflow-hidden rounded-[16px] border-none bg-[#0a0a0f] px-6 py-[15px] text-[13px] font-semibold uppercase tracking-[0.06em] text-white shadow-[0_4px_16px_rgba(10,10,15,0.18),0_1px_3px_rgba(10,10,15,0.12)] transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-px hover:bg-[#1a1a24] hover:shadow-[0_8px_28px_rgba(10,10,15,0.25),0_2px_6px_rgba(10,10,15,0.15)] active:translate-y-0 active:scale-[0.985]"
-          >
-            Continue →
-          </button>
         </div>
    
       </div>

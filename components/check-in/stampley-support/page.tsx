@@ -411,12 +411,16 @@ export default function StampleySupportPage() {
         <StampleySidebar
           isOpen={isSidebarOpen}
           setIsOpen={setIsSidebarOpen}
-          conversations={conversations}
-          currentConversationId={currentConvId}
-          onSelectConversation={handleSelectConversation}
-          onNewChat={handleNewChat}
           setActiveView={(v) => setActiveView(v as "chat" | "results")}
           currentDomain={store.domain}
+          distress={store.distress}
+          mood={store.mood}
+          energy={store.energy}
+          chatStarted={messages.length > 0}
+          checkInCompleted={submitted}
+          subscale={subscale}
+          dayNumber={dayNumber}
+          weekNumber={weekNumber}
         />
 
         <main className="flex-1 flex flex-col h-full overflow-hidden">

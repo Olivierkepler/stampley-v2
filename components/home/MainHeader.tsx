@@ -3,6 +3,7 @@
 import Image from "next/image"
 import { Heart, Menu, Search, X } from "lucide-react"
 import { useState } from "react"
+import Link from "next/link"
 
 export default function MainHeader() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
@@ -51,15 +52,17 @@ export default function MainHeader() {
           </div>
 
           {/* Donate */}
-          <button className="inline-flex h-14 cursor-pointer items-center justify-center gap-2 rounded-full bg-blue-900 px-7 text-base font-semibold text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-blue-800">
-            <Heart size={20} />
-            Volunteer
-          </button>
+          <Link
+            href="/register" className="inline-flex h-9 cursor-pointer items-center justify-center gap-2 rounded-full bg-blue-900 px-7 text-base font-semibold text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-blue-800">
+            {/* <Heart size={20} /> */}
+            Register
+          </Link>
 
           {/* Donate Monthly */}
-          <button className="inline-flex h-14 cursor-pointer items-center justify-center rounded-full border-2 border-blue-900 px-7 text-base font-semibold text-blue-900 transition hover:-translate-y-0.5 hover:bg-blue-900 hover:text-white">
-            Learn More
-          </button>
+          <Link
+            href="/login"className="inline-flex h-9 cursor-pointer items-center justify-center rounded-full border-2 border-blue-900 px-7 text-base font-semibold text-blue-900 transition hover:-translate-y-0.5 hover:bg-blue-900 hover:text-white">
+        Login
+          </Link>
         </div>
 
         {/* Mobile Hamburger */}

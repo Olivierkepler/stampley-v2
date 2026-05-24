@@ -1,71 +1,240 @@
 "use client"
 
-import React, { useState, useMemo } from "react"
+import React, { useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import {
-  Search, MessageSquareText, PanelLeftClose, PanelLeft,
-  Plus, Clock, Target, FileBarChart
+  PanelLeftClose,
+  PanelLeft,
+  Target,
+  FileBarChart,
+  CheckCircle2,
+  Circle,
+  CircleDot,
 } from "lucide-react"
-import type { StoredConversation } from "@/store/conversation-storage"
 
-interface SidebarProps {
-  isOpen: boolean
-  setIsOpen: (open: boolean) => void
-  conversations: StoredConversation[]
-  currentConversationId: string | null
-  onSelectConversation: (id: string) => void
-  onNewChat: () => void
-  setActiveView: (view: "chat" | "results") => void
-  currentDomain: string | null
+type DomainKey = "Emotional" | "Regimen" | "Physician" | "Interpersonal"
+
+const DDS_FOCUS: Record<
+  DomainKey,
+  { label: string; description: string }
+> = {
+  Emotional: {
+    label: "Emotional",
+    description:
+      "Feelings, burnout, worry, and the emotional weight of living with diabetes.",
+  },
+  Regimen: {
+    label: "Regimen",
+    description:
+      "Routines, medication, food, glucose, and day-to-day self-management.",
+  },
+  Physician: {
+    label: "Physician",
+    description:
+      "Your care team, appointments, and feeling heard by healthcare providers.",
+  },
+  Interpersonal: {
+    label: "Interpersonal",
+    description:
+      "Family, friends, support, and feeling understood by people around you.",
+  },
 }
 
-function groupConversations(conversations: StoredConversation[], query: string) {
-  const filtered = conversations
-    .filter(c => c.title.toLowerCase().includes(query.toLowerCase()))
-    .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())
+type StepStatus = "completed" | "active" | "pending"
 
-  if (filtered.length === 0) return []
+interface SessionStep {
+  label: string
+  status: StepStatus
+}
 
-  const now = new Date()
-  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime()
-  const yesterday = today - 86400000
+export interface StampleySidebarProps {
+  isOpen: boolean
+  setIsOpen: (open: boolean) => void
+  setActiveView?: (view: "chat" | "results") => void
+  currentDomain: string | null
+  distress: number
+  mood: number
+  energy: number
+  chatStarted: boolean
+  checkInCompleted: boolean
+  reflection?: string
+  copingAction?: string
+  userMessageCount?: number
+  conversationPhase?: "opening" | "exploration" | "coping" | "closure"
+  highStress?: boolean
+  subscale?: string
+  dayNumber?: number
+  weekNumber?: number
+}
 
-  const groups: Record<string, StoredConversation[]> = {
-    "Today": [], "Yesterday": [], "Earlier": []
+function isDomainKey(value: string | null): value is DomainKey {
+  return (
+    value === "Emotional" ||
+    value === "Regimen" ||
+    value === "Physician" ||
+    value === "Interpersonal"
+  )
+}
+
+function getSessionSteps(
+  chatStarted: boolean,
+  checkInCompleted: boolean
+): SessionStep[] {
+  if (checkInCompleted) {
+    return [
+      { label: "Daily data collected", status: "completed" },
+      { label: "Stampley chat started", status: "completed" },
+      { label: "Check-in saved", status: "completed" },
+      { label: "Session complete", status: "completed" },
+    ]
   }
 
-  filtered.forEach(c => {
-    const t = new Date(c.updatedAt).getTime()
-    if (t >= today) groups["Today"].push(c)
-    else if (t >= yesterday) groups["Yesterday"].push(c)
-    else groups["Earlier"].push(c)
-  })
+  if (chatStarted) {
+    return [
+      { label: "Daily data collected", status: "completed" },
+      { label: "Stampley chat started", status: "completed" },
+      { label: "Check-in not saved yet", status: "active" },
+      { label: "Complete Check-in to finish", status: "pending" },
+    ]
+  }
 
-  return Object.entries(groups).filter(([, chats]) => chats.length > 0)
+  return [
+    { label: "Daily data collected", status: "completed" },
+    { label: "Stampley chat started", status: "pending" },
+    { label: "Check-in not saved yet", status: "pending" },
+    { label: "Complete Check-in to finish", status: "pending" },
+  ]
+}
+
+function derivePhaseFromUserReplies(
+  userMessageCount?: number
+): "opening" | "exploration" | "coping" | "closure" {
+  const count = Math.max(0, userMessageCount ?? 0)
+  if (count === 0) return "opening"
+  if (count === 1) return "exploration"
+  if (count === 2) return "coping"
+  return "closure"
+}
+
+function getSupportLevel(stress: number): {
+  label: "Low" | "Moderate" | "Elevated" | "High support"
+  detail: string
+} {
+  if (stress >= 9) {
+    return {
+      label: "High support",
+      detail: "High stress today — shorter, steadier support.",
+    }
+  }
+  if (stress >= 7) {
+    return { label: "Elevated", detail: "More support and gentle structure." }
+  }
+  if (stress >= 4) {
+    return { label: "Moderate", detail: "Balanced reflection + small steps." }
+  }
+  return { label: "Low", detail: "Light reflection and encouragement." }
+}
+
+function Chip({ children }: { children: React.ReactNode }) {
+  return (
+    <span className="inline-flex items-center rounded-full border border-black/[0.08] bg-white px-2 py-1 text-[10px] font-medium text-black">
+      {children}
+    </span>
+  )
+}
+
+function StepIcon({ status }: { status: StepStatus }) {
+  if (status === "completed") {
+    return (
+      <CheckCircle2
+        size={14}
+        strokeWidth={1.8}
+        className="shrink-0 text-black"
+      />
+    )
+  }
+  if (status === "active") {
+    return (
+      <CircleDot
+        size={14}
+        strokeWidth={1.8}
+        className="shrink-0 text-black"
+      />
+    )
+  }
+  return (
+    <Circle
+      size={14}
+      strokeWidth={1.8}
+      className="shrink-0 text-black/20"
+    />
+  )
+}
+
+function SidebarCard({
+  children,
+  className = "",
+}: {
+  children: React.ReactNode
+  className?: string
+}) {
+  return (
+    <motion.div
+      className={` border border-black/[0.07] bg-white p-3.5 shadow-[0_1px_4px_rgba(10,10,15,0.04)] ${className}`}
+    >
+      {children}
+    </motion.div>
+  )
+}
+
+function MonoLabel({ children }: { children: React.ReactNode }) {
+  return (
+    <p className="mb-2  text-[8px] uppercase tracking-[0.18em] text-black">
+      {children}
+    </p>
+  )
 }
 
 export function StampleySidebar({
-  isOpen, setIsOpen, conversations, currentConversationId,
-  onSelectConversation, onNewChat, setActiveView, currentDomain
-}: SidebarProps) {
+  isOpen,
+  setIsOpen,
+  setActiveView,
+  currentDomain,
+  distress,
+  mood,
+  energy,
+  chatStarted,
+  checkInCompleted,
+  reflection,
+  copingAction,
+  userMessageCount,
+  conversationPhase,
+  highStress,
+  subscale,
+  dayNumber,
+  weekNumber,
+}: StampleySidebarProps) {
   const [isCollapsed, setIsCollapsed] = useState(false)
-  const [searchQuery, setSearchQuery] = useState("")
 
-  const groupedChats = useMemo(
-    () => groupConversations(conversations, searchQuery),
-    [conversations, searchQuery]
-  )
+  const domainFocus = isDomainKey(currentDomain)
+    ? DDS_FOCUS[currentDomain]
+    : null
+
+  const sessionSteps = getSessionSteps(chatStarted, checkInCompleted)
+  const resolvedPhase =
+    conversationPhase ?? derivePhaseFromUserReplies(userMessageCount)
+  const supportLevel = getSupportLevel(distress)
+  const isHighStress = highStress ?? distress >= 9
 
   return (
     <>
-      {/* Mobile overlay */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/20 backdrop-blur-[2px] z-40 md:hidden"
+            className="fixed inset-0 z-40 bg-white backdrop-blur-[2px] md:hidden"
             onClick={() => setIsOpen(false)}
           />
         )}
@@ -75,219 +244,289 @@ export function StampleySidebar({
         initial={false}
         animate={{ width: isCollapsed ? 68 : 272 }}
         transition={{ type: "spring", stiffness: 400, damping: 40 }}
-        className="relative z-50 h-full flex flex-col overflow-hidden select-none"
+        className="relative z-50 flex h-full min-h-0 shrink-0 select-none flex-col overflow-hidden"
         style={{
-          background: "linear-gradient(180deg, #fefdfb 0%, #faf8f4 100%)",
+          background: "#ffffff",
           borderRight: "1px solid rgba(10,10,5,0.07)",
           fontFamily: "'Outfit', system-ui, sans-serif",
         }}
       >
         {/* Header */}
         <div
-          className={`h-16 flex items-center shrink-0 px-3 ${
+          className={`flex h-16 shrink-0 items-center px-3 ${
             isCollapsed ? "justify-center" : "justify-between"
           }`}
           style={{ borderBottom: "1px solid rgba(10,10,5,0.05)" }}
         >
           {!isCollapsed && (
-            <span
-              className="text-[10px] uppercase tracking-[0.22em] px-1 select-none"
-              style={{
-                color: "rgba(10,10,5,0.35)",
-                fontFamily: "'JetBrains Mono', monospace",
-              }}
-            >
-              Stampley
+            <span className="px-1 font-[JetBrains_Mono,monospace] text-[10px] uppercase tracking-[0.22em] text-black">
+              Session
             </span>
           )}
           <button
+            type="button"
             onClick={() => setIsCollapsed(!isCollapsed)}
-            className="flex h-8 w-8 items-center justify-center rounded-[9px] transition-all duration-200"
-            style={{
-              border: "1px solid rgba(10,10,5,0.07)",
-              color: "rgba(10,10,5,0.35)",
-            }}
+            className="flex h-8 w-8 items-center justify-center rounded-[9px] border border-black/[0.07] text-black transition-all duration-200"
+            aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
           >
-            {isCollapsed
-              ? <PanelLeft size={14} strokeWidth={1.5} />
-              : <PanelLeftClose size={14} strokeWidth={1.5} />
-            }
-          </button>
-        </div>
-
-        {/* Primary actions */}
-        <div className="px-3 pt-4 space-y-1.5 shrink-0">
-          <button
-            onClick={onNewChat}
-            className={`flex items-center w-full transition-all duration-150 ${
-              isCollapsed
-                ? "h-9 w-9 justify-center mx-auto rounded-[10px]"
-                : "h-9 px-3 rounded-[10px]"
-            }`}
-            style={{
-              border: "1px solid rgba(10,10,5,0.08)",
-              background: "linear-gradient(160deg, #fefdfb 0%, #f9f6f1 100%)",
-              color: "rgba(10,10,5,0.55)",
-              boxShadow: "0 1px 3px rgba(10,10,5,0.04)",
-            }}
-          >
-            <Plus size={14} strokeWidth={2} className="shrink-0" />
-            {!isCollapsed && (
-              <span
-                className="ml-2.5 text-[10px] uppercase tracking-[0.12em]"
-                style={{ fontFamily: "'JetBrains Mono', monospace" }}
-              >
-                New chat
-              </span>
-            )}
-          </button>
-
-          <button
-            onClick={() => setActiveView("results")}
-            className={`flex items-center w-full transition-all duration-150 ${
-              isCollapsed ? "h-9 w-9 justify-center mx-auto rounded-[10px]" : "h-9 px-3 rounded-[10px]"
-            }`}
-            style={{ color: "rgba(10,10,5,0.4)" }}
-          >
-            <FileBarChart size={14} strokeWidth={1.5} className="shrink-0" />
-            {!isCollapsed && (
-              <span
-                className="ml-2.5 text-[10px] uppercase tracking-[0.12em]"
-                style={{ fontFamily: "'JetBrains Mono', monospace" }}
-              >
-                Results
-              </span>
+            {isCollapsed ? (
+              <PanelLeft size={14} strokeWidth={1.5} />
+            ) : (
+              <PanelLeftClose size={14} strokeWidth={1.5} />
             )}
           </button>
         </div>
 
-        {/* Search */}
-        {!isCollapsed && (
-          <div className="px-3 mt-4 shrink-0">
-            <div className="relative">
-              <Search
-                size={11}
-                className="absolute left-3 top-1/2 -translate-y-1/2"
-                style={{ color: "rgba(10,10,5,0.28)" }}
-              />
-              <input
-                placeholder="Search history…"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-7 pr-3 py-2 rounded-[9px] text-[12px] outline-none transition-all duration-200"
-                style={{
-                  background: "rgba(10,10,5,0.03)",
-                  border: "1px solid rgba(10,10,5,0.07)",
-                  color: "rgba(10,10,5,0.7)",
-                  fontFamily: "'Outfit', system-ui, sans-serif",
-                }}
-              />
-            </div>
-          </div>
-        )}
-
-        {/* Conversation history */}
-        <div
-          className="flex-1 overflow-y-auto mt-4 px-2"
-          style={{ scrollbarWidth: "thin", scrollbarColor: "rgba(10,10,5,0.08) transparent" }}
-        >
-          {isCollapsed ? (
-            <div className="flex flex-col items-center pt-2">
-              <Clock size={13} style={{ color: "rgba(10,10,5,0.18)" }} />
-            </div>
-          ) : groupedChats.length === 0 ? (
-            <div className="flex flex-col items-center gap-2 px-4 pt-6 text-center">
-              <MessageSquareText size={16} style={{ color: "rgba(10,10,5,0.14)" }} />
-              <p
-                className="text-[9px] uppercase tracking-[0.2em] select-none"
-                style={{ color: "rgba(10,10,5,0.22)", fontFamily: "'JetBrains Mono', monospace" }}
-              >
-                No conversations yet
-              </p>
-            </div>
-          ) : (
-            groupedChats.map(([label, chats]) => (
-              <div key={label} className="mb-5">
-                <p
-                  className="px-3 text-[8px] uppercase tracking-[0.2em] mb-2 select-none"
-                  style={{ color: "rgba(10,10,5,0.22)", fontFamily: "'JetBrains Mono', monospace" }}
-                >
-                  {label}
-                </p>
-                {chats.map(chat => (
-                  <button
-                    key={chat.id}
-                    onClick={() => onSelectConversation(chat.id)}
-                    className="flex items-center gap-2.5 w-full px-3 py-2 rounded-[10px] text-[12.5px] transition-all duration-150"
-                    style={{
-                      background: currentConversationId === chat.id
-                        ? "rgba(10,10,5,0.05)"
-                        : "transparent",
-                      border: currentConversationId === chat.id
-                        ? "1px solid rgba(10,10,5,0.08)"
-                        : "1px solid transparent",
-                      color: currentConversationId === chat.id
-                        ? "rgba(10,10,5,0.7)"
-                        : "rgba(10,10,5,0.45)",
-                    }}
-                  >
-                    <MessageSquareText
-                      size={12}
-                      strokeWidth={1.5}
-                      className="shrink-0"
-                      style={{
-                        color: currentConversationId === chat.id
-                          ? "rgba(10,10,5,0.5)"
-                          : "rgba(10,10,5,0.22)",
-                      }}
-                    />
-                    <span className="truncate flex-1 text-left font-light">
-                      {chat.title}
-                    </span>
-                  </button>
-                ))}
-              </div>
-            ))
-          )}
-        </div>
-
-        {/* Footer — active focus */}
-        {!isCollapsed && (
-          <div
-            className="p-3 shrink-0"
-            style={{ borderTop: "1px solid rgba(10,10,5,0.06)" }}
-          >
-            <div className="flex items-center justify-between mb-2 px-1">
-              <span
-                className="text-[8px] uppercase tracking-[0.2em] select-none"
-                style={{ color: "rgba(10,10,5,0.28)", fontFamily: "'JetBrains Mono', monospace" }}
-              >
-                Active Focus
-              </span>
-              <Target size={10} style={{ color: "rgba(10,10,5,0.25)" }} />
-            </div>
+        {isCollapsed ? (
+          <div className="flex flex-1 flex-col items-center gap-4 px-2 py-4">
             <div
-              className="flex items-center gap-2.5 px-3 py-2.5 rounded-[11px]"
-              style={{
-                background: "linear-gradient(160deg, #fefdfb 0%, #f9f6f1 100%)",
-                border: "1px solid rgba(10,10,5,0.07)",
-                boxShadow: "0 1px 3px rgba(10,10,5,0.04)",
-              }}
+              className="flex h-9 w-9 items-center justify-center rounded-[10px] bg-white text-black"
+              title={`Stress ${distress}/10`}
             >
-              <div
-                className="w-1.5 h-1.5 rounded-full shrink-0"
-                style={{ background: "rgba(10,10,5,0.3)" }}
-              />
-              <span
-                className="text-[12px] font-light truncate"
-                style={{ color: "rgba(10,10,5,0.55)" }}
-              >
-                {currentDomain ?? "General Support"}
-              </span>
+              <Target size={14} strokeWidth={1.5} />
             </div>
+            {sessionSteps.map((step) => (
+              <StepIcon key={step.label} status={step.status} />
+            ))}
+            {setActiveView && (
+              <button
+                type="button"
+                onClick={() => setActiveView("results")}
+                className="mt-auto flex h-9 w-9 items-center justify-center rounded-[10px] text-black"
+                aria-label="View results"
+              >
+                <FileBarChart size={14} strokeWidth={1.5} />
+              </button>
+            )}
+          </div>
+        ) : (
+          <div
+            className="flex-1 space-y-3 overflow-y-auto px-3 py-4"
+            style={{
+              scrollbarWidth: "thin",
+              scrollbarColor: "rgba(10,10,5,0.08) transparent",
+            }}
+          >
+               {/* DDS focus */}
+               <SidebarCard className="p-4">
+              <MonoLabel>DDS focus</MonoLabel>
+              {domainFocus ? (
+                <>
+                  <p className="mb-1.5 font-[Fraunces,Georgia,serif] text-[14px] font-light text-black">
+                    {domainFocus.label}
+                  </p>
+                  <p className="text-[12px] font-light leading-[1.65] text-black">
+                    {domainFocus.description}
+                  </p>
+                </>
+              ) : (
+                <p className="text-[12px] font-light leading-[1.65] text-black/45">
+                  Your focus domain will appear here once selected.
+                </p>
+              )}
+            </SidebarCard>
+            {/* What you're doing */}
+            {/* <SidebarCard>
+              <MonoLabel>What you&apos;re doing</MonoLabel>
+              <p className="font-[Fraunces,Georgia,serif] text-[15px] font-light leading-[1.55] text-black/70">
+                You&apos;re using Stampley to reflect on today&apos;s check-in
+                before saving it.
+              </p>
+            </SidebarCard> */}
+
+            {/* Today's status */}
+            <SidebarCard className="p-4">
+              <MonoLabel>Today&apos;s status</MonoLabel>
+              <motion.div className="space-y-2">
+                <MetricRow label="Stress" value={`${distress}/10`}  />
+                <MetricRow label="Mood" value={`${mood}/10`} />
+                <MetricRow label="Energy" value={`${energy}/10`} />
+                <MetricRow
+                  label="Focus domain"
+                  value={currentDomain ?? "—"}
+                  accent
+                />
+              </motion.div>
+              {(dayNumber || weekNumber || subscale) && (
+                <p className="mt-2.5 font-[JetBrains_Mono,monospace] text-[8px] uppercase tracking-[0.12em] text-black/30">
+                  {weekNumber ? `Week ${weekNumber}` : ""}
+                  {dayNumber ? ` · Day ${dayNumber}` : ""}
+                  {subscale ? ` · ${subscale}` : ""}
+                </p>
+              )}
+            </SidebarCard>
+
+            {/* Today’s questions */}
+            <SidebarCard className="p-4">
+              <MonoLabel>Today&apos;s questions</MonoLabel>
+              <div className="space-y-1.5">
+                <p className="text-[12px] font-light leading-[1.65] text-black">
+                  Expected:{" "}
+                  <span className="font-medium text-black/70">2–4</span>{" "}
+                  questions
+                </p>
+                <p className="text-[12px] font-light leading-[1.65] text-black">
+                  High stress:{" "}
+                  <span className="font-medium text-black/70">1–2</span>{" "}
+                  shorter questions
+                </p>
+                <p className="mt-2 text-[12px] font-light text-black/50">
+                  Opening → Exploration → Coping → Closure
+                </p>
+              </div>
+            </SidebarCard>
+
+            {/* Why Stampley asks */}
+            {/* <SidebarCard>
+              <MonoLabel>Why Stampley asks</MonoLabel>
+              <p className="text-[12px] font-light leading-[1.65] text-black">
+                Stampley uses your daily check-in to help you reflect on
+                today&apos;s stress, mood, energy, and diabetes-related focus
+                area. It does not replace medical care or score DDS-17 daily.
+              </p>
+            </SidebarCard> */}
+
+            {/* Today’s support level */}
+            {/* <SidebarCard
+              className={
+                isHighStress ? "border-black/15 bg-black/[0.04]" : ""
+              }
+            >
+              <MonoLabel>Today&apos;s support level</MonoLabel>
+              <div className="flex items-start justify-between gap-3">
+                <div>
+                  <p className="font-[Fraunces,Georgia,serif] text-[16px] font-light text-black">
+                    {supportLevel.label}
+                  </p>
+                  <p className="mt-1 text-[12px] font-light leading-[1.55] text-black">
+                    {supportLevel.detail}
+                  </p>
+                </div>
+                <div className="shrink-0 rounded-[10px] border border-black/[0.07] bg-white px-2.5 py-2 text-center">
+                  <p className="font-[JetBrains_Mono,monospace] text-[8px] uppercase tracking-[0.14em] text-black/30">
+                    Stress
+                  </p>
+                  <p className="text-[12px] font-semibold text-black/70">
+                    {distress}/10
+                  </p>
+                </div>
+              </div>
+            </SidebarCard> */}
+
+            {/* What shapes your result */}
+            {/* <SidebarCard>
+              <MonoLabel>What shapes your result</MonoLabel>
+              <div className="flex flex-wrap gap-1.5">
+                <Chip>stress level</Chip>
+                <Chip>mood</Chip>
+                <Chip>energy</Chip>
+                <Chip>DDS focus domain</Chip>
+                <Chip>{reflection?.trim() ? "reflection" : "reflection (none)"}</Chip>
+                <Chip>
+                  {copingAction?.trim() ? "coping action" : "coping action (none)"}
+                </Chip>
+                <Chip>chat replies: {Math.max(0, userMessageCount ?? 0)}</Chip>
+              </div>
+            </SidebarCard> */}
+
+            {/* Progress */}
+            <SidebarCard
+  className="p-4 font-['Poppins', sans-serif]"
+ 
+>
+  <MonoLabel>Progress</MonoLabel>
+
+  <div className="space-y-2">
+    <MetricRow
+      label="Questions answered"
+      value={`${Math.max(0, userMessageCount ?? 0)}`}
+    />
+
+    <MetricRow
+      label="Current phase"
+      value={resolvedPhase}
+      accent
+    />
+
+    <p className="text-[12px] font-light leading-[1.65] text-black">
+      Complete Check-in saves today&apos;s record.
+    </p>
+  </div>
+</SidebarCard>
+         
+
+            {/* Session progress */}
+            <SidebarCard className="p-4">
+              <MonoLabel>Session progress</MonoLabel>
+              <ul className="space-y-2.5">
+                {sessionSteps.map((step) => (
+                  <li key={step.label} className="flex items-start gap-2.5">
+                    <StepIcon status={step.status} />
+                    <span
+                      className={`text-[12px] font-light leading-[1.5] ${
+                        step.status === "active"
+                          ? "font-medium text-black"
+                          : step.status === "completed"
+                            ? "text-black"
+                            : "text-black"
+                      }`}
+                    >
+                      {step.label}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </SidebarCard>
+
+            {/* Reminder */}
+            {/* <SidebarCard className="border-black/15 bg-black/[0.04]">
+              <MonoLabel>Reminder</MonoLabel>
+              <p className="text-[12px] font-light leading-[1.65] text-black/60">
+                Your check-in is saved only after you click{" "}
+                <span className="font-medium text-black">
+                  Complete Check-in
+                </span>
+                .
+              </p>
+            </SidebarCard> */}
+
+            {setActiveView && (
+              <button
+                type="button"
+                onClick={() => setActiveView("results")}
+                className="flex w-full items-center justify-center gap-2 rounded-[10px] border border-black/[0.08] bg-white px-3 py-2.5 text-[10px] uppercase tracking-[0.12em] text-black/45 transition-all hover:border-black/20 hover:text-black"
+                style={{ fontFamily: "'JetBrains Mono', monospace" }}
+              >
+                <FileBarChart size={13} strokeWidth={1.5} />
+                View results summary
+              </button>
+            )}
           </div>
         )}
       </motion.aside>
     </>
+  )
+}
+
+function MetricRow({
+  label,
+  value,
+  accent = false,
+}: {
+  label: string
+  value: string
+  accent?: boolean
+}) {
+  return (
+    <div className="flex items-center justify-between gap-2">
+      <span className="text-[12px] text-black">{label}</span>
+      <span
+        className={`text-[12px] font-medium ${
+          accent ? "text-black" : "text-black"
+        }`}
+      >
+        {value}
+      </span>
+    </div>
   )
 }

@@ -4,16 +4,16 @@ import { HeartHandshake, MapPin, Phone } from "lucide-react";
 export default function Navbar() {
   return (
     <header className="w-full bg-blue-900 text-white">
-      <nav className="flex h-16 items-center justify-between px-8 md:px-24">
+      <nav className="flex h-10 items-center justify-between px-8 md:px-24">
         
         {/* Left Side */}
         <div className="flex items-center gap-10">
           <a
             href="#"
-            className="flex items-center gap-3 font-semibold hover:opacity-90 transition"
+            className="flex items-center gap-3 font-semibold hover:opacity-90 transition "
           >
             <HeartHandshake size={24} strokeWidth={2.5} />
-            <span>Volunteer Application</span>
+            <span className="hidden sm:block">Volunteer Application</span>
           </a>
 
           <a

@@ -72,11 +72,11 @@ export default async function AdminSafetyPage() {
 
       {/* Status Banner */}
       {totalAlerts === 0 ? (
-        <section className="relative overflow-hidden rounded-[28px] border border-slate-200 bg-gradient-to-br from-slate-50 to-white shadow-sm">
+        <section className="relative overflow-hidden  border border-slate-200 bg-gradient-to-br from-slate-50 to-white shadow-sm">
 
 <div className="flex items-start gap-4 px-6 py-5">
   
-  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-slate-900 text-white">
+  <div className="flex h-11 w-11 shrink-0 items-center justify-center  bg-slate-900 text-white">
     ✓
   </div>
 
@@ -91,9 +91,9 @@ export default async function AdminSafetyPage() {
 </div>
 </section>
       ) : (
-        <section className="overflow-hidden rounded-3xl border border-red-200/80 bg-red-50 shadow-sm">
+        <section className="overflow-hidden  border border-red-200/80 bg-red-50 shadow-sm">
           <div className="flex items-start gap-4 px-6 py-5">
-            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-red-100 text-red-700">
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center  bg-red-100 text-red-700">
               <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path
                   strokeLinecap="round"
@@ -117,7 +117,7 @@ export default async function AdminSafetyPage() {
 
       {/* Stats */}
       <section className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-        <div className="rounded-3xl border border-gray-200/80 bg-white p-5 shadow-sm"
+        <div className=" border border-gray-200/80 bg-white p-5 shadow-sm"
         
         style={{
           backgroundImage: "url('/images/gradient5.jpg')",
@@ -140,7 +140,7 @@ export default async function AdminSafetyPage() {
           <p className="mt-1 text-xs text-gray-400">Distress ≥ 9 for 2+ days</p>
         </div>
 
-        <div className="rounded-3xl border border-gray-200/80 bg-white p-5 shadow-sm"
+        <div className=" border border-gray-200/80 bg-white p-5 shadow-sm"
            
            style={{
             backgroundImage: "url('/images/gradient3.jpg')",
@@ -161,7 +161,7 @@ export default async function AdminSafetyPage() {
           <p className="mt-1 text-xs text-white">Distress ≥ 7 this week</p>
         </div>
 
-        <div className="rounded-3xl border border-gray-200/80 bg-white p-5 shadow-sm"
+        <div className=" border border-gray-200/80 bg-white p-5 shadow-sm"
            
            style={{
             backgroundImage: "url('/images/gradient4.jpg')",
@@ -181,7 +181,7 @@ export default async function AdminSafetyPage() {
 
       {/* Safety Escalations */}
       {alertsResult.rows.length > 0 && (
-        <section className="overflow-hidden rounded-3xl border border-red-200/80 bg-white shadow-sm">
+        <section className="overflow-hidden  border border-red-200/80 bg-white shadow-sm">
           <div className="flex items-center gap-2 border-b border-red-100 bg-gradient-to-b from-red-50 to-white px-6 py-5">
             <svg className="h-4 w-4 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
@@ -207,7 +207,7 @@ export default async function AdminSafetyPage() {
                 className="flex flex-col gap-4 px-6 py-5 lg:flex-row lg:items-center lg:justify-between"
               >
                 <div className="flex min-w-0 items-center gap-3">
-                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-red-100 text-sm font-semibold text-red-700">
+                  <div className="flex h-11 w-11 shrink-0 items-center justify-center  bg-red-100 text-sm font-semibold text-red-700">
                     {u.email[0].toUpperCase()}
                   </div>
                   <div className="min-w-0">
@@ -232,7 +232,7 @@ export default async function AdminSafetyPage() {
 
                   <a
                     href={`mailto:${u.email}?subject=AIDES-T2D Study Check-in&body=Hi, we noticed you've been experiencing high distress levels. We wanted to check in and provide support.`}
-                    className="inline-flex h-10 items-center gap-2 rounded-xl bg-red-600 px-4 text-xs font-medium text-white shadow-sm transition hover:bg-red-700"
+                    className="inline-flex h-10 items-center gap-2  bg-red-600 px-4 text-xs font-medium text-white shadow-sm transition hover:bg-red-700"
                   >
                     <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path
@@ -253,7 +253,7 @@ export default async function AdminSafetyPage() {
 
       {/* At Risk */}
       {highDistressResult.rows.length > 0 && (
-        <section className="overflow-hidden rounded-3xl border border-amber-200/80 bg-white shadow-sm">
+        <section className="overflow-hidden  border border-amber-200/80 bg-white shadow-sm">
           <div className="flex items-center gap-2 border-b border-amber-100 bg-gradient-to-b from-amber-50 to-white px-6 py-5">
             <svg className="h-4 w-4 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
@@ -275,7 +275,7 @@ export default async function AdminSafetyPage() {
                 className="flex flex-col gap-4 px-6 py-5 lg:flex-row lg:items-center lg:justify-between"
               >
                 <div className="flex min-w-0 items-center gap-3">
-                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-amber-100 text-sm font-semibold text-amber-700">
+                  <div className="flex h-11 w-11 shrink-0 items-center justify-center  bg-amber-100 text-sm font-semibold text-amber-700">
                     {u.email[0].toUpperCase()}
                   </div>
                   <div className="min-w-0">
@@ -300,7 +300,7 @@ export default async function AdminSafetyPage() {
 
                   <a
                     href={`mailto:${u.email}`}
-                    className="inline-flex h-10 items-center gap-2 rounded-xl border border-amber-200 bg-white px-4 text-xs font-medium text-amber-700 shadow-sm transition hover:bg-amber-50"
+                    className="inline-flex h-10 items-center gap-2  border border-amber-200 bg-white px-4 text-xs font-medium text-amber-700 shadow-sm transition hover:bg-amber-50"
                   >
                     <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path
@@ -320,7 +320,7 @@ export default async function AdminSafetyPage() {
       )}
 
       {/* Recent High Distress Check-ins */}
-      <section className="overflow-hidden rounded-3xl border border-gray-200/80 bg-white shadow-sm">
+      <section className="overflow-hidden  border border-gray-200/80 bg-white shadow-sm">
         <div className="border-b border-gray-100 bg-gradient-to-b from-gray-50 to-white px-6 py-5">
           <h2 className="text-sm font-semibold text-gray-900">
             Recent High Distress Check-ins

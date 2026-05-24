@@ -55,10 +55,10 @@ export default function DemographicsStep({
 
         <SelectField
           number="3."
-          label="What is your gender?"
+            label="Sex assigned at birth"
           name="gender"
           value={formData.gender}
-          options={["Woman", "Man", "Prefer not to answer"]}
+          options={["Female", "Male", "Prefer not to answer"]}
           setFormData={setFormData}
           formData={formData}
         />

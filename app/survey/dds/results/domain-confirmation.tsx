@@ -1,6 +1,12 @@
 "use client"
 
+import { useState } from "react"
 import { useRouter } from "next/navigation"
+import { confirmDomain } from "@/actions/dds"
+
+type Domain = "Emotional" | "Regimen" | "Physician" | "Interpersonal"
+
+const DOMAINS: Domain[] = ["Emotional", "Regimen", "Physician", "Interpersonal"]
 
 type ScoreItem = {
   domain: string
@@ -19,16 +25,27 @@ interface DomainConfirmationProps {
   scores: ScoreItem[]
 }
 
+function isDomain(value: string): value is Domain {
+  return DOMAINS.includes(value as Domain)
+}
+
 export function DomainConfirmation({
   recommendedDomain,
   scores,
 }: DomainConfirmationProps) {
   const router = useRouter()
+  const defaultDomain = isDomain(recommendedDomain) ? recommendedDomain : DOMAINS[0]
+
+  const [selectedDomain, setSelectedDomain] = useState<Domain>(defaultDomain)
+  const [confirming, setConfirming] = useState(false)
+  const [error, setError] = useState("")
 
   const selected =
-    scores.find((s) => s.domain === recommendedDomain) ?? scores[0]
+    scores.find((s) => s.domain === selectedDomain) ??
+    scores.find((s) => s.domain === recommendedDomain) ??
+    scores[0]
 
-  const domainNotes: Record<string, string> = {
+  const domainNotes: Record<Domain, string> = {
     Emotional:
       "This area reflects the emotional weight of living with diabetes — feeling overwhelmed, discouraged, or mentally exhausted.",
     Regimen:
@@ -39,10 +56,25 @@ export function DomainConfirmation({
       "This area reflects support from family and friends, and whether diabetes feels understood by people around you.",
   }
 
+  async function handleConfirm() {
+    if (confirming) return
+
+    setConfirming(true)
+    setError("")
+
+    const result = await confirmDomain(selectedDomain)
+
+    if (result?.error) {
+      setError(result.error)
+      setConfirming(false)
+      return
+    }
+
+    router.push("/check-in")
+  }
+
   return (
     <section className="rounded-[32px] border border-black/[0.06] bg-[#fefdfb] p-7 shadow-[0_16px_50px_rgba(15,23,42,0.05)]">
-      
-      {/* HEADER */}
       <div className="mb-6 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <p className="text-[10px] font-medium uppercase tracking-[0.18em] text-black/35">
@@ -52,22 +84,76 @@ export function DomainConfirmation({
             className="mt-1 text-[22px] font-medium tracking-[-0.02em] text-black/85"
             style={{ fontFamily: "'Fraunces', Georgia, serif" }}
           >
-            Your suggested starting domain
+            Confirm your starting domain
           </h2>
+          <p className="mt-2 max-w-xl text-[13px] leading-6 text-black/50">
+            Based on your DDS results, we recommend{" "}
+            <span className="font-medium text-black/70">{recommendedDomain}</span>.
+            You can keep this recommendation or choose another focus area.
+          </p>
         </div>
 
         <span className="rounded-full border border-[#e7dac8] bg-[#f6efe4] px-3 py-1.5 text-[11px] font-medium text-[#8B6F47]">
-          Based on your highest score
+          Recommended: {recommendedDomain}
         </span>
       </div>
 
-      {/* MAIN GRID */}
+      <div className="mb-6 grid gap-3 sm:grid-cols-2">
+        {DOMAINS.map((domain) => {
+          const scoreItem = scores.find((s) => s.domain === domain)
+          const isSelected = selectedDomain === domain
+          const isRecommended = domain === recommendedDomain
+
+          return (
+            <button
+              key={domain}
+              type="button"
+              onClick={() => setSelectedDomain(domain)}
+              disabled={confirming}
+              className={[
+                "rounded-[22px] border p-4 text-left transition-all",
+                isSelected
+                  ? "border-[#1f1a17] bg-[#faf7f2] shadow-[0_6px_18px_rgba(15,23,42,0.06)]"
+                  : "border-black/[0.08] bg-white hover:border-[#8B6F47]/30 hover:bg-[#fefdfb]",
+                confirming ? "cursor-not-allowed opacity-70" : "cursor-pointer",
+              ].join(" ")}
+            >
+              <div className="flex items-start justify-between gap-3">
+                <div>
+                  <div className="mb-2 flex flex-wrap items-center gap-2">
+                    <span className="text-xl">{scoreItem?.emoji ?? "•"}</span>
+                    <span className="text-[14px] font-semibold text-black/80">
+                      {scoreItem?.label ?? domain}
+                    </span>
+                    {isRecommended && (
+                      <span className="rounded-full bg-[#1f1a17] px-2 py-0.5 text-[10px] font-medium text-white">
+                        Recommended
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-[12px] leading-6 text-black/50">{domainNotes[domain]}</p>
+                </div>
+
+                {scoreItem && (
+                  <div className="shrink-0 text-right">
+                    <p className="text-[18px] font-semibold text-black/75">
+                      {scoreItem.score.toFixed(1)}
+                    </p>
+                    <p className="text-[10px] text-black/35">/ 6.0</p>
+                  </div>
+                )}
+              </div>
+            </button>
+          )
+        })}
+      </div>
+
       <div className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
-        
-        {/* LEFT CARD */}
         <div className="rounded-[28px] border border-black/[0.06] bg-[linear-gradient(180deg,#fffdf9_0%,#faf6ef_100%)] p-6">
           <div className="flex items-start gap-4">
-            <div className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-[18px] ${selected.softBg} text-2xl`}>
+            <div
+              className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-[18px] ${selected.softBg} text-2xl`}
+            >
               {selected.emoji}
             </div>
 
@@ -77,24 +163,20 @@ export function DomainConfirmation({
                   {selected.label}
                 </h3>
 
-                <span className="rounded-full bg-[#1f1a17] px-2.5 py-1 text-[11px] font-medium text-white">
-                  Recommended
-                </span>
+                {selectedDomain === recommendedDomain && (
+                  <span className="rounded-full bg-[#1f1a17] px-2.5 py-1 text-[11px] font-medium text-white">
+                    Recommended
+                  </span>
+                )}
               </div>
 
-              <p className="text-[14px] leading-7 text-black/55">
-                {domainNotes[selected.domain] ??
-                  "This domain may be the most useful place to begin support right now."}
-              </p>
+              <p className="text-[14px] leading-7 text-black/55">{domainNotes[selectedDomain]}</p>
             </div>
           </div>
 
-          {/* SCORE BAR */}
           <div className="mt-6 rounded-[22px] border border-black/[0.06] bg-white/70 p-5">
             <div className="mb-2 flex items-center justify-between">
-              <p className="text-[12px] font-medium text-black/45">
-                Domain score
-              </p>
+              <p className="text-[12px] font-medium text-black/45">Domain score</p>
               <p className="text-[13px] font-medium text-black/65">
                 {selected.score.toFixed(1)} / 6.0
               </p>
@@ -109,7 +191,6 @@ export function DomainConfirmation({
           </div>
         </div>
 
-        {/* RIGHT CARD */}
         <div className="rounded-[28px] border border-black/[0.06] bg-[#fbf8f4] p-6">
           <p className="text-[10px] font-medium uppercase tracking-[0.18em] text-black/35">
             What happens next
@@ -135,12 +216,8 @@ export function DomainConfirmation({
                   {index + 1}
                 </div>
                 <div>
-                  <h4 className="text-[13px] font-semibold text-black/75">
-                    {item.title}
-                  </h4>
-                  <p className="mt-1 text-[13px] leading-6 text-black/50">
-                    {item.text}
-                  </p>
+                  <h4 className="text-[13px] font-semibold text-black/75">{item.title}</h4>
+                  <p className="mt-1 text-[13px] leading-6 text-black/50">{item.text}</p>
                 </div>
               </div>
             ))}
@@ -148,33 +225,38 @@ export function DomainConfirmation({
         </div>
       </div>
 
-      {/* FOOTER NOTE */}
-      <div className="fixed max-w-6xl mx-auto bottom-10 left-0 right-0 z-50 border border-black/[0.06] rounded-[22px] bg-[#fefdfb]/90 backdrop-blur-xl">
-  <div className="mx-auto max-w-6xl px-6 py-4 flex flex-col sm:flex-row items-center justify-between gap-4">
-    
-    <p className="text-[12px] leading-6 text-black/55 text-center sm:text-left">
-      <span className="font-medium text-black/70">Recommended focus:</span>{" "}
-      {selected.label}. This is the area where support may feel most useful right now.
-    </p>
+      {error && (
+        <div className="mt-6 rounded-[18px] border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+          {error}
+        </div>
+      )}
 
-    <button
-      onClick={() => router.push("/check-in")}
-      className="shrink-0 rounded-[18px] bg-[#1f1a17] px-6 py-3 text-sm font-medium text-white transition hover:bg-[#2a231f] shadow-[0_6px_16px_rgba(31,26,23,0.18)]"
-    >
-      Start my {selected.shortLabel} check-in →
-    </button>
+      <div className="fixed bottom-10 left-0 right-0 z-50 mx-auto max-w-6xl rounded-[22px] border border-black/[0.06] bg-[#fefdfb]/90 backdrop-blur-xl">
+        <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 px-6 py-4 sm:flex-row">
+          <p className="text-center text-[12px] leading-6 text-black/55 sm:text-left">
+            <span className="font-medium text-black/70">Selected focus:</span>{" "}
+            {selected.label}. Confirm to begin your personalized check-ins.
+          </p>
 
-  </div>
-</div>
-
-      {/* ✅ CTA BUTTON (NEW) */}
-      <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <p className="text-[13px] text-black/45">
-          You’re ready to begin your personalized weekly check-ins.
-        </p>
-
+          <button
+            type="button"
+            onClick={handleConfirm}
+            disabled={confirming}
+            className="shrink-0 rounded-[18px] bg-[#1f1a17] px-6 py-3 text-sm font-medium text-white shadow-[0_6px_16px_rgba(31,26,23,0.18)] transition hover:bg-[#2a231f] disabled:cursor-not-allowed disabled:opacity-60"
+          >
+            {confirming
+              ? "Confirming..."
+              : `Start my ${selected.shortLabel} check-in →`}
+          </button>
+        </div>
       </div>
 
+      <div className="mt-8 pb-24">
+        <p className="text-[13px] text-black/45">
+          You&apos;re ready to begin your personalized weekly check-ins once you confirm
+          your focus domain.
+        </p>
+      </div>
     </section>
   )
 }

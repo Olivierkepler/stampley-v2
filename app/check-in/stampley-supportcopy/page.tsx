@@ -13,8 +13,8 @@ import { useCheckInUserId } from "../CheckInUserScope";
 import SupportSidebar from "../stampley-support/StampleySupportPage";
 import CheckInResults from "./CheckInResults";
 import Image from "next/image";
-import { VoiceController } from "./VoiceController";
-import StampleyVoiceContainer from "@/components/ui/StampleyVoiceContainer";
+// import { VoiceController } from "./VoiceController";
+// import StampleyVoiceContainer from "@/components/ui/StampleyVoiceContainer";
 
 interface AiResponseData {
   validationText: string;
@@ -622,7 +622,7 @@ export default function StampleySupportPage() {
                 exit={{ opacity: 0, y: -20 }}
                 className="flex-1 flex items-center justify-center"
               >
-                <StampleyVoiceContainer />
+                {/* <StampleyVoiceContainer /> */}
               </motion.div>
             )}
 
@@ -643,7 +643,7 @@ export default function StampleySupportPage() {
                 className="flex-1 h-[52px] pl-5 bg-transparent text-[#0a0a0f] placeholder:text-black/30 outline-none text-[14px] font-light disabled:opacity-40"
               />
               <div className="flex items-center gap-1 pr-2">
-                <VoiceController isMuted={false} isSpeaking={false} onToggleMute={() => {}} />
+                {/* <VoiceController isMuted={false} isSpeaking={false} onToggleMute={() => {}} /> */}
                 <button
                   onClick={handleSend}
                   disabled={!inputText.trim() || isLoading || !hasCheckInData}

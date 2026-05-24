@@ -72,8 +72,28 @@ const navItems = [
           </svg>
         ),
       },
+      {
+        href: "/admin/pre-surveys",
+        label: "Pre-Surveys",
+        icon: (
+          <svg
+            className="w-4 h-4"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M9 12h6m-6 4h6M7 4h10a2 2 0 012 2v12a2 2 0 01-2 2H7a2 2 0 01-2-2V6a2 2 0 012-2z"
+            />
+          </svg>
+        ),
+      },
     ],
   },
+ 
 ]
 
 interface AdminSidebarProps {
@@ -107,7 +127,7 @@ export function AdminSidebar({
             <>
               <div className="min-w-0">
                 <Link href="/dashboard" className="flex items-center gap-3">
-                  {/* <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-slate-900 via-slate-800 to-slate-700 text-white shadow-lg shadow-slate-900/20">
+                  {/* <div className="flex h-10 w-10 items-center justify-center  bg-gradient-to-br from-slate-900 via-slate-800 to-slate-700 text-white shadow-lg shadow-slate-900/20">
                     <span className="text-sm font-semibold">A</span>
                   </div> */}
                   <Image src="/images/stampleyLogo.png" alt="AIDES-T2D" width={32} height={32} />
@@ -124,7 +144,7 @@ export function AdminSidebar({
                 type="button"
                 onClick={onToggleCollapse}
                 aria-label="Collapse sidebar"
-                className="inline-flex h-10 w-10 cursor-pointer items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-500  transition hover:border-slate-300 hover:bg-slate-50 hover:text-slate-900"
+                className="inline-flex h-10 w-10 cursor-pointer items-center justify-center  border border-slate-200 bg-white text-slate-500  transition hover:border-slate-300 hover:bg-slate-50 hover:text-slate-900"
               >
                 <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -139,7 +159,7 @@ export function AdminSidebar({
                 type="button"
                 onClick={onToggleCollapse}
                 aria-label="Expand sidebar"
-                className="inline-flex cursor-pointer h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-500 shadow-sm transition hover:border-slate-300 hover:bg-slate-50 hover:text-slate-900"
+                className="inline-flex cursor-pointer h-10 w-10 items-center justify-center  border border-slate-200 bg-white text-slate-500 shadow-sm transition hover:border-slate-300 hover:bg-slate-50 hover:text-slate-900"
               >
                 <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
@@ -169,7 +189,7 @@ export function AdminSidebar({
             <input
               type="text"
               placeholder="Search navigation..."
-              className="w-full rounded-2xl border border-slate-200 bg-slate-50/80 py-2.5 pl-10 pr-4 text-sm text-slate-700 outline-none transition placeholder:text-slate-400 focus:border-slate-300 focus:bg-white focus:ring-4 focus:ring-slate-200/50"
+              className="w-full  border border-slate-200 bg-slate-50/80 py-2.5 pl-10 pr-4 text-sm text-slate-700 outline-none transition placeholder:text-slate-400 focus:border-slate-300 focus:bg-white focus:ring-4 focus:ring-slate-200/50"
             />
           </div>
         </div>
@@ -196,7 +216,7 @@ export function AdminSidebar({
                       key={link.href}
                       href={link.href}
                       title={collapsed ? link.label : undefined}
-                      className={`group relative flex items-center rounded-xl text-sm font-medium transition-all duration-200 ${
+                      className={`group relative flex items-center  text-sm font-medium transition-all duration-200 ${
                         collapsed ? "justify-center px-2 py-3" : "gap-3 px-3.5 py-3"
                       } ${
                         isActive
@@ -232,13 +252,13 @@ export function AdminSidebar({
 
       <div className={`border-t border-slate-200/70  p-4 ${collapsed ? "px-3" : ""}`}>
         <div
-          className={`rounded-2xl border border-slate-200/80 bg-slate-50/70 shadow-sm ${
+          className={` border border-slate-200/80 bg-slate-50/70 shadow-sm ${
             collapsed ? "p-2.5" : "p-3"
           }`}
         >
           <div className={`flex items-center ${collapsed ? "flex-col gap-2" : "gap-3"}`}>
             <div
-              className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-blue-900 text-sm font-semibold text-white shadow-md"
+              className="flex h-10 w-10 shrink-0 items-center justify-center  bg-blue-900 text-sm font-semibold text-white shadow-md"
               title={collapsed ? email : undefined}
             >
               {email[0]?.toUpperCase() ?? "?"}

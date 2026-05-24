@@ -2,6 +2,7 @@
 
 import Image from "next/image"
 import { useEffect, useRef, useState } from "react"
+import Link from "next/link"
 
 export default function DiabetesNumbersSection() {
   const sectionRef = useRef<HTMLElement>(null)
@@ -91,18 +92,18 @@ export default function DiabetesNumbersSection() {
             }}
           >
             <a
-              href="/register"
+              href="/login"
               className="inline-flex justify-center bg-white px-7 py-3.5 text-center text-xs font-bold uppercase tracking-[0.14em] text-blue-900 transition hover:bg-white/90 sm:px-8 sm:py-4 sm:text-sm sm:tracking-[0.16em]"
             >
               Join the Study
             </a>
 
-            <a
-              href="#about"
+            <Link
+              href="/learnmore"
               className="inline-flex justify-center border-2 border-white px-7 py-3.5 text-center text-xs font-bold uppercase tracking-[0.14em] text-white transition hover:bg-white hover:text-blue-900 sm:px-8 sm:py-4 sm:text-sm sm:tracking-[0.16em]"
             >
               Learn More
-            </a>
+            </Link>
           </div>
         </div>
 
