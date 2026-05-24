@@ -1,6 +1,8 @@
 export const runtime = "nodejs"
 export const dynamic = "force-dynamic"
 
+console.log("[stampley/generate] module loaded")
+
 import { NextRequest, NextResponse } from "next/server"
 import { auth } from "@/lib/auth"
 import { query } from "@/lib/db"
@@ -20,31 +22,38 @@ import {
 } from "@/lib/stampley-prompt"
 import type { Domain } from "@/store/checkin-store"
 
+console.log("[stampley/generate] imports complete")
+
 function safeErrorInfo(error: unknown) {
   if (error instanceof Error) {
     return { message: error.message, name: error.name }
   }
+
   return { message: String(error) }
 }
 
 function safeOpenAIErrorInfo(error: unknown) {
   const base = safeErrorInfo(error)
+
   const status =
     typeof (error as { status?: unknown })?.status === "number"
       ? (error as { status: number }).status
       : undefined
+
   return { ...base, status }
 }
 
 export async function POST(req: NextRequest) {
-  console.error("[stampley/generate] route entered")
-  console.error("[stampley/generate] env flags", {
+  console.log("[stampley/generate] route entered")
+
+  console.log("[stampley/generate] env flags", {
     hasDatabaseUrl: !!process.env.DATABASE_URL?.trim(),
     hasOpenAiApiKey: !!process.env.OPENAI_API_KEY?.trim(),
   })
 
   const session = await auth()
-  console.error("[stampley/generate] auth flags", {
+
+  console.log("[stampley/generate] auth flags", {
     sessionExists: !!session,
     hasUserId: !!session?.user?.id,
     hasUserEmail: !!session?.user?.email,
@@ -56,7 +65,8 @@ export async function POST(req: NextRequest) {
 
   try {
     const body = await req.json()
-    console.error("[stampley/generate] request body parsed successfully")
+
+    console.log("[stampley/generate] request body parsed successfully")
 
     const {
       distress,
@@ -71,11 +81,13 @@ export async function POST(req: NextRequest) {
     } = body
 
     let userResult
+
     try {
       userResult = await query("SELECT email FROM users WHERE id = $1", [
         session.user.id,
       ])
-      console.error("[stampley/generate] user lookup success", {
+
+      console.log("[stampley/generate] user lookup success", {
         found: userResult.rows.length > 0,
       })
     } catch (error) {
@@ -95,12 +107,14 @@ export async function POST(req: NextRequest) {
     const highStress = isHighStress(stressLevel)
 
     let liveStudyContext
+
     try {
       liveStudyContext = await loadLiveStudyContext(
         session.user.id,
         resolvedDomain
       )
-      console.error("[stampley/generate] study context success", {
+
+      console.log("[stampley/generate] study context success", {
         hasContext: liveStudyContext != null,
       })
     } catch (error) {
@@ -126,9 +140,11 @@ export async function POST(req: NextRequest) {
     }
 
     let longitudinalContext
+
     try {
       longitudinalContext = await loadLongitudinalContext(session.user.id)
-      console.error("[stampley/generate] memory DB query success")
+
+      console.log("[stampley/generate] memory DB query success")
     } catch (error) {
       console.error(
         "[stampley/generate] memory DB query failure",
@@ -139,6 +155,7 @@ export async function POST(req: NextRequest) {
 
     const history = sanitizeHistory(messageHistory)
     const phase = resolvePhase(history, conversationPhase)
+
     const messages = buildOpenAIMessages(
       input,
       history,
@@ -147,13 +164,20 @@ export async function POST(req: NextRequest) {
       longitudinalContext
     )
 
-    console.error("[stampley/generate] OpenAI call start")
+    console.log("[stampley/generate] OpenAI call start")
+
+    const apiKey = process.env.OPENAI_API_KEY?.trim()
+
+    if (!apiKey) {
+      throw new Error("OPENAI_API_KEY is missing at request runtime")
+    }
 
     const openai = new OpenAI({
-      apiKey: process.env.OPENAI_API_KEY,
+      apiKey,
     })
 
     let completion
+
     try {
       completion = await openai.chat.completions.create({
         model: "gpt-4o",
@@ -163,22 +187,25 @@ export async function POST(req: NextRequest) {
         response_format: { type: "json_object" },
       })
 
-      console.error("[stampley/generate] OpenAI call success")
+      console.log("[stampley/generate] OpenAI call success")
     } catch (error) {
       console.error(
         "[stampley/generate] OpenAI call failure",
         safeOpenAIErrorInfo(error)
       )
+
       throw error
     }
 
     const raw = completion.choices[0]?.message?.content ?? ""
 
     let stampleyResponse
+
     try {
       stampleyResponse = JSON.parse(raw)
     } catch {
       console.error("[stampley/generate] JSON parse failed")
+
       stampleyResponse = getFallbackResponse(
         formattedName,
         resolvedDomain,
@@ -195,6 +222,7 @@ export async function POST(req: NextRequest) {
     })
   } catch (error) {
     console.error("[stampley/generate] final catch", safeErrorInfo(error))
+
     return NextResponse.json(
       { error: "Failed to generate response" },
       { status: 500 }
@@ -302,6 +330,7 @@ function getFallbackResponse(
   }
 
   const educationChip = `Living with diabetes means ${domainMessages[domain]}`
+
   const microSkill =
     "Try taking one slow, deep breath — in for 4 counts, hold for 4, out for 4. You can do this anytime things feel heavy."
 
