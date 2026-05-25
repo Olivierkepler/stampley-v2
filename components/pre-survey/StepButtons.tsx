@@ -17,7 +17,7 @@ export default function StepButtons({
         <button
           type="button"
           onClick={prevStep}
-          className="border border-gray-500 bg-white px-5 py-2 text-sm font-semibold text-gray-800 hover:bg-gray-100"
+          className="border cursor-pointer border-gray-500 bg-white px-5 py-2 text-sm font-semibold text-gray-800 hover:bg-gray-100"
         >
           Back
         </button>
@@ -28,7 +28,7 @@ export default function StepButtons({
       <button
         type={submit ? "submit" : "button"}
         onClick={submit ? undefined : nextStep}
-        className="bg-[#005ea8] px-6 py-2 text-sm font-semibold text-white hover:bg-[#004b87]"
+        className="cursor-pointer bg-[#005ea8] px-6 py-2 text-sm font-semibold text-white hover:bg-[#004b87]"
       >
         {nextLabel}
       </button>

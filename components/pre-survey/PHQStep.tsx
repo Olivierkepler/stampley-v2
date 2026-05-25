@@ -35,58 +35,62 @@ export default function PHQStep({
   const progress = Math.round((answeredQuestions / questions.length) * 100)
 
   return (
-    <section>
-      <div className="border-b border-gray-300 bg-gray-50 px-6 py-5">
-        <p className="text-xs font-bold uppercase tracking-[0.18em] text-gray-500">
+    <section className="bg-white">
+      {/* HEADER */}
+      <div className="border-b border-gray-300 bg-[#003e73] px-6 py-5 text-white">
+        <p className="text-xs font-semibold uppercase tracking-[0.18em] text-blue-100">
           Section E
         </p>
 
-        <h1 className="mt-2 text-2xl font-bold text-gray-900">
+        <h1 className="mt-2 text-2xl font-bold">
           Patient Health Questionnaire-9 (PHQ-9)
         </h1>
 
-        <p className="mt-3 max-w-3xl text-sm leading-6 text-gray-700">
+        <p className="mt-3 max-w-3xl text-sm leading-6 text-blue-50">
           Over the last 2 weeks, how often have you been bothered by the
           following problems?
         </p>
-
-        <div className="mt-6">
-          <div className="mb-2 flex items-center justify-between text-xs text-gray-500">
-            <span>Progress</span>
-            <span>{progress}% completed</span>
-          </div>
-
-          <div className="h-2 border border-gray-300 bg-white">
-            <div
-              className="h-full bg-[#005ea8] transition-all duration-300"
-              style={{ width: `${progress}%` }}
-            />
-          </div>
-        </div>
       </div>
 
-      <div className="border-b border-gray-300 bg-[#f8fafc] px-6 py-4">
-        <p className="text-sm leading-6 text-gray-700">
-          Please select one response for each row.
+      {/* PROGRESS */}
+      <div className="border-b border-gray-300 bg-gray-50 px-6 py-5">
+        <div className="mb-2 flex items-center justify-between text-xs font-medium text-gray-500">
+          <span>Completion Progress</span>
+          <span>{progress}% completed</span>
+        </div>
+
+        <div className="h-2 overflow-hidden border border-gray-300 bg-white">
+          <div
+            className="h-full bg-[#005ea8] transition-all duration-300"
+            style={{ width: `${progress}%` }}
+          />
+        </div>
+
+        <p className="mt-2 text-xs text-gray-500">
+          {answeredQuestions} of {questions.length} questions answered
         </p>
       </div>
 
-      <div className="px-6 py-8">
+      {/* MATRIX */}
+      <div className="px-6 py-6">
         <div className="overflow-x-auto border border-gray-300 bg-white">
-          <table className="w-full min-w-[900px] border-collapse">
+          <table className="w-full min-w-[880px] border-collapse">
             <thead>
               <tr className="border-b border-gray-300 bg-gray-50">
-                <th className="w-[42%] px-4 py-4 text-left text-xs font-bold uppercase tracking-[0.12em] text-gray-500">
+                <th className="w-[45%] px-4 py-3 text-left text-[11px] font-bold uppercase tracking-[0.12em] text-gray-500">
                   Question
                 </th>
 
                 {options.map((option) => (
                   <th
                     key={option.value}
-                    className="px-4 py-4 text-center text-xs font-bold uppercase tracking-[0.08em] text-gray-500"
+                    className="px-3 py-3 text-center text-[11px] font-bold uppercase tracking-[0.08em] text-gray-500"
                   >
-                    <span className="block text-gray-900">{option.label}</span>
-                    <span className="mt-1 block font-normal text-gray-400">
+                    <span className="block text-gray-900">
+                      {option.label}
+                    </span>
+
+                    <span className="mt-1 block text-[10px] font-normal text-gray-400">
                       Score {option.value}
                     </span>
                   </th>
@@ -103,13 +107,13 @@ export default function PHQStep({
                     key={name}
                     className="border-b border-gray-200 last:border-b-0"
                   >
-                    <td className="px-4 py-5 align-top">
-                      <div className="flex gap-3">
-                        <span className="flex h-7 w-7 shrink-0 items-center justify-center border border-gray-300 bg-gray-50 text-xs font-semibold text-gray-600">
+                    <td className="px-4 py-4 align-middle">
+                      <div className="flex items-start gap-3">
+                        <span className="flex h-6 w-6 shrink-0 items-center justify-center border border-gray-300 bg-gray-50 text-[11px] font-semibold text-gray-600">
                           {index + 1}
                         </span>
 
-                        <p className="text-sm font-medium leading-6 text-gray-900">
+                        <p className="text-[13px] font-medium leading-5 text-gray-900">
                           {question}
                         </p>
                       </div>
@@ -121,7 +125,7 @@ export default function PHQStep({
                       return (
                         <td
                           key={option.value}
-                          className={`px-4 py-5 text-center align-middle transition ${
+                          className={`px-3 py-4 text-center align-middle transition ${
                             selected ? "bg-[#f0f6fc]" : "bg-white"
                           }`}
                         >
@@ -141,19 +145,21 @@ export default function PHQStep({
                             />
 
                             <span
-                              className={`flex h-6 w-6 items-center justify-center rounded-full border transition ${
+                              className={`flex h-5 w-5 items-center justify-center rounded-full border transition ${
                                 selected
                                   ? "border-[#005ea8] bg-[#005ea8]"
                                   : "border-gray-400 bg-white hover:border-[#005ea8]"
                               }`}
                               aria-hidden="true"
                             >
-                              {selected && (
-                                <span className="h-2.5 w-2.5 rounded-full bg-white" />
-                              )}
+                              {selected ? (
+                                <span className="h-2 w-2 rounded-full bg-white" />
+                              ) : null}
                             </span>
 
-                            <span className="sr-only">{option.label}</span>
+                            <span className="sr-only">
+                              {option.label}
+                            </span>
                           </label>
                         </td>
                       )
@@ -166,7 +172,8 @@ export default function PHQStep({
         </div>
       </div>
 
-      <div className="border-t border-gray-300 bg-amber-50 px-6 py-5">
+      {/* SAFETY NOTE */}
+      <div className="border-t border-amber-200 bg-amber-50 px-6 py-5">
         <p className="text-sm leading-6 text-amber-900">
           If you are experiencing emotional distress or thoughts of self-harm,
           please contact a healthcare provider or emergency support service
@@ -174,7 +181,10 @@ export default function PHQStep({
         </p>
       </div>
 
-      <StepButtons prevStep={prevStep} nextStep={nextStep} />
+      {/* NAVIGATION */}
+      <div className="border-t border-gray-300 bg-gray-50">
+        <StepButtons prevStep={prevStep} nextStep={nextStep} />
+      </div>
     </section>
   )
 }
