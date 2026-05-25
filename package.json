@@ -11,6 +11,7 @@
   "dependencies": {
     "@elevenlabs/react": "^1.6.2",
     "@tailwindcss/postcss": "^4.2.2",
+    "@types/node": "20.19.41",
     "bcryptjs": "^3.0.3",
     "framer-motion": "^12.38.0",
     "lucide-react": "^1.8.0",
@@ -26,16 +27,15 @@
     "resend": "^6.11.0",
     "tailwindcss": "^4.2.2",
     "three": "^0.184.0",
+    "typescript": "5.9.3",
     "zustand": "^5.0.12"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",
-    "@types/node": "^20.19.41",
     "@types/pg": "^8.20.0",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
-    "eslint-config-next": "16.2.3",
-    "typescript": "^5.9.3"
+    "eslint-config-next": "16.2.3"
   }
 }
