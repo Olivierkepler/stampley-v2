@@ -66,7 +66,7 @@ export default function ContextualFactorsPage() {
                 whileTap={{ scale: 0.98 }}
                 onClick={() => toggleTag(tag.id)}
                 className={`
-                  relative flex w-full items-center gap-4 overflow-hidden border p-5 text-left transition-all duration-300
+                  relative flex cursor-pointer w-full items-center gap-4 overflow-hidden border p-5 text-left transition-all duration-300
                   ${
                     selected
                       ? "border-[#3d5a80]/50 bg-white shadow-[0_4px_16px_rgba(61,90,128,0.1)]"
