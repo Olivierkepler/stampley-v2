@@ -46,6 +46,37 @@ const DOMAIN_DESCRIPTIONS: Record<string, string> = {
     "Questions about support from family, friends, and people around you.",
 }
 
+const SCORE_GROUPS = [
+  { label: "Total DDS", items: QUESTIONS.map((q) => q.id), divisor: 17 },
+  { label: "Emotional", items: ["q1", "q3", "q8", "q11", "q14"], divisor: 5 },
+  { label: "Physician", items: ["q2", "q4", "q9", "q15"], divisor: 4 },
+  { label: "Regimen", items: ["q5", "q6", "q10", "q12", "q16"], divisor: 5 },
+  { label: "Interpersonal", items: ["q7", "q13", "q17"], divisor: 3 },
+]
+
+function getLiveScorePreview(
+  answers: Record<string, number>,
+  items: string[],
+  divisor: number
+) {
+  const answeredValues = items
+    .map((item) => answers[item])
+    .filter((value): value is number => typeof value === "number")
+
+  const answeredCount = answeredValues.length
+  const previewMean =
+    answeredCount > 0
+      ? answeredValues.reduce((sum, value) => sum + value, 0) / answeredCount
+      : null
+
+  return {
+    answeredCount,
+    divisor,
+    previewMean,
+    complete: answeredCount === divisor,
+  }
+}
+
 export default function DDSClient() {
   const router = useRouter()
   const [answers, setAnswers] = useState<Record<string, number>>({})
@@ -202,7 +233,7 @@ export default function DDSClient() {
                   )
                 })}
               </ol>
-
+{/* 
               <div className="border-t border-gray-300 px-4 py-4">
                 <div className="mb-2 flex items-center justify-between text-xs text-gray-500">
                   <span>Overall progress</span>
@@ -217,7 +248,64 @@ export default function DDSClient() {
                 <p className="mt-2 text-xs text-gray-500">
                   {totalAnswered}/17 questions completed
                 </p>
-              </div>
+              </div> */}
+
+              <div className="border-t border-gray-300 px-4 py-4">
+  <h3 className="text-sm font-bold text-gray-800">
+    Live score preview
+  </h3>
+
+  <div className="mt-3 space-y-2">
+    {SCORE_GROUPS.map((group) => {
+      const score = getLiveScorePreview(
+        answers,
+        group.items,
+        group.divisor
+      )
+
+      return (
+        <div
+          key={group.label}
+          className="border border-gray-300 bg-white px-3 py-2"
+        >
+          <div className="flex items-center justify-between gap-3">
+            <p className="text-xs font-semibold text-gray-800">
+              {group.label}
+            </p>
+
+            <span className="text-[11px] text-gray-500">
+              {score.answeredCount}/{score.divisor}
+            </span>
+          </div>
+
+          <div className="mt-1 flex items-center justify-between gap-3">
+            <p className="text-xs text-gray-500">
+              {score.complete ? "Final preview" : "In progress"}
+            </p>
+
+            <div className="flex items-center gap-2">
+              <span className="text-sm font-bold text-[#003e73]">
+                {score.previewMean == null
+                  ? "—"
+                  : score.previewMean.toFixed(2)}
+              </span>
+
+              {score.previewMean != null && score.previewMean >= 3 ? (
+                <span className="border border-amber-300 bg-amber-50 px-1.5 py-0.5 text-[10px] font-semibold text-amber-800">
+                  ≥ 3
+                </span>
+              ) : null}
+            </div>
+          </div>
+        </div>
+      )
+    })}
+  </div>
+
+  <p className="mt-3 text-[11px] leading-5 text-gray-500">
+    Preview only. Final DDS scores are calculated after submission.
+  </p>
+</div>
             </aside>
 
             <section className="border border-gray-300 bg-white">
