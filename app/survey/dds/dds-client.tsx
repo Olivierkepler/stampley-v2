@@ -35,31 +35,15 @@ const SCALE = [
 
 const DOMAIN_ORDER = ["Emotional", "Physician", "Regimen", "Interpersonal"] as const
 
-const DOMAIN_STYLES: Record<string, { bg: string; text: string; border: string; description: string }> = {
-  Emotional: {
-    bg: "rgba(139,111,71,0.08)",
-    text: "#8B6F47",
-    border: "rgba(139,111,71,0.16)",
-    description: "Questions about overwhelm, fear, burnout, and emotional burden.",
-  },
-  Physician: {
-    bg: "rgba(124,94,60,0.08)",
-    text: "#7C5E3C",
-    border: "rgba(124,94,60,0.16)",
-    description: "Questions about communication, support, and confidence in your healthcare team.",
-  },
-  Regimen: {
-    bg: "rgba(166,124,82,0.08)",
-    text: "#A67C52",
-    border: "rgba(166,124,82,0.16)",
-    description: "Questions about routines, meal plans, testing, and self-management.",
-  },
-  Interpersonal: {
-    bg: "rgba(176,137,104,0.08)",
-    text: "#B08968",
-    border: "rgba(176,137,104,0.16)",
-    description: "Questions about support from family, friends, and people around you.",
-  },
+const DOMAIN_DESCRIPTIONS: Record<string, string> = {
+  Emotional:
+    "Questions about overwhelm, fear, burnout, and emotional burden.",
+  Physician:
+    "Questions about communication, support, and confidence in your healthcare team.",
+  Regimen:
+    "Questions about routines, meal plans, testing, and self-management.",
+  Interpersonal:
+    "Questions about support from family, friends, and people around you.",
 }
 
 export default function DDSClient() {
@@ -69,7 +53,7 @@ export default function DDSClient() {
   const [error, setError] = useState("")
   const [currentDomainIndex, setCurrentDomainIndex] = useState(0)
 
-  const questionRefs = useRef<Record<string, HTMLDivElement | null>>({})
+  const questionRefs = useRef<Record<string, HTMLTableRowElement | null>>({})
 
   const totalAnswered = Object.keys(answers).length
   const progress = Math.round((totalAnswered / 17) * 100)
@@ -86,7 +70,7 @@ export default function DDSClient() {
   const currentSection = groupedQuestions[currentDomainIndex]
   const currentDomain = currentSection.domain
   const currentQuestions = currentSection.questions
-  const currentStyle = DOMAIN_STYLES[currentDomain]
+  const currentDomainDescription = DOMAIN_DESCRIPTIONS[currentDomain]
 
   const currentSectionAnswered = currentQuestions.filter((q) => answers[q.id] != null).length
   const currentSectionComplete = currentSectionAnswered === currentQuestions.length
@@ -170,232 +154,278 @@ export default function DDSClient() {
     .reduce((sum, section) => sum + section.questions.length, 0)
 
   return (
-    <>
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500&family=JetBrains+Mono:wght@400;500&family=Outfit:wght@300;400;500;600&display=swap');
-      `}</style>
+    <main className="min-h-screen bg-white">
+      <div className="mx-auto">
+        <div className="border border-gray-300 bg-white">
+          <div className="border-b border-gray-300 bg-[#003e73] px-6 py-4 text-white">
+            <p className="text-xs font-semibold uppercase tracking-widest">
+              AIDES-T2D Research Study
+            </p>
+            <h1 className="mt-1 text-2xl font-bold">
+              Diabetes Distress Scale (DDS)
+            </h1>
+          </div>
 
-      <div
-        className="min-h-screen bg-[#f7f3ed]"
-        style={{ fontFamily: "'Outfit', system-ui, sans-serif" }}
-      >
-        <div className="sticky top-0 z-20 border-b border-black/[0.06] bg-[#fefdfb]/90 backdrop-blur-xl">
-          <div className="mx-auto max-w-4xl px-6 py-4">
-            <div className="mb-3 flex items-start justify-between gap-4">
-              <div>
-                <p
-                  className="mb-2 text-[10px] uppercase tracking-[0.18em] text-black/35"
-                  style={{ fontFamily: "'JetBrains Mono', monospace" }}
-                >
-                  Baseline Assessment
-                </p>
-                <h1
-                  className="text-[22px] font-medium tracking-[-0.02em] text-black/85"
-                  style={{ fontFamily: "'Fraunces', Georgia, serif" }}
-                >
-                  Diabetes Distress Scale
-                </h1>
-                <p className="mt-1 text-[13px] leading-relaxed text-black/45">
-                  Consider how much each item has distressed or bothered you during the past month.
-                </p>
+          <div className="grid gap-6 p-6 lg:grid-cols-[280px_1fr]">
+            <aside className="border border-gray-300 bg-[#f7f9fb]">
+              <div className="border-b border-gray-300 bg-gray-100 px-4 py-3">
+                <h2 className="text-sm font-bold text-gray-800">Form Progress</h2>
               </div>
 
-              <div className="shrink-0 text-right">
-                <p className="text-sm font-medium text-black/65">
-                  {totalAnswered}/17 completed
+              <ol className="divide-y divide-gray-300">
+                {groupedQuestions.map((section, index) => {
+                  const active = currentDomainIndex === index
+                  const completed = currentDomainIndex > index
+                  const sectionAnswered = section.questions.filter(
+                    (q) => answers[q.id] != null
+                  ).length
+
+                  return (
+                    <li
+                      key={section.domain}
+                      className={`flex gap-3 px-4 py-3 text-sm ${
+                        active
+                          ? "border-l-4 border-[#005ea8] bg-white font-bold text-[#003e73]"
+                          : completed
+                            ? "text-gray-700"
+                            : "text-gray-500"
+                      }`}
+                    >
+                      <span>{completed ? "✓" : `${index + 1}.`}</span>
+                      <span className="flex-1">
+                        {section.domain}
+                        <span className="mt-0.5 block text-xs font-normal text-gray-500">
+                          {sectionAnswered}/{section.questions.length} answered
+                        </span>
+                      </span>
+                    </li>
+                  )
+                })}
+              </ol>
+
+              <div className="border-t border-gray-300 px-4 py-4">
+                <div className="mb-2 flex items-center justify-between text-xs text-gray-500">
+                  <span>Overall progress</span>
+                  <span>{progress}% completed</span>
+                </div>
+                <div className="h-2 border border-gray-300 bg-white">
+                  <div
+                    className="h-full bg-[#005ea8] transition-all duration-300"
+                    style={{ width: `${progress}%` }}
+                  />
+                </div>
+                <p className="mt-2 text-xs text-gray-500">
+                  {totalAnswered}/17 questions completed
                 </p>
-                <p className="text-[11px] text-black/35">
+              </div>
+            </aside>
+
+            <section className="border border-gray-300 bg-white">
+              <div className="border-b border-gray-300 bg-gray-50 px-6 py-5">
+                <p className="text-xs font-bold uppercase tracking-[0.18em] text-gray-500">
                   Section {currentDomainIndex + 1} of {groupedQuestions.length}
                 </p>
-              </div>
-            </div>
 
-            <div className="h-2 overflow-hidden rounded-full bg-black/[0.06]">
-              <div
-                className="h-full rounded-full bg-[linear-gradient(90deg,#8B6F47,#B08968)] transition-all duration-300"
-                style={{ width: `${progress}%` }}
-              />
-            </div>
-          </div>
-        </div>
+                <h2 className="mt-2 text-2xl font-bold text-gray-900">
+                  {currentDomain} Distress
+                </h2>
 
-        <div className="mx-auto max-w-4xl space-y-6 px-6 py-8">
-          <section className="space-y-5">
-            <div className="rounded-[24px] border border-black/[0.05] bg-[#fbf8f4] p-5">
-              <div className="flex items-start justify-between gap-4">
-                <div>
-                  <div className="mb-2 flex items-center gap-2">
-                    <span
-                      className="rounded-full border px-3 py-1 text-[10px] uppercase tracking-[0.14em]"
-                      style={{
-                        background: currentStyle.bg,
-                        color: currentStyle.text,
-                        borderColor: currentStyle.border,
-                        fontFamily: "'JetBrains Mono', monospace",
-                      }}
-                    >
-                      {currentDomain}
+                <p className="mt-3 max-w-3xl text-sm leading-6 text-gray-700">
+                  Consider how much each item has distressed or bothered you during
+                  the past month.
+                </p>
+
+                <p className="mt-2 max-w-3xl text-sm leading-6 text-gray-600">
+                  {currentDomainDescription}
+                </p>
+
+                <div className="mt-6">
+                  <div className="mb-2 flex items-center justify-between text-xs text-gray-500">
+                    <span>Section progress</span>
+                    <span>
+                      {currentSectionAnswered}/{currentQuestions.length} answered
                     </span>
                   </div>
 
-                  <h2
-                    className="text-[20px] font-medium tracking-[-0.02em] text-black/80"
-                    style={{ fontFamily: "'Fraunces', Georgia, serif" }}
-                  >
-                    {currentDomain} Distress
-                  </h2>
-
-                  <p className="mt-1 text-[13px] leading-relaxed text-black/45">
-                    {currentStyle.description}
-                  </p>
-                </div>
-
-                <div className="text-right">
-                  <p className="text-sm font-medium text-black/60">
-                    {currentSectionAnswered}/{currentQuestions.length}
-                  </p>
-                  <p className="text-[11px] text-black/35">answered</p>
+                  <div className="h-2 border border-gray-300 bg-white">
+                    <div
+                      className="h-full bg-[#005ea8] transition-all duration-300"
+                      style={{
+                        width: `${Math.round(
+                          (currentSectionAnswered / currentQuestions.length) * 100
+                        )}%`,
+                      }}
+                    />
+                  </div>
                 </div>
               </div>
-            </div>
 
-            {currentQuestions.map((q, index) => {
-              const selectedValue = answers[q.id]
-              const selectedLabel = SCALE.find((s) => s.value === selectedValue)?.label
-              const isUnansweredError = !!error && selectedValue == null
-              const questionNumber = globalQuestionNumberStart + index + 1
+              <div className="border-b border-gray-300 bg-[#f8fafc] px-6 py-4">
+                <p className="text-sm leading-6 text-gray-700">
+                  Select one response for each question using the 1–6 scale below.
+                </p>
+              </div>
 
-              return (
-                <div
-                  key={q.id}
-                  ref={(el) => {
-                    questionRefs.current[q.id] = el
-                  }}
-                  className={[
-                    "rounded-[28px] border bg-[#fefdfb] p-6 shadow-[0_4px_20px_rgba(15,23,42,0.04)] transition-all",
-                    isUnansweredError
-                      ? "border-red-200 ring-4 ring-red-50"
-                      : "border-black/[0.06]",
-                  ].join(" ")}
-                >
-                  <div className="mb-5 flex gap-4">
-                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#f6efe4] text-[12px] font-semibold text-[#8B6F47]">
-                      {questionNumber}
-                    </div>
+              <div className="px-6 py-6">
+  <div className="overflow-x-auto border border-gray-300 bg-white">
+    <table className="w-full min-w-[820px] border-collapse text-sm">
+      <thead>
+        <tr className="border-b border-gray-300 bg-gray-50">
+          <th className="w-[48%] px-4 py-3 text-left text-[11px] font-bold uppercase tracking-[0.12em] text-gray-500">
+            Question
+          </th>
 
-                    <div className="min-w-0 flex-1">
-                      <div className="mb-2 flex flex-wrap items-center gap-2">
-                        <span
-                          className="rounded-full border px-2.5 py-1 text-[10px] uppercase tracking-[0.14em]"
-                          style={{
-                            background: currentStyle.bg,
-                            color: currentStyle.text,
-                            borderColor: currentStyle.border,
-                            fontFamily: "'JetBrains Mono', monospace",
-                          }}
-                        >
-                          {q.domain}
-                        </span>
-
-                        {selectedValue != null && (
-                          <span className="text-[11px] text-black/35">
-                            Selected: {selectedLabel}
-                          </span>
-                        )}
-                      </div>
-
-                      <p className="text-[15px] leading-7 text-black/80">{q.text}</p>
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-6">
-                    {SCALE.map((option) => {
-                      const selected = selectedValue === option.value
-                      return (
-                        <button
-                          key={option.value}
-                          type="button"
-                          onClick={() => handleAnswer(q.id, option.value)}
-                          aria-pressed={selected}
-                          className={[
-                            "flex flex-col items-center gap-1 rounded-2xl border p-2 transition-all",
-                            selected
-                              ? "border-[#1f1a17] bg-[#1f1a17] text-white shadow-[0_6px_16px_rgba(31,26,23,0.16)]"
-                              : "border-black/[0.08] bg-white text-black/60 hover:border-[#8B6F47]/35 hover:bg-[#faf7f2]",
-                          ].join(" ")}
-                        >
-                          <span className="text-lg font-semibold">{option.value}</span>
-                          <span
-                            className={[
-                              "text-center text-[9px] leading-tight",
-                              selected ? "text-white/75" : "text-black/40",
-                            ].join(" ")}
-                          >
-                            {option.label}
-                          </span>
-                        </button>
-                      )
-                    })}
-                  </div>
-                </div>
-              )
-            })}
-          </section>
-
-          {error && (
-            <div className="rounded-[18px] border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-              {error}
-            </div>
-          )}
-
-          <div className="flex gap-3 pb-8">
-            <button
-              type="button"
-              onClick={handlePreviousSection}
-              disabled={currentDomainIndex === 0 || loading}
-              className={[
-                "flex-1 rounded-[18px] py-4 text-sm font-medium transition",
-                currentDomainIndex === 0
-                  ? "cursor-not-allowed bg-black/[0.08] text-black/30"
-                  : "border border-black/[0.08] bg-white text-black/65 hover:bg-[#faf7f2]",
-              ].join(" ")}
+          {SCALE.map((option) => (
+            <th
+              key={option.value}
+              className="w-[8.6%] px-2 py-3 text-center text-[11px] font-bold uppercase tracking-[0.06em] text-gray-500"
             >
-              ← Back
-            </button>
+              <span className="block text-sm font-bold text-gray-900">
+                {option.value}
+              </span>
+              <span className="mt-0.5 block text-[10px] font-normal leading-tight text-gray-400">
+                {option.label}
+              </span>
+            </th>
+          ))}
+        </tr>
+      </thead>
 
-            {!isLastSection ? (
-              <button
-                type="button"
-                onClick={handleNextSection}
-                disabled={loading}
-                className="flex-1 rounded-[18px] bg-[#1f1a17] py-4 text-sm font-medium text-white transition hover:bg-[#2a231f]"
-              >
-                {currentSectionComplete
-                  ? "Next Category →"
-                  : `Continue (${currentQuestions.length - currentSectionAnswered} remaining)`}
-              </button>
-            ) : (
-              <button
-                type="button"
-                onClick={handleSubmit}
-                disabled={loading || !allAnswered}
-                className={[
-                  "flex-1 rounded-[18px] py-4 text-sm font-medium transition",
-                  allAnswered
-                    ? "bg-[#1f1a17] text-white hover:bg-[#2a231f]"
-                    : "cursor-not-allowed bg-black/[0.08] text-black/30",
-                ].join(" ")}
-              >
-                {loading
-                  ? "Calculating your results..."
-                  : allAnswered
-                    ? "See My Results →"
-                    : `Answer all questions to continue (${remaining} remaining)`}
-              </button>
-            )}
+      <tbody>
+        {currentQuestions.map((q, index) => {
+          const selectedValue = answers[q.id]
+          const isUnansweredError = !!error && selectedValue == null
+          const questionNumber = globalQuestionNumberStart + index + 1
+
+          return (
+            <tr
+              key={q.id}
+              ref={(el) => {
+                questionRefs.current[q.id] = el
+              }}
+              className={`border-b border-gray-200 last:border-b-0 ${
+                isUnansweredError ? "bg-red-50" : "bg-white"
+              }`}
+            >
+              <td className="px-4 py-3 align-middle">
+                <div className="flex items-start gap-3">
+                  <span className="flex h-6 w-6 shrink-0 items-center justify-center border border-gray-300 bg-gray-50 text-[11px] font-semibold text-gray-600">
+                    {questionNumber}
+                  </span>
+
+                  <p className="text-[13px] font-medium leading-5 text-gray-900">
+                    {q.text}
+                  </p>
+                </div>
+              </td>
+
+              {SCALE.map((option) => {
+                const selected = selectedValue === option.value
+                const inputId = `${q.id}-${option.value}`
+
+                return (
+                  <td
+                    key={option.value}
+                    className={`px-2 py-3 text-center align-middle transition ${
+                      selected ? "bg-[#f0f6fc]" : "bg-white"
+                    }`}
+                  >
+                    <label
+                      htmlFor={inputId}
+                      className="inline-flex cursor-pointer items-center justify-center"
+                    >
+                      <input
+                        type="radio"
+                        id={inputId}
+                        name={q.id}
+                        value={option.value}
+                        checked={selected}
+                        onChange={() => handleAnswer(q.id, option.value)}
+                        className="sr-only"
+                      />
+
+                      <span
+                        className={`flex h-5 w-5 items-center justify-center rounded-full border transition ${
+                          selected
+                            ? "border-[#005ea8] bg-[#005ea8]"
+                            : "border-gray-400 bg-white hover:border-[#005ea8]"
+                        }`}
+                        aria-hidden="true"
+                      >
+                        {selected && (
+                          <span className="h-2 w-2 rounded-full bg-white" />
+                        )}
+                      </span>
+
+                      <span className="sr-only">
+                        Question {questionNumber}: {option.label} Score{" "}
+                        {option.value}
+                      </span>
+                    </label>
+                  </td>
+                )
+              })}
+            </tr>
+          )
+        })}
+      </tbody>
+    </table>
+  </div>
+</div>
+              {error ? (
+                <p className="px-6 pb-2 text-sm text-red-700" role="alert">
+                  {error}
+                </p>
+              ) : null}
+
+              <div className="flex items-center justify-between border-t border-gray-300 bg-gray-50 px-6 py-4">
+                <button
+                  type="button"
+                  onClick={handlePreviousSection}
+                  disabled={currentDomainIndex === 0 || loading}
+                  className={`border px-5 py-2 text-sm font-semibold ${
+                    currentDomainIndex === 0
+                      ? "cursor-not-allowed border-gray-300 bg-gray-100 text-gray-400"
+                      : "border-gray-500 bg-white text-gray-800 hover:bg-gray-100"
+                  }`}
+                >
+                  Back
+                </button>
+
+                {!isLastSection ? (
+                  <button
+                    type="button"
+                    onClick={handleNextSection}
+                    disabled={loading}
+                    className="bg-[#005ea8] px-6 py-2 text-sm font-semibold text-white hover:bg-[#004b87] disabled:opacity-60"
+                  >
+                    {currentSectionComplete
+                      ? "Continue"
+                      : `Continue (${currentQuestions.length - currentSectionAnswered} remaining)`}
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={handleSubmit}
+                    disabled={loading || !allAnswered}
+                    className={`px-6 py-2 text-sm font-semibold text-white ${
+                      allAnswered
+                        ? "bg-[#005ea8] hover:bg-[#004b87]"
+                        : "cursor-not-allowed bg-gray-400"
+                    } disabled:opacity-60`}
+                  >
+                    {loading
+                      ? "Calculating your results..."
+                      : allAnswered
+                        ? "See My Results"
+                        : `Answer all questions to continue (${remaining} remaining)`}
+                  </button>
+                )}
+              </div>
+            </section>
           </div>
         </div>
       </div>
-    </>
+    </main>
   )
 }

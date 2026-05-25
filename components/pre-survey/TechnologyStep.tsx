@@ -180,11 +180,22 @@ function SelectField({
       >
         <option value="">Select one</option>
 
-        {options.map((option: string) => (
-          <option key={option} value={option}>
-            {option}
-          </option>
-        ))}
+        {options.map((option: string) => {
+          const isBlocked =
+            option === "Not sure" || option === "Prefer not to answer";
+
+          return (
+            <option
+              key={option}
+              value={option}
+              disabled={isBlocked}
+              aria-disabled={isBlocked ? "true" : undefined}
+              className={isBlocked ? "cursor-not-allowed opacity-50" : undefined}
+            >
+              {option}
+            </option>
+          );
+        })}
       </select>
     </FieldWrapper>
   );
