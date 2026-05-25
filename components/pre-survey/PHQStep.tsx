@@ -1,6 +1,6 @@
-"use client";
+"use client"
 
-import StepButtons from "./StepButtons";
+import StepButtons from "./StepButtons"
 
 const questions = [
   "Little interest or pleasure in doing things",
@@ -12,30 +12,14 @@ const questions = [
   "Trouble concentrating on things, such as reading or watching television",
   "Moving or speaking so slowly that other people could notice, or the opposite — being so fidgety or restless that you move around more than usual",
   "Thoughts that you would be better off dead or hurting yourself in some way",
-];
+]
 
 const options = [
-  {
-    value: 0,
-    label: "Not at all",
-    description: "Did not occur",
-  },
-  {
-    value: 1,
-    label: "Several days",
-    description: "Occurred occasionally",
-  },
-  {
-    value: 2,
-    label: "More than half the days",
-    description: "Occurred frequently",
-  },
-  {
-    value: 3,
-    label: "Nearly every day",
-    description: "Occurred almost daily",
-  },
-];
+  { value: 0, label: "Not at all" },
+  { value: 1, label: "Several days" },
+  { value: 2, label: "More than half the days" },
+  { value: 3, label: "Nearly every day" },
+]
 
 export default function PHQStep({
   formData,
@@ -44,15 +28,14 @@ export default function PHQStep({
   prevStep,
 }: any) {
   const answeredQuestions = questions.filter((_, index) => {
-    const name = `phq${index + 1}`;
-    return formData[name] !== undefined;
-  }).length;
+    const name = `phq${index + 1}`
+    return formData[name] !== undefined
+  }).length
 
-  const progress = Math.round((answeredQuestions / questions.length) * 100);
+  const progress = Math.round((answeredQuestions / questions.length) * 100)
 
   return (
     <section>
-      {/* Header */}
       <div className="border-b border-gray-300 bg-gray-50 px-6 py-5">
         <p className="text-xs font-bold uppercase tracking-[0.18em] text-gray-500">
           Section E
@@ -67,7 +50,6 @@ export default function PHQStep({
           following problems?
         </p>
 
-        {/* Progress */}
         <div className="mt-6">
           <div className="mb-2 flex items-center justify-between text-xs text-gray-500">
             <span>Progress</span>
@@ -83,98 +65,107 @@ export default function PHQStep({
         </div>
       </div>
 
-      {/* Instructions */}
       <div className="border-b border-gray-300 bg-[#f8fafc] px-6 py-4">
         <p className="text-sm leading-6 text-gray-700">
-          Please select the response that best describes how often you
-          experienced each symptom during the past two weeks.
+          Please select one response for each row.
         </p>
       </div>
 
-      {/* Questions */}
-      <div className="space-y-6 px-6 py-8">
-        {questions.map((question, index) => {
-          const name = `phq${index + 1}`;
+      <div className="px-6 py-8">
+        <div className="overflow-x-auto border border-gray-300 bg-white">
+          <table className="w-full min-w-[900px] border-collapse">
+            <thead>
+              <tr className="border-b border-gray-300 bg-gray-50">
+                <th className="w-[42%] px-4 py-4 text-left text-xs font-bold uppercase tracking-[0.12em] text-gray-500">
+                  Question
+                </th>
 
-          return (
-            <div
-              key={name}
-              className="border border-gray-300 bg-white"
-            >
-              {/* Question Header */}
-              <div className="border-b border-gray-300 bg-gray-50 px-4 py-4">
-                <div className="flex items-start gap-3">
-                  <div className="flex h-7 w-7 shrink-0 items-center justify-center border border-gray-300 bg-white text-sm font-semibold text-gray-700">
-                    {index + 1}
-                  </div>
+                {options.map((option) => (
+                  <th
+                    key={option.value}
+                    className="px-4 py-4 text-center text-xs font-bold uppercase tracking-[0.08em] text-gray-500"
+                  >
+                    <span className="block text-gray-900">{option.label}</span>
+                    <span className="mt-1 block font-normal text-gray-400">
+                      Score {option.value}
+                    </span>
+                  </th>
+                ))}
+              </tr>
+            </thead>
 
-                  <div>
-                    <p className="text-sm font-semibold leading-6 text-gray-900">
-                      {question}
-                    </p>
-                  </div>
-                </div>
-              </div>
+            <tbody>
+              {questions.map((question, index) => {
+                const name = `phq${index + 1}`
 
-              {/* Options */}
-              <div className="divide-y divide-gray-200">
-                {options.map((option) => {
-                  const selected = formData[name] === option.value;
+                return (
+                  <tr
+                    key={name}
+                    className="border-b border-gray-200 last:border-b-0"
+                  >
+                    <td className="px-4 py-5 align-top">
+                      <div className="flex gap-3">
+                        <span className="flex h-7 w-7 shrink-0 items-center justify-center border border-gray-300 bg-gray-50 text-xs font-semibold text-gray-600">
+                          {index + 1}
+                        </span>
 
-                  return (
-                    <label
-                      key={option.value}
-                      className={`flex cursor-pointer items-start gap-4 px-5 py-4 transition ${
-                        selected
-                          ? "bg-[#f0f6fc]"
-                          : "bg-white hover:bg-gray-50"
-                      }`}
-                    >
-                      <input
-                        type="radio"
-                        name={name}
-                        value={option.value}
-                        checked={selected}
-                        onChange={() =>
-                          setFormData({
-                            ...formData,
-                            [name]: option.value,
-                          })
-                        }
-                        className="mt-1 h-4 w-4 accent-[#005ea8]"
-                      />
-
-                      <div className="flex-1">
-                        <div className="flex items-center justify-between gap-4">
-                          <p
-                            className={`text-sm font-medium ${
-                              selected
-                                ? "text-[#003e73]"
-                                : "text-gray-900"
-                            }`}
-                          >
-                            {option.label}
-                          </p>
-
-                          <span className="border border-gray-300 bg-white px-2 py-1 text-xs text-gray-500">
-                            Score {option.value}
-                          </span>
-                        </div>
-
-                        <p className="mt-1 text-xs leading-5 text-gray-500">
-                          {option.description}
+                        <p className="text-sm font-medium leading-6 text-gray-900">
+                          {question}
                         </p>
                       </div>
-                    </label>
-                  );
-                })}
-              </div>
-            </div>
-          );
-        })}
+                    </td>
+
+                    {options.map((option) => {
+                      const selected = formData[name] === option.value
+
+                      return (
+                        <td
+                          key={option.value}
+                          className={`px-4 py-5 text-center align-middle transition ${
+                            selected ? "bg-[#f0f6fc]" : "bg-white"
+                          }`}
+                        >
+                          <label className="inline-flex cursor-pointer items-center justify-center">
+                            <input
+                              type="radio"
+                              name={name}
+                              value={option.value}
+                              checked={selected}
+                              onChange={() =>
+                                setFormData({
+                                  ...formData,
+                                  [name]: option.value,
+                                })
+                              }
+                              className="sr-only"
+                            />
+
+                            <span
+                              className={`flex h-6 w-6 items-center justify-center rounded-full border transition ${
+                                selected
+                                  ? "border-[#005ea8] bg-[#005ea8]"
+                                  : "border-gray-400 bg-white hover:border-[#005ea8]"
+                              }`}
+                              aria-hidden="true"
+                            >
+                              {selected && (
+                                <span className="h-2.5 w-2.5 rounded-full bg-white" />
+                              )}
+                            </span>
+
+                            <span className="sr-only">{option.label}</span>
+                          </label>
+                        </td>
+                      )
+                    })}
+                  </tr>
+                )
+              })}
+            </tbody>
+          </table>
+        </div>
       </div>
 
-      {/* Safety Notice */}
       <div className="border-t border-gray-300 bg-amber-50 px-6 py-5">
         <p className="text-sm leading-6 text-amber-900">
           If you are experiencing emotional distress or thoughts of self-harm,
@@ -183,8 +174,7 @@ export default function PHQStep({
         </p>
       </div>
 
-      {/* Footer */}
       <StepButtons prevStep={prevStep} nextStep={nextStep} />
     </section>
-  );
+  )
 }
