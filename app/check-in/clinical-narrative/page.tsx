@@ -12,6 +12,7 @@ import {
 
 import { useCheckInStore } from "@/store/checkin-store"
 import CheckInSubHeader from "@/components/check-in/CheckInSubHeader"
+import StampleyHeader from "@/components/stampley/stampley-header"
 
 const REFLECTION_MAX_LENGTH = 250
 const COPING_MAX_LENGTH = 180
@@ -204,9 +205,15 @@ export default function ClinicalNarrativePage() {
       `}</style>
 
       <div
-        className="mx-auto w-full max-w-7xl pb-10 lg:px-0"
+        className="mx-auto w-full max-w-full pb-10 lg:px-0"
         style={{ fontFamily: "'Outfit', system-ui, sans-serif" }}
       >
+
+<StampleyHeader
+  step="Step 5 of 5"
+  title="Stampley Support"
+  subtitle="Daily reflection support"
+/>
         <CheckInSubHeader
           eyebrow="Step 3 of 5"
           title="Reflect on your day"

@@ -3,6 +3,7 @@ import { redirect } from "next/navigation"
 import { query } from "@/lib/db"
 import { WeeklyDomainClient } from "./weekly-domain-client"
 import CheckInSubHeader from "@/components/check-in/CheckInSubHeader"
+import StampleyHeader from "@/components/stampley/stampley-header"
 
 export default async function WeeklyDomainPage() {
   const session = await auth()
@@ -32,9 +33,15 @@ export default async function WeeklyDomainPage() {
       `}</style>
 
       <div
-        className="mx-auto w-full max-w-full px-4 pb-10 lg:px-0"
+        className="mx-auto w-full max-w-full  pb-10 lg:px-0"
         style={{ fontFamily: "'Outfit', system-ui, sans-serif" }}
       >
+        
+        <StampleyHeader
+  step="Step 5 of 5"
+  title="Stampley Support"
+  subtitle="Daily reflection support"
+/>
         <CheckInSubHeader
           eyebrow="Step 4 of 5"
           title="Choose your focus domain."

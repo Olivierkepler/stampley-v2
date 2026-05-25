@@ -7,6 +7,7 @@ import DailyWellnessRadar from "@/components/daily-metrics/DailyWellnessRadar"
 import BioMonitor from "@/components/daily-metrics/BioMonitor"
 import WhiteGlucometer from "@/components/daily-metrics/glucometer"
 import CheckInSubHeader from "@/components/check-in/CheckInSubHeader"
+import StampleyHeader from "@/components/stampley/stampley-header"
 
 export default function DailyMetricsPage() {
   const { distress, mood, energy, setDistress, setMood, setEnergy } = useCheckInStore()
@@ -51,6 +52,7 @@ export default function DailyMetricsPage() {
         // style={{ background: "linear-gradient(160deg, #fefdfb 0%, #f9f6f1 100%)" }}
         style={{ background: "#fff" }}
       >
+        
 
       
         <div className="mb-1">
@@ -170,6 +172,12 @@ export default function DailyMetricsPage() {
         style={{ fontFamily: "'Poppins', sans-serif", fontSize: "clamp(10px, 1vw, 12px)" }}
       >
 
+<StampleyHeader
+  step="Step 5 of 5"
+  title="Stampley Support"
+  subtitle="Daily reflection support"
+/>
+
 <CheckInSubHeader
   eyebrow="Step 1 of 5"
   title="How are you feeling today?"
@@ -179,7 +187,7 @@ export default function DailyMetricsPage() {
 
        
 
-        <div className="max-w-full mx-auto px-4 md:px-20 w-full my-20">
+        <div className="max-w-full mx-auto px-4 md:px-20 w-full my-10 ">
           <div className="flex flex-col lg:flex-row gap-6 w-full items-start">
             <div className="flex-1 w-full ">
               {renderSlider({

@@ -78,72 +78,59 @@ export function WeeklyDomainClient({
 
   return (
     <div className="space-y-8 px-4 md:px-8 lg:px-12">
-      <AnimatePresence>
-        {(domain || lockedDomain) && activeDomain && (
-          <motion.section
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 8 }}
-            transition={{ duration: 0.25 }}
-            className="flex items-center gap-3  border border-black/[0.07] bg-white px-4 py-3 shadow-[0_1px_4px_rgba(10,10,15,0.04)]"
-          >
-            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[12px] bg-[#3d5a80]/[0.08] text-[#3d5a80]">
-              <activeDomain.icon size={16} strokeWidth={1.8} />
-            </div>
-
-            <p
-              className="text-[13.5px] leading-[1.6] text-black"
-              style={{ fontFamily: "'Poppins', sans-serif" }}
-            >
-              Stampley will focus on{" "}
-              <span className="font-semibold text-black/75">
-                {activeDomain.label}
-              </span>{" "}
-              for the next 4 days.
-            </p>
-          </motion.section>
+     <AnimatePresence>
+  {activeDomain && (domain || lockedDomain) && (
+    <motion.section
+      initial={{ opacity: 0, y: 8 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: 8 }}
+      transition={{ duration: 0.25 }}
+      className="flex items-center gap-3 border border-black/[0.07] bg-white px-5 py-4 shadow-[0_1px_4px_rgba(10,10,15,0.04)]"
+    >
+      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[12px] bg-[#3d5a80]/[0.08] text-[#3d5a80]">
+        {isLocked ? (
+          <Lock size={16} strokeWidth={1.8} />
+        ) : (
+          <activeDomain.icon size={16} strokeWidth={1.8} />
         )}
-      </AnimatePresence>
+      </div>
 
-      <AnimatePresence>
-        {isLocked && activeDomain && (
-          <motion.section
-            initial={{ opacity: 0, y: -8, scale: 0.98 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -8 }}
-            transition={{ duration: 0.3 }}
-            className="flex items-center gap-3  border border-black/[0.07] bg-white px-5 py-4 shadow-[0_1px_4px_rgba(10,10,15,0.04)]"
-          >
-            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[12px] border border-black/[0.08] bg-white text-black/45">
-              <Lock size={15} strokeWidth={1.8} />
-            </div>
+      <div className="min-w-0 flex-1">
+        <p
+          className="text-[13.5px] font-medium text-black"
+          style={{ fontFamily: "'Poppins', sans-serif" }}
+        >
+          {isLocked
+            ? `Week ${weekNumber} focus locked`
+            : "Current Stampley focus"}
+        </p>
 
-            <div className="min-w-0 flex-1">
-              <p
-                className="text-[13.5px] font-medium text-black/65"
-                style={{ fontFamily: "'Poppins', sans-serif" }}
-              >
-                Week {weekNumber} focus locked
-              </p>
-              <p
-                className="mt-0.5 text-[12px] text-black/40"
-                style={{ fontFamily: "'Poppins', sans-serif" }}
-              >
-                A new focus domain becomes available at Week {weekNumber + 1}.
-              </p>
-            </div>
+        <p
+          className="mt-0.5 text-[12px] leading-[1.6] text-black/60"
+          style={{ fontFamily: "'Poppins', sans-serif" }}
+        >
+          Stampley will focus on{" "}
+          <span className="font-semibold text-black">
+            {activeDomain.label}
+          </span>{" "}
+          for the next 4 days.
+          {isLocked
+            ? ` A new focus domain becomes available at Week ${weekNumber + 1}.`
+            : ""}
+        </p>
+      </div>
 
-            <div className="hidden shrink-0 items-center rounded-full border border-black/[0.08] bg-black/[0.03] px-3 py-1.5 sm:flex">
-              <span
-                className="text-[9.5px] font-semibold uppercase tracking-[0.16em] text-black/45"
-                style={{ fontFamily: "'JetBrains Mono', monospace" }}
-              >
-                {activeDomain.shortLabel}
-              </span>
-            </div>
-          </motion.section>
-        )}
-      </AnimatePresence>
+      <div className="hidden shrink-0 items-center rounded-full border border-black/[0.08] bg-black/[0.03] px-3 py-1.5 sm:flex">
+        <span
+          className="text-[9.5px] font-semibold uppercase tracking-[0.16em] text-black/45"
+          style={{ fontFamily: "'JetBrains Mono', monospace" }}
+        >
+          {activeDomain.shortLabel}
+        </span>
+      </div>
+    </motion.section>
+  )}
+</AnimatePresence>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:gap-5">
         {DOMAINS.map((item, index) => {

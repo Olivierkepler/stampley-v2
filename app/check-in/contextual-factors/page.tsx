@@ -13,6 +13,7 @@ import {
   ThermometerSnowflake,
   CheckCircle2,
 } from "lucide-react"
+import StampleyHeader from "@/components/stampley/stampley-header"
 
 const CONTEXT_TAGS = [
   { id: "doctors_appointment", label: "Doctor's appointment", icon: Stethoscope },
@@ -45,6 +46,12 @@ export default function ContextualFactorsPage() {
         className="mx-auto w-full max-w-full pb-10  "
         style={{ fontFamily: "'Outfit', system-ui, sans-serif" }}
       >
+
+<StampleyHeader
+  step="Step 5 of 5"
+  title="Stampley Support"
+  subtitle="Daily reflection support"
+/>  
         <CheckInSubHeader
           eyebrow="Step 2 of 5"
           title="What shaped your day?"

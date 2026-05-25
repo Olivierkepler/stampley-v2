@@ -4,6 +4,7 @@ import React, { useRef, useState, useCallback, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { useRouter } from "next/navigation"
 import Image from "next/image"
+import StampleyHeader from "@/components/stampley/stampley-header"
 import {
   Phone,
   Wind,
@@ -48,6 +49,7 @@ import {
   writeActiveChatDraft,
   type ActiveChatSnapshot,
 } from "@/lib/stampley-active-chat-draft"
+import CheckInSubHeader from "@/components/check-in/CheckInSubHeader"
 
 type SavedMetrics = {
   distress: number
@@ -667,35 +669,40 @@ export default function StampleySupportPage() {
           className="flex h-full min-h-0 w-full flex-col overflow-hidden bg-white text-[#0a0a0f] antialiased"
           style={{ fontFamily: "'Outfit', system-ui, sans-serif" }}
         >
-          <header className="sticky top-0 z-30 flex h-14 w-full items-center justify-between border-b border-black/[0.06] bg-[#ffffff] px-4 backdrop-blur-md md:h-16 md:px-6">
-            <div className="min-w-0">
-              <p className="font-['Poppins', sans-serif] text-[8.5px] uppercase tracking-[0.18em] text-black/35">
-                Step 5 of 5
-              </p>
-              <h1 className="truncate font-[Fraunces,Georgia,serif] text-[17px] font-light tracking-[-0.02em] text-[#0a0a0f]/80 md:text-[19px]">
-                Stampley Support
-              </h1>
-            </div>
-          </header>
 
-          <main className="flex min-h-0 flex-1 flex-col overflow-hidden">
+
+        <StampleyHeader
+  step="Step 5 of 5"
+  title="Stampley Support"
+  subtitle="Daily reflection support"
+/>
+<CheckInSubHeader
+          eyebrow="Step 5 of 5"
+          title="Stampley Support"
+          description="Review your check-in metrics and start chatting with Stampley."
+        />
+
+
+
+
+          <main className="flex min-h-0 flex-1 flex-col overflow-hidden my-10 ">
             <div className="min-h-0 flex-1 overflow-y-auto">
-            <motion.div className="mx-auto flex w-full max-w-3xl flex-col gap-6 px-4 py-6 md:px-6 md:py-8">
-              <section className="flex items-center gap-3 rounded-[14px] border border-black/[0.07] bg-white px-4 py-3 shadow-[0_1px_4px_rgba(10,10,15,0.04)]">
+            <motion.div className="mx-auto flex w-full max-w-5xl flex-col gap-6 px-4 py-6 md:px-6 md:py-8">
+              <section className="flex items-center gap-3  border border-black/[0.07] bg-white px-4 py-3 shadow-[0_1px_4px_rgba(10,10,15,0.04)]">
                 <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-[9px] bg-[#3d5a80]/[0.08] text-[#3d5a80]">
                   <Activity size={15} strokeWidth={1.5} />
                 </div>
                 <motion.div className="min-w-0 flex-1">
-                  <p className="mb-0.5 font-['Poppins', sans-serif] text-[8.5px] uppercase tracking-[0.18em] text-black/35">
+                  <p className="mb-0.5 font-['Poppins', sans-serif] text-[8.5px] uppercase tracking-[0.18em] text-black">
                     Today&apos;s metrics
                  
                     
                   </p>
-                  <p className="text-[12.5px] font-light text-black/65">
+                  <p className="text-[12.5px] font-light text-black">
                     Distress {metrics.distress} · Mood {metrics.mood} · Energy{" "}
                     {metrics.energy}
                     {metrics.domain ? (
-                      <span className="ml-1.5 text-[11px] text-black/30">
+                      <span className="ml-1.5 text-[11px] text-black">
                         · {metrics.domain}
                       </span>
                     ) : null}
@@ -704,20 +711,20 @@ export default function StampleySupportPage() {
               </section>
 
               {!isBusy && !chatStarted && (
-                <section className="space-y-3">
-                  <div className="rounded-[16px] border border-black/[0.07] bg-white p-5 shadow-[0_1px_4px_rgba(10,10,15,0.04)]">
+                <section className="space-y-3 ">
+                  <div className=" border border-black/[0.07] bg-white p-5 shadow-[0_1px_4px_rgba(10,10,15,0.04)]">
                     <div className="mb-4 flex items-center gap-3">
                       <CardIcon />
                       <div>
-                        <p className="font-['Poppins', sans-serif] text-[8.5px] uppercase tracking-[0.18em] text-black/35">
+                        <p className="font-['Poppins', sans-serif] text-[8.5px] uppercase tracking-[0.18em] text-black">
                           Ready for Stampley
                         </p>
-                        <h2 className="font-[Fraunces,Georgia,serif] text-[22px] font-light tracking-[-0.02em] text-black/80">
+                        <h2 className="font-[Fraunces,Georgia,serif] text-[22px] font-light tracking-[-0.02em] text-black">
                           Your check-in is ready to discuss.
                         </h2>
                       </div>
                     </div>
-                    <p className="text-[14px] font-light leading-[1.75] text-black/55">
+                    <p className="text-[14px] font-light leading-[1.75] text-black">
                       Review your summary below, then use the button in the dock
                       to start chatting with Stampley. Your check-in will be
                       saved when you tap Complete Check-in at the end.
@@ -942,7 +949,7 @@ export default function StampleySupportPage() {
                             className="object-contain opacity-40 grayscale"
                           />
                         </div>
-                        <div className="flex items-center gap-2 text-[13.5px] font-light text-black/40">
+                        <div className="flex items-center gap-2 text-[13.5px] font-light text-black">
                           <Loader2 size={13} className="animate-spin" />
                           <span>Stampley is thinking…</span>
                         </div>
@@ -1072,8 +1079,8 @@ function CardIcon() {
 
 function ReviewRow({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex items-center justify-between rounded-[14px] border border-black/[0.07] bg-white px-5 py-4 shadow-[0_1px_4px_rgba(10,10,15,0.04)]">
-      <p className="text-[12px] text-black/40">{label}</p>
+    <div className="flex items-center justify-between  border border-black/[0.07] bg-white px-5 py-4 shadow-[0_1px_4px_rgba(10,10,15,0.04)]">
+      <p className="text-[12px] text-black">{label}</p>
       <p className="text-right text-[13px] font-medium text-black/70">{value}</p>
     </div>
   )
@@ -1081,8 +1088,8 @@ function ReviewRow({ label, value }: { label: string; value: string }) {
 
 function ReviewBlock({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-[14px] border border-black/[0.07] bg-white px-5 py-4 shadow-[0_1px_4px_rgba(10,10,15,0.04)]">
-      <p className="mb-2 text-[12px] text-black/40">{label}</p>
+    <div className=" border border-black/[0.07] bg-white px-5 py-4 shadow-[0_1px_4px_rgba(10,10,15,0.04)]">
+      <p className="mb-2 text-[12px] text-black">{label}</p>
       <p className="line-clamp-4 text-[13px] leading-[1.75] text-black/60">
         {value}
       </p>
@@ -1126,7 +1133,7 @@ function ErrorBanner({ message }: { message: string }) {
     <motion.section
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
-      className={`rounded-[14px] border px-4 py-3 text-[13px] leading-[1.65] ${
+      className={` border px-4 py-3 text-[13px] leading-[1.65] ${
         isDuplicate
           ? "border-amber-200/70 bg-amber-50/90 text-amber-900"
           : "border-red-200/70 bg-red-50/90 text-red-700"
@@ -1140,7 +1147,7 @@ function ErrorBanner({ message }: { message: string }) {
 function MetricsBar({ metrics }: { metrics: SavedMetrics }) {
   return (
     <div
-      className="flex items-center gap-3 rounded-[14px] px-4 py-3"
+      className="flex items-center gap-3  px-4 py-3"
       style={{
         background: "white",
         border: "1px solid rgba(10,10,5,0.07)",
@@ -1198,7 +1205,7 @@ function ReflectionSummaryCard({
         Stress {metrics.distress}/10 · Mood {metrics.mood}/10 · Energy{" "}
         {metrics.energy}
         {metrics.domain ? (
-          <span className="text-black/40"> · {metrics.domain}</span>
+          <span className="text-black"> · {metrics.domain}</span>
         ) : null}
       </p>
       {reflectionPreview ? (
@@ -1207,7 +1214,7 @@ function ReflectionSummaryCard({
         </p>
       ) : null}
       {copingPreview ? (
-        <p className="mt-1 line-clamp-1 text-[11px] font-light text-black/40">
+        <p className="mt-1 line-clamp-1 text-[11px] font-light text-black">
           Coping: {copingPreview}
         </p>
       ) : null}
@@ -1304,7 +1311,7 @@ function ChatInputDock({
           )}
         </button>
   
-        <p className="mt-2 text-center text-[11px] text-black/40">
+        <p className="mt-2 text-center text-[11px] text-black">
           {!canComplete
             ? `Continue chatting with Stampley. Answer ${remainingReplies} more question${
                 remainingReplies === 1 ? "" : "s"
@@ -1537,14 +1544,14 @@ function ExpandableCard({
       className="overflow-hidden"
     >
       <div
-        className="mt-1 rounded-[14px] p-4"
+        className="mt-1  p-4"
         style={{
           background: "white",
           border: "1px solid rgba(10,10,5,0.07)",
           boxShadow: "0 1px 4px rgba(10,10,5,0.04)",
         }}
       >
-        <div className="mb-2 flex items-center gap-2 text-black/40">
+        <div className="mb-2 flex items-center gap-2 text-black">
           {icon}
           <span
             className="text-[11px] font-semibold uppercase tracking-[0.14em]"
