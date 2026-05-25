@@ -1,8 +1,6 @@
 export const runtime = "nodejs"
 export const dynamic = "force-dynamic"
 
-console.log("[stampley/generate] module loaded")
-
 import { NextRequest, NextResponse } from "next/server"
 import { auth } from "@/lib/auth"
 import { query } from "@/lib/db"
@@ -21,8 +19,6 @@ import {
   type StampleyPhase,
 } from "@/lib/stampley-prompt"
 import type { Domain } from "@/store/checkin-store"
-
-console.log("[stampley/generate] imports complete")
 
 function safeErrorInfo(error: unknown) {
   if (error instanceof Error) {
@@ -169,6 +165,9 @@ export async function POST(req: NextRequest) {
     const apiKey = process.env.OPENAI_API_KEY?.trim()
 
     if (!apiKey) {
+      console.error(
+        "[stampley/generate] OPENAI_API_KEY missing at request runtime"
+      )
       throw new Error("OPENAI_API_KEY is missing at request runtime")
     }
 
