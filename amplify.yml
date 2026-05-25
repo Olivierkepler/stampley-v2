@@ -1,23 +1,24 @@
 version: 1
+
 frontend:
   phases:
     preBuild:
       commands:
-        # Amplify sets NODE_ENV=production; plain npm ci omits devDependencies and breaks next build (Tailwind/PostCSS, TypeScript).
-        - npm ci --include=dev
+        - npm ci
+
     build:
       commands:
-        # SSR: Next.js server/API routes read .env.production at build time (Amplify console vars are not available by default).
-        # https://docs.aws.amazon.com/amplify/latest/userguide/ssr-environment-variables.html
+        - rm -f .env.production
         - env | grep -E '^(AUTH_SECRET|AUTH_TRUST_HOST|AUTH_URL|DATABASE_URL|EMAIL_FROM|RESEND_API_KEY|OPENAI_API_KEY|NODE_ENV|NEXTAUTH_SECRET|NEXTAUTH_URL)=' >> .env.production
-        - test -f .env.production && cut -d= -f1 .env.production | sort -u | sed 's/^/[amplify] .env.production key: /' || echo "[amplify] .env.production missing before build"
+        - echo "Amplify env keys written to .env.production"
+        - cut -d= -f1 .env.production | sort -u
         - npm run build
-        - test -f .env.production && cut -d= -f1 .env.production | sort -u | sed 's/^/[amplify] post-build .env.production key: /' || echo "[amplify] .env.production missing after build"
+
   artifacts:
     baseDirectory: .next
     files:
       - '**/*'
+
   cache:
     paths:
       - node_modules/**/*
-      - .next/cache/**/*
