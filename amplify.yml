@@ -4,7 +4,8 @@ frontend:
   phases:
     preBuild:
       commands:
-        - npm ci
+        # Install devDependencies (typescript, eslint, etc.) — plain npm ci omits them in production.
+        - npm ci --include=dev
 
     build:
       commands:
