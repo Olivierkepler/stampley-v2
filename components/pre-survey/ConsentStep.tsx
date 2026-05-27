@@ -24,6 +24,14 @@ export default function ConsentStep({
           Before continuing, please review the information below and indicate
           whether you consent to participate in this study.
         </p>
+        <div className="mt-4 max-w-3xl  border border-[#c7d8ea] bg-[#f0f6fc] px-4 py-4">
+  <p className="text-sm leading-6 text-[#24415c]">
+    This pre-survey is completed only once at the beginning of the study.
+    Your responses will help personalize your experience throughout the
+    AIDES-T2D program and support ongoing research focused on
+    diabetes-related distress and well-being.
+  </p>
+</div>
       </div>
 
       {/* Body */}

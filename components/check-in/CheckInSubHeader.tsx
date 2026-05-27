@@ -37,7 +37,7 @@ export default function CheckInSubHeader({
             {title}
           </h1>
 
-          <p className="mt-2 max-w-md text-sm leading-6 text-white/75">
+          <p className="mt-2 max-w-md text-[18px] leading-[1.5] text-white/75" style={{ fontFamily: "'Poppins', sans-serif" }}>
             {description}
           </p>
         </div>

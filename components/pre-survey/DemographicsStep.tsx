@@ -36,11 +36,13 @@ export default function DemographicsStep({
             "1–5 years ago",
             "6–10 years ago",
             "More than 10 years ago",
-            "Not sure",
+            // "Not sure",
           ]}
           setFormData={setFormData}
           formData={formData}
-        />
+          
+          
+          />
 
         <TextField
           number="2."
@@ -58,7 +60,11 @@ export default function DemographicsStep({
             label="Sex assigned at birth"
           name="gender"
           value={formData.gender}
-          options={["Female", "Male", "Prefer not to answer"]}
+          options={["Female", "Male", 
+            
+            // "Prefer not to answer"
+          
+          ]}
           setFormData={setFormData}
           formData={formData}
         />
@@ -76,7 +82,7 @@ export default function DemographicsStep({
             "White",
             "Multiracial",
             "Other",
-            "Prefer not to answer",
+            // "Prefer not to answer",
           ]}
           setFormData={setFormData}
           formData={formData}
@@ -87,7 +93,10 @@ export default function DemographicsStep({
           label="Are you of Hispanic, Latino, or Spanish origin?"
           name="ethnicity"
           value={formData.ethnicity}
-          options={["Yes", "No", "Prefer not to answer"]}
+          options={["Yes", "No",
+            //  "Prefer not to answer"
+            
+            ]}
           setFormData={setFormData}
           formData={formData}
         />
@@ -104,7 +113,7 @@ export default function DemographicsStep({
             "Separated",
             "Divorced",
             "Widowed",
-            "Prefer not to answer",
+            // "Prefer not to answer",
           ]}
           setFormData={setFormData}
           formData={formData}
@@ -122,7 +131,7 @@ export default function DemographicsStep({
             "Associate degree",
             "Bachelor’s degree",
             "Graduate or professional degree",
-            "Prefer not to answer",
+            // "Prefer not to answer",
           ]}
           setFormData={setFormData}
           formData={formData}
@@ -141,7 +150,7 @@ export default function DemographicsStep({
             "Student",
             "Retired",
             "Unable to work",
-            "Prefer not to answer",
+            // "Prefer not to answer",
           ]}
           setFormData={setFormData}
           formData={formData}
@@ -158,7 +167,7 @@ export default function DemographicsStep({
             "$50,000–$74,999",
             "$75,000–$99,999",
             "$100,000 or more",
-            "Prefer not to answer",
+            // "Prefer not to answer",
           ]}
           setFormData={setFormData}
           formData={formData}
@@ -176,8 +185,8 @@ export default function DemographicsStep({
             "Military/Veterans insurance",
             "No insurance",
             "Other",
-            "Not sure",
-            "Prefer not to answer",
+            // "Not sure",
+            // "Prefer not to answer",
           ]}
           setFormData={setFormData}
           formData={formData}
@@ -224,18 +233,26 @@ function TextField({
 }: any) {
   return (
     <FieldWrapper number={number} label={label}>
-      <input
-        type={type}
-        value={value}
-        placeholder={placeholder}
-        onChange={(e) =>
-          setFormData({
-            ...formData,
-            [name]: e.target.value,
-          })
-        }
-        className="w-full border border-gray-300 bg-white px-4 py-3 text-sm text-gray-900 outline-none transition focus:border-[#005ea8]"
-      />
+  <input
+  type={type}
+  value={value}
+  min={type === "number" ? 0 : undefined}
+  placeholder={placeholder}
+  onChange={(e) => {
+    const value = e.target.value
+
+    // Prevent negative numbers
+    if (type === "number" && Number(value) < 0) {
+      return
+    }
+
+    setFormData({
+      ...formData,
+      [name]: value,
+    })
+  }}
+  className="w-full border cursor-pointer border-gray-300 bg-white px-4 py-3 text-sm text-gray-900 outline-none transition focus:border-[#005ea8]"
+/>
     </FieldWrapper>
   );
 }
@@ -259,7 +276,7 @@ function SelectField({
             [name]: e.target.value,
           })
         }
-        className="w-full border border-gray-300 bg-white px-4 py-3 text-sm text-gray-900 outline-none transition focus:border-[#005ea8]"
+        className="w-full border border-gray-300 bg-white px-4 py-3 text-sm text-gray-900 outline-none transition focus:border-[#005ea8] cursor-pointer"
       >
         <option value="">Select one</option>
 
@@ -317,7 +334,7 @@ function MultiSelectField({
               type="button"
               key={option}
               onClick={() => toggleOption(option)}
-              className={`border px-4 py-3 text-left text-sm transition ${
+              className={`cursor-pointer border px-4 py-3 text-left text-sm transition ${
                 selected
                   ? "border-[#005ea8] bg-[#f0f6fc] font-semibold text-[#003e73]"
                   : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"

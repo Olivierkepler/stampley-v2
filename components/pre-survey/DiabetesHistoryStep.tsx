@@ -36,7 +36,7 @@ export default function DiabetesHistoryStep({
             "1–5 years",
             "6–10 years",
             "More than 10 years",
-            "Not sure",
+            // "Not sure",
           ]}
           formData={formData}
           setFormData={setFormData}
@@ -153,8 +153,7 @@ function SelectField({
             [name]: e.target.value,
           })
         }
-        className="w-full border border-gray-300 bg-white px-4 py-3 text-sm text-gray-900 outline-none transition focus:border-[#005ea8]"
-      >
+        className="w-full cursor-pointer border border-gray-300 bg-white px-4 py-3 text-sm text-gray-900 outline-none transition focus:border-[#005ea8]"      >
         <option value="">Select one</option>
 
         {options.map((option: string) => {
@@ -215,7 +214,7 @@ function MultiSelectField({
               type="button"
               key={option}
               onClick={() => toggleOption(option)}
-              className={`border px-4 py-3 text-left text-sm transition ${
+              className={`cursor-pointer border px-4 py-3 text-left text-sm transition ${
                 selected
                   ? "border-[#005ea8] bg-[#f0f6fc] font-semibold text-[#003e73]"
                   : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"

@@ -176,7 +176,8 @@ function SelectField({
             [name]: e.target.value,
           })
         }
-        className="w-full border border-gray-300 bg-white px-4 py-3 text-sm text-gray-900 outline-none transition focus:border-[#005ea8]"
+       className="w-full cursor-pointer border border-gray-300 bg-white px-4 py-3 text-sm text-gray-900 outline-none transition focus:border-[#005ea8]"
+      
       >
         <option value="">Select one</option>
 
@@ -228,7 +229,7 @@ function YesNoField({
                   [name]: option.value,
                 })
               }
-              className={`border px-4 py-3 text-left text-sm transition ${
+              className={`cursor-pointer border px-4 py-3 text-left text-sm transition ${
                 selected
                   ? "border-[#005ea8] bg-[#f0f6fc] font-semibold text-[#003e73]"
                   : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
@@ -271,7 +272,7 @@ function ScaleField({
               [name]: Number(e.target.value),
             })
           }
-          className="w-full accent-[#005ea8]"
+          className="w-full cursor-pointer accent-[#005ea8]"
         />
 
         <div className="border border-gray-300 bg-gray-50 px-4 py-3 text-sm font-semibold text-gray-900">

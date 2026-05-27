@@ -220,7 +220,7 @@ export default function ClinicalNarrativePage() {
           description="Share what was on your mind today. There are no right or wrong answers."
         />
 
-        <div className="my-10">
+        <div className="my-10 mb-20 md:mb-10">
           <NarrativeBox
             id="reflection"
             label="Contextual Impact"

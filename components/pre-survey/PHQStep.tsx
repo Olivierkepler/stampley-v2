@@ -38,15 +38,15 @@ export default function PHQStep({
     <section className="bg-white">
       {/* HEADER */}
       <div className="border-b border-gray-300 bg-[#003e73] px-6 py-5 text-white">
-        <p className="text-xs font-semibold uppercase tracking-[0.18em] text-blue-100">
+        <p className="text-xs font-['Poppins', sans-serif] uppercase tracking-[0.18em] text-blue-100">
           Section E
         </p>
 
-        <h1 className="mt-2 text-2xl font-bold">
+        <h1 className="mt-2 text-2xl font-['Poppins', sans-serif]">
           Patient Health Questionnaire-9 (PHQ-9)
         </h1>
 
-        <p className="mt-3 max-w-3xl text-sm leading-6 text-blue-50">
+        <p className="mt-3 max-w-3xl text-sm leading-6 text-blue-50 font-['Poppins', sans-serif]">
           Over the last 2 weeks, how often have you been bothered by the
           following problems?
         </p>
@@ -173,7 +173,7 @@ export default function PHQStep({
       </div>
 
       {/* SAFETY NOTE */}
-      <div className="border-t border-amber-200 bg-amber-50 px-6 py-5">
+      <div className="border-t border-amber-200 bg-amber-50 px-6 py-5 ">
         <p className="text-sm leading-6 text-amber-900">
           If you are experiencing emotional distress or thoughts of self-harm,
           please contact a healthcare provider or emergency support service
@@ -182,7 +182,7 @@ export default function PHQStep({
       </div>
 
       {/* NAVIGATION */}
-      <div className="border-t border-gray-300 bg-gray-50">
+      <div className=" bg-gray-50">
         <StepButtons prevStep={prevStep} nextStep={nextStep} />
       </div>
     </section>

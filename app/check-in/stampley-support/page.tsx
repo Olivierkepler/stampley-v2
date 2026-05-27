@@ -1150,18 +1150,18 @@ function MetricsBar({ metrics }: { metrics: SavedMetrics }) {
       className="flex items-center gap-3  px-4 py-3"
       style={{
         background: "white",
-        border: "1px solid rgba(10,10,5,0.07)",
+        border: "1px solid #cfd9e5",
         boxShadow: "0 1px 4px rgba(10,10,5,0.04)",
       }}
     >
       <motion.div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-[9px] bg-black/[0.05]">
-        <Activity size={14} strokeWidth={1.5} className="text-black/45" />
+        <Activity size={14} strokeWidth={1.5} className="text-black" />
       </motion.div>
       <div>
         <p
           className="mb-0.5 text-[8px] uppercase tracking-[0.2em]"
           style={{
-            color: "rgba(10,10,5,0.28)",
+            color: "text-black",
             fontFamily: "'Poppins', sans-serif",
           }}
         >
@@ -1257,39 +1257,47 @@ function ChatInputDock({
   return (
     <div className="shrink-0 w-full  bg-white px-4 pb-4 pt-3 md:px-6 md:pb-6">
       <div className="mx-auto w-full max-w-3xl">
-        <div className="rounded-[26px] border border-black/[0.08] bg-white shadow-[0_4px_24px_rgba(10,10,15,0.07)] transition-all duration-200 focus-within:border-[#3d5a80]/30 focus-within:shadow-[0_8px_30px_rgba(61,90,128,0.10)]">
-          <div className="flex items-center gap-2 px-4 py-3">
-            <input
-              type="text"
-              value={inputText}
-              onChange={(e) => setInputText(e.target.value)}
-              onKeyDown={(e) => e.key === "Enter" && onSend()}
-              placeholder="Reply to Stampley..."
-              disabled={inputDisabled}
-              className="h-8 flex-1 bg-transparent text-[15px] font-light text-[#0a0a0f] outline-none placeholder:text-black/30 disabled:opacity-40"
-              style={{ fontFamily: "'Outfit', system-ui, sans-serif" }}
-            />
-  
-            <button
-              type="button"
-              onClick={onSend}
-              disabled={!inputText.trim() || inputDisabled}
-              className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full transition-all duration-150 ${
-                inputText.trim() && !inputDisabled
-                  ? "bg-[#0a0a0f] text-white hover:bg-black"
-                  : "cursor-not-allowed bg-black/[0.06] text-black/25"
-              }`}
-              aria-label="Send message"
-            >
-              {loading ? (
-                <Loader2 size={13} className="animate-spin" />
-              ) : (
-                <ArrowUp size={15} strokeWidth={2.3} />
-              )}
-            </button>
-          </div>
+        <div className="rounded-[26px] border border-blue-100 bg-white shadow-[0_4px_24px_rgba(10,10,15,0.07)] transition-all duration-200 focus-within:border-blue-900 focus-within:shadow-[0_8px_30px_rgba(61,90,128,0.10)]">
+        <div className="flex items-center gap-3 px-4 py-3">
+  <input
+    type="text"
+    value={inputText}
+    onChange={(e) => setInputText(e.target.value)}
+    onKeyDown={(e) => e.key === "Enter" && onSend()}
+    placeholder="Reply to Stampley..."
+    disabled={inputDisabled}
+    className="h-9 flex-1 bg-transparent text-[15px] font-light text-[#1f1f1f] outline-none placeholder:text-black/35 disabled:opacity-40"
+    style={{ fontFamily: "'Outfit', system-ui, sans-serif" }}
+  />
+
+  <button
+    type="button"
+    onClick={onSend}
+    disabled={!inputText.trim() || inputDisabled}
+    className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full transition-all duration-150 ${
+      inputText.trim() && !inputDisabled
+        ? "bg-blue-900 text-white hover:scale-[1.02] hover:bg-blue-900 active:scale-[0.98]"
+        : "cursor-not-allowed bg-black/[0.06] text-black/25"
+    }`}
+    aria-label="Send message"
+  >
+    {loading ? (
+      <Loader2 size={14} className="animate-spin" />
+    ) : (
+      <ArrowUp size={16} strokeWidth={2.4} />
+    )}
+  </button>
+</div>
         </div>
-  
+        <p className="mt-2 text-center text-[14px] leading-[1.5] text-black" style={{ fontFamily: "'Poppins', sans-serif" }}>
+          {!canComplete
+            ? `Continue chatting with Stampley. 
+            
+            Answer ${remainingReplies} more question${
+                remainingReplies === 1 ? "" : "s"
+              } to complete today’s reflection.`
+            : "You can complete today’s check-in when you’re ready."}
+        </p>
         <button
           type="button"
           onClick={onComplete}
@@ -1311,13 +1319,7 @@ function ChatInputDock({
           )}
         </button>
   
-        <p className="mt-2 text-center text-[11px] text-black">
-          {!canComplete
-            ? `Continue chatting with Stampley. Answer ${remainingReplies} more question${
-                remainingReplies === 1 ? "" : "s"
-              } to complete today’s reflection.`
-            : "You can complete today’s check-in when you’re ready."}
-        </p>
+     
   
         <p
           className="mt-3 hidden select-none text-center text-[8.5px] uppercase tracking-[0.16em] text-black/25 md:block"
@@ -1421,12 +1423,16 @@ function ChatMessage({
             <div className="space-y-3 text-[14.5px] font-light leading-[1.72] text-black/75">
               {msg.data.greeting && <p>{msg.data.greeting}</p>}
               <p className="text-black/60">{msg.data.validation}</p>
-              <p className="font-normal text-black/85">
+
+{/* stampley question */}
+              <p className=" text-[16px] leading-[1.5] text-black font-medium" style={{ fontFamily: "'Poppins', sans-serif" }}>
                 {msg.data.reflection_question}
               </p>
-              {msg.data.closure && (
+
+
+              {/* {msg.data.closure && (
                 <p className="text-black/50 italic">{msg.data.closure}</p>
-              )}
+              )} */}
             </div>
 
             <div className="flex items-center gap-1.5">
@@ -1568,6 +1574,13 @@ function ExpandableCard({
   )
 }
 
+function getDefaultExpandedCard(messages: StoredMessage[]) {
+  const lastAssistantMessage = [...messages]
+    .reverse()
+    .find((message) => message.role === "assistant")
+
+  return lastAssistantMessage ? `${lastAssistantMessage.id}-skill` : null
+}
 function SafetyCard({
   showSupport,
   setShowSupport,

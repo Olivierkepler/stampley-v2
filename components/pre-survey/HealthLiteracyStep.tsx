@@ -124,8 +124,8 @@ function SelectField({
             [name]: e.target.value,
           })
         }
-        className="w-full border border-gray-300 bg-white px-4 py-3 text-sm text-gray-900 outline-none transition focus:border-[#005ea8]"
-      >
+      
+        className="w-full cursor-pointer border border-gray-300 bg-white px-4 py-3 text-sm text-gray-900 outline-none transition focus:border-[#005ea8]"    >
         <option value="">Select one</option>
 
         {options.map((option: string) => {

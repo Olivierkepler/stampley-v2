@@ -132,7 +132,7 @@ export function WeeklyDomainClient({
   )}
 </AnimatePresence>
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:gap-5">
+      <div className=" mb-20 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:gap-5">
         {DOMAINS.map((item, index) => {
           const Icon = item.icon
           const isSelected = domain === item.id || lockedDomain === item.id
@@ -187,7 +187,7 @@ export function WeeklyDomainClient({
                 />
               )}
 
-              <div className="mb-5 flex items-start justify-between gap-3">
+              <div className="mb-5 flex items-start justify-between gap-3 ">
                 <motion.div
                   animate={isSelected ? { scale: 1.04 } : { scale: 1 }}
                   transition={{ type: "spring", stiffness: 300, damping: 20 }}

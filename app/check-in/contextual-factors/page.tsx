@@ -58,7 +58,7 @@ export default function ContextualFactorsPage() {
           description="Select all that applied to your day with diabetes."
         />
 
-        <div className="mt-10 md:mt-20 grid grid-cols-1 px-4 md:px-20 gap-3 md:grid-cols-2">
+        <div className="mt-10 md:mt-20 mb-20 md:mb-10 grid grid-cols-1 px-4 md:px-20 gap-3 md:grid-cols-2">
           {CONTEXT_TAGS.map((tag, index) => {
             const selected = contextTags.includes(tag.id)
             const Icon = tag.icon

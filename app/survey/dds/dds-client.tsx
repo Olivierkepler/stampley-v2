@@ -3,6 +3,8 @@
 import { useMemo, useRef, useState } from "react"
 import { useRouter } from "next/navigation"
 import { submitDDS } from "@/actions/dds"
+import Image from "next/image"
+import Link from "next/link"
 
 const QUESTIONS = [
   { id: "q1", text: "Feeling that diabetes is taking up too much of my mental and physical energy every day.", domain: "Emotional" },
@@ -183,22 +185,83 @@ export default function DDSClient() {
   const globalQuestionNumberStart = groupedQuestions
     .slice(0, currentDomainIndex)
     .reduce((sum, section) => sum + section.questions.length, 0)
+    const [showMobileProgress, setShowMobileProgress] = useState(false)
 
   return (
-    <main className="min-h-screen bg-white">
+
+    
+    <main className="min-h-screen bg-white ">
       <div className="mx-auto">
-        <div className="border border-gray-300 bg-white">
-          <div className="border-b border-gray-300 bg-[#003e73] px-6 py-4 text-white">
+        <div className=" bg-white">
+          {/* <div className="border-b border-gray-300 bg-[#003e73] px-6 py-4 text-white">
             <p className="text-xs font-semibold uppercase tracking-widest">
               AIDES-T2D Research Study
             </p>
             <h1 className="mt-1 text-2xl font-bold">
               Diabetes Distress Scale (DDS)
             </h1>
-          </div>
+         
+         
+          </div> */}
+<header className="bg-[#003e73] px-4 text-white shadow-[0_2px_16px_rgba(0,0,0,0.08)] sm:px-6 lg:px-8">
+  <div className="mx-auto flex max-w-7xl items-center gap-3 py-4 sm:gap-4 sm:py-5">
+    
+    <Link href="/" className="flex h-13 w-13 shrink-0 items-center justify-center bg-white backdrop-blur-sm">
+      <Image
+        src="/images/stampleyLogo.png"
+        alt="AIDES-T2D"
+        width={30}
+        height={30}
+        className="h-auto w-auto object-contain"
+        priority
+      />
+    </Link>
 
-          <div className="grid gap-6 p-6 lg:grid-cols-[280px_1fr]">
-            <aside className="border border-gray-300 bg-[#f7f9fb]">
+    <div className="min-w-0">
+      <p className="text-[10px] font-['Poppins',sans-serif] uppercase tracking-[0.22em] text-white/70 leading-tight">
+        AIDES-T2D Research Study
+      </p>
+
+      <h1 className="text-[20px] font-['Poppins',sans-serif] tracking-[-0.03em] text-white leading-tight">
+        Diabetes Distress Scale (DDS-17)
+      </h1>
+
+      <p className="text-[13px] font-['Poppins',sans-serif] leading-tight text-white/70">
+        Tell us how diabetes has affected your emotional well-being,
+        daily routines, healthcare experiences, and support system
+        during the past month.
+      </p>
+    </div>
+  </div>
+</header>
+      
+
+
+          <div className="grid gap-6 p-6 lg:grid-cols-[280px_1fr] px-4 py-6 md:px-6 lg:px-30">
+           
+           {/* Mobile progress toggle */}
+<div className="lg:hidden">
+  <button
+    type="button"
+    onClick={() => setShowMobileProgress((prev) => !prev)}
+    className="mb-4 flex w-full items-center justify-between border border-gray-300 bg-white px-4 py-3 text-sm font-semibold text-gray-800"
+  >
+    <span>Form Progress</span>
+    <span>{showMobileProgress ? "✕" : "☰"}</span>
+  </button>
+
+  {showMobileProgress && (
+    <div className="mb-4">
+      {/* paste the aside content here */}
+    </div>
+  )}
+</div>
+
+{/* Desktop sidebar */}
+<aside className="hidden border border-gray-300 bg-[#f7f9fb] lg:block">
+
+{/*            
+            <aside className="border border-gray-300 bg-[#f7f9fb]"> */}
               <div className="border-b border-gray-300 bg-gray-100 px-4 py-3">
                 <h2 className="text-sm font-bold text-gray-800">Form Progress</h2>
               </div>
@@ -255,7 +318,7 @@ export default function DDSClient() {
     Live score preview
   </h3>
 
-  <div className="mt-3 space-y-2">
+  <div className="mt-3 space-y-2 ">
     {SCORE_GROUPS.map((group) => {
       const score = getLiveScorePreview(
         answers,

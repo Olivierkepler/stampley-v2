@@ -49,6 +49,8 @@ export default function DailyMetricsPage() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, ease: [0.2, 0.8, 0.2, 1] }}
         className="relative border border-black/[0.08] p-7 md:p-8  mb-6 shadow-[0_2px_16px_rgba(10,10,15,0.06),inset_0_1px_0_rgba(255,255,255,0.9)] transition-all duration-300 hover:shadow-[0_8px_32px_rgba(10,10,15,0.1)] hover:border-[#3d5a80]/25 group w-full"
+        
+        
         // style={{ background: "linear-gradient(160deg, #fefdfb 0%, #f9f6f1 100%)" }}
         style={{ background: "#fff" }}
       >
@@ -57,9 +59,10 @@ export default function DailyMetricsPage() {
       
         <div className="mb-1">
           <div className="flex items-center gap-2 mb-2">
-            <div className="w-1.5 h-1.5 rounded-full bg-[#3d5a80] shadow-[0_0_5px_rgba(61,90,128,0.45)]" />
+            <div className="w-1 h-1 rounded-full bg-[#3d5a80] shadow-[0_0_5px_rgba(61,90,128,0.45)]" />
+                
             <h2
-              className="text-[9.5px] font-medium text-[#3d5a80] uppercase tracking-[0.2em] leading-none select-none"
+              className="text-[9.5px] text-[#3d5a80] uppercase tracking-[0.2em] leading-none select-none"
               style={{ fontFamily: "'Poppins', sans-serif", fontSize: "clamp(10px, 1vw, 12px)" }}
             >
               {label}
@@ -67,8 +70,8 @@ export default function DailyMetricsPage() {
           </div>
 
           <h3
-            className="text-[#0a0a0f] leading-snug"
-            style={{ fontFamily: "'Poppins', sans-serif", fontSize: "clamp(16px, 1vw, 16px)" }}
+            className="text-[#0a0a0f] text-[20px] leading-[1.25] leading-snug"
+            style={{ fontFamily: "'Poppins', sans-serif",  }}
             >
             {question}
           </h3>
@@ -188,7 +191,7 @@ export default function DailyMetricsPage() {
        
 
         <div className="max-w-full mx-auto px-4 md:px-20 w-full my-10 ">
-          <div className="flex flex-col lg:flex-row gap-6 w-full items-start">
+          <div className="flex flex-col lg:flex-row gap-6 w-full items-start ">
             <div className="flex-1 w-full ">
               {renderSlider({
                 label: "Distress",
@@ -212,8 +215,10 @@ export default function DailyMetricsPage() {
             </div>
           </div>
 
-          <div className="flex flex-col lg:flex-row gap-6 w-full items-start">
-            <div className="flex-1 w-full flex flex-col md:flex-row gap-6">
+          
+
+          <div className=" flex flex-col lg:flex-row gap-6 w-full items-start">
+            <div className=" mb-30 flex-1 w-full flex flex-col md:flex-row gap-6">
               <div className="flex-1">
                 {renderSlider({
                   label: "Mood",
