@@ -250,6 +250,8 @@ export default function StampleySupportPage() {
     setTimeout(() => setCopiedId(null), 2000)
   }
 
+  const inputHintActive = !inputText.trim() && !isLoading
+
   if (!submitted) {
     return (
       <div className={`space-y-6 ${bodyText}`}>
@@ -777,11 +779,13 @@ export default function StampleySupportPage() {
                   style={{ background: "rgba(245,242,236,0.9)", backdropFilter: "blur(8px)" }}
                 >
                   <div
-                    className="flex items-center gap-2 max-w-3xl mx-auto rounded-[20px] transition-all duration-300"
+                    className={`flex items-center gap-2 max-w-3xl mx-auto rounded-[20px] border transition-all duration-300 ${
+                      inputHintActive
+                        ? "border-[#005ea8]/40 ring-2 ring-[#005ea8]/10 shadow-[0_0_0_3px_rgba(0,94,168,0.06)]"
+                        : "border-blue-100 shadow-[0_2px_12px_rgba(10,10,15,0.06)]"
+                    }`}
                     style={{
                       background: "linear-gradient(160deg, #fefdfb 0%, #f9f6f1 100%)",
-                      border: "1.5px solid rgba(10,10,5,0.08)",
-                      boxShadow: "0 2px 12px rgba(10,10,5,0.06)",
                     }}
                   >
                     <input
@@ -791,7 +795,12 @@ export default function StampleySupportPage() {
                       onKeyDown={(e) => e.key === "Enter" && handleSend()}
                       placeholder="Reply to Stampley…"
                       disabled={isLoading}
-                      className={`flex-1 h-[50px] pl-5 bg-transparent outline-none ${bodyText} placeholder:text-black/50 disabled:opacity-40`}
+                      aria-label="Reply to Stampley"
+                      className={`flex-1 h-[50px] pl-5 bg-transparent outline-none caret-[#005ea8] transition-all duration-300 ${bodyText} disabled:opacity-40 ${
+                        inputHintActive
+                          ? "placeholder:text-black/55 placeholder:animate-pulse"
+                          : "placeholder:text-black/35"
+                      }`}
                     />
                     <div className="pr-2">
                       <button

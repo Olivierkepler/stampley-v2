@@ -161,7 +161,7 @@ export default function StampleySupportPage() {
   const [activeView, setActiveView] = useState<"chat" | "results">("chat")
   const [copiedId, setCopiedId] = useState<string | null>(null)
   const [ddsSummary, setDdsSummary] = useState<DdsSummary | null>(null)
-
+  const [showExplanation, setShowExplanation] = useState(false)
   const [needsSafety, setNeedsSafety] = useState(false)
   const [showSupport, setShowSupport] = useState(false)
   const [isAlertDismissed, setIsAlertDismissed] = useState(false)
@@ -467,7 +467,7 @@ export default function StampleySupportPage() {
           timestamp: getCurrentTime(),
         },
       ])
-      setExpandedCard(`${msgId}-skill`)
+      setExpandedCard(null)
       setChatStarted(true)
       setActiveView("chat")
     } catch {
@@ -651,7 +651,7 @@ export default function StampleySupportPage() {
           timestamp: getCurrentTime(),
         },
       ])
-      setExpandedCard(`${msgId}-skill`)
+      setExpandedCard(null)
     } catch {
       const msgId = Date.now().toString()
       setMessages((prev) => [
@@ -668,7 +668,7 @@ export default function StampleySupportPage() {
           timestamp: getCurrentTime(),
         },
       ])
-      setExpandedCard(`${msgId}-skill`)
+      setExpandedCard(null)
     } finally {
       setLoading(false)
     }
@@ -742,7 +742,7 @@ export default function StampleySupportPage() {
                  
                     
                   </p>
-                  <p className="text-[12.5px] font-light text-black">
+                  <p className="text-[16px] font-['Poppins',sans-serif] text-black">
                     Distress {metrics.distress} · Mood {metrics.mood} · Energy{" "}
                     {metrics.energy}
                     {metrics.domain ? (
@@ -870,10 +870,8 @@ export default function StampleySupportPage() {
             </button>
 
             <motion.div className="hidden min-w-0 md:block">
-              <p className="font-['Poppins', sans-serif] text-[8px] uppercase tracking-[0.18em] text-black/35">
-                Step 5 · Stampley Support
-              </p>
-              <p className="font-['Poppins', sans-serif] text-[9px] uppercase tracking-[0.12em] text-[#3d5a80]">
+          
+              <p className="font-['Poppins', sans-serif] text-[16px]  text-black">
                 {subscale
                   ? `Week ${weekNumber} · Day ${dayNumber} · ${subscale}`
                   : "Chat in progress · not saved yet"}
@@ -915,7 +913,7 @@ export default function StampleySupportPage() {
             </div>
 
             <div className="flex items-center gap-1">
-              <button
+              {/* <button
                 type="button"
                 onClick={handleNewChat}
                 disabled={loading}
@@ -924,8 +922,8 @@ export default function StampleySupportPage() {
                 aria-label="Clear chat"
               >
                 <Trash2 size={14} strokeWidth={1.5} />
-              </button>
-              <button
+              </button> */}
+              {/* <button
                 type="button"
                 onClick={handleNewChat}
                 disabled={loading}
@@ -934,7 +932,39 @@ export default function StampleySupportPage() {
                 aria-label="New chat"
               >
                 <SquarePen size={14} strokeWidth={1.5} />
+              </button> */}
+            <div className="relative">
+              <button
+                type="button"
+                className="flex h-8 w-8 items-center justify-center rounded-[9px] transition-all duration-200"
+                style={{ color: "rgba(10,10,5,0.35)" }}
+                aria-label="Show explanation"
+                onClick={() => setShowExplanation((prev: boolean) => !prev)}
+              >
+                <BookOpen size={14} strokeWidth={1.5} />
               </button>
+              {showExplanation && (
+                <div
+                  className="absolute z-10 top-10 right-0 rounded-md shadow-lg border border-black/5 bg-white px-4 py-3 text-[13px] leading-normal text-black w-64"
+                  style={{ fontFamily: "'Outfit', system-ui, sans-serif" }}
+                >
+                  <span>
+                    <strong>What&apos;s this?</strong>
+                    <br />
+                    The chat is where you can interact with Stampley to reflect on your check-in. Your responses help tailor the conversation and support you receive.
+                  </span>
+                  <button
+                    className="absolute top-1 right-2 text-[11px] px-1 py-0.5 rounded hover:bg-gray-100"
+                    style={{ color: "#666" }}
+                    onClick={() => setShowExplanation((prev: boolean) => !prev)}
+                    aria-label="Close explanation"
+                  >
+                    ×
+                  </button>
+                </div>
+              )}
+            </div>
+       
             </div>
           </header>
 
@@ -1298,11 +1328,18 @@ function ChatInputDock({
 }) {
   const inputDisabled = loading || completingCheckIn
   const remainingReplies = Math.max(requiredDailyReplies - userMessageCount, 0)
+  const inputHintActive = !inputText.trim() && !inputDisabled
 
   return (
     <div className="shrink-0 w-full  bg-white px-4 pb-4 pt-3 md:px-6 md:pb-6">
       <div className="mx-auto w-full max-w-3xl">
-        <div className="rounded-[26px] border border-blue-100 bg-white shadow-[0_4px_24px_rgba(10,10,15,0.07)] transition-all duration-200 focus-within:border-blue-900 focus-within:shadow-[0_8px_30px_rgba(61,90,128,0.10)]">
+        <div
+          className={`rounded-[26px] border bg-white transition-all duration-300 ${
+            inputHintActive
+              ? "border-[#005ea8]/40 ring-2 ring-[#005ea8]/10 shadow-[0_0_0_3px_rgba(0,94,168,0.06)]"
+              : "border-blue-100 shadow-[0_4px_24px_rgba(10,10,15,0.07)] focus-within:border-blue-900 focus-within:shadow-[0_8px_30px_rgba(61,90,128,0.10)]"
+          }`}
+        >
         <div className="flex items-center gap-3 px-4 py-3">
   <input
     type="text"
@@ -1311,8 +1348,13 @@ function ChatInputDock({
     onKeyDown={(e) => e.key === "Enter" && onSend()}
     placeholder="Reply to Stampley..."
     disabled={inputDisabled}
-    className="h-9 flex-1 bg-transparent text-[15px] font-light text-[#1f1f1f] outline-none placeholder:text-black/35 disabled:opacity-40"
-    style={{ fontFamily: "'Outfit', system-ui, sans-serif" }}
+    aria-label="Reply to Stampley"
+    className={`h-9 flex-1 bg-transparent text-[16px] font-['Poppins', sans-serif] font-light text-black caret-[#005ea8] outline-none transition-all duration-300 disabled:opacity-40 ${
+      inputHintActive
+        ? "placeholder:animate-pulse placeholder:text-black/60"
+        : "placeholder:text-black"
+    }`}
+    style={{ fontFamily: "'Poppins', sans-serif",  }}
   />
 
   <button
@@ -1334,7 +1376,7 @@ function ChatInputDock({
   </button>
 </div>
         </div>
-        <p className="mt-2 text-center text-[14px] leading-[1.5] text-black" style={{ fontFamily: "'Poppins', sans-serif" }}>
+        <p className="mt-2 text-center text-[18px] leading-[1.5] text-black " style={{ fontFamily: "'Poppins', sans-serif" }}>
           {!canComplete
             ? `Continue chatting with Stampley. 
             
@@ -1431,12 +1473,12 @@ function ChatMessage({
       transition={materialSpring}
       className="flex w-full gap-3"
     >
-      <motion.div className="mt-1 flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-[9px] border border-black/[0.08] bg-white shadow-[0_1px_3px_rgba(10,10,15,0.06)]">
+      <motion.div className="mt-1 flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-[9px] border border-black/[0.08] bg-white shadow-[0_1px_3px_rgba(10,10,15,0.06)]">
         <Image
           src="/images/stampleyLogo.png"
           alt="Stampley"
-          width={20}
-          height={20}
+          width={30}
+          height={30}
           className="object-contain"
         />
       </motion.div>
@@ -1444,10 +1486,10 @@ function ChatMessage({
       <div className="min-w-0 flex-1 space-y-3">
         <div className="flex items-center gap-2">
           <span
-            className="text-[11px] uppercase tracking-[0.14em]"
+            className="text-[14px] uppercase "
             style={{
-              color: "rgba(10,10,5,0.45)",
-              fontFamily: "'JetBrains Mono', monospace",
+              color: "black",
+              fontFamily: "'Poppins', sans-serif",
             }}
           >
             Stampley
@@ -1455,8 +1497,8 @@ function ChatMessage({
           <span
             className="text-[9px]"
             style={{
-              color: "rgba(10,10,5,0.22)",
-              fontFamily: "'JetBrains Mono', monospace",
+              color: "black",
+              fontFamily: "'Poppins', sans-serif",
             }}
           >
             {msg.timestamp}
@@ -1465,12 +1507,12 @@ function ChatMessage({
 
         {msg.data && (
           <>
-            <div className="space-y-3 text-[14.5px] font-light leading-[1.72] text-black/75">
+            <div className="space-y-3 text-[18px] font-['Poppins', sans-serif] font-light leading-[1.72] text-black">
               {msg.data.greeting && <p>{msg.data.greeting}</p>}
-              <p className="text-black/60">{msg.data.validation}</p>
+              <p className="text-black font-['Poppins', sans-serif] text-[18px] font-light">{msg.data.validation}</p>
 
 {/* stampley question */}
-              <p className=" text-[16px] leading-[1.5] text-black font-medium" style={{ fontFamily: "'Poppins', sans-serif" }}>
+              <p className=" text-[20px] mt-14 leading-[1.5] text-black font-['Poppins', sans-serif] " >
                 {msg.data.reflection_question}
               </p>
 
@@ -1562,14 +1604,14 @@ function ChipButton({
     <button
       type="button"
       onClick={onClick}
-      className="flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[11px] uppercase tracking-[0.1em] transition-all duration-200"
+      className="flex cursor-pointer font-['Poppins', sans-serif] items-center gap-1.5  px-3 py-1.5 text-[11px] uppercase tracking-[0.1em] transition-all duration-200"
       style={{
         fontFamily: "'JetBrains Mono', monospace",
-        background: active ? "rgba(10,10,5,0.07)" : "transparent",
+        fontWeight: active ? "bold" : "normal",
         border: active
-          ? "1px solid rgba(10,10,5,0.1)"
-          : "1px solid rgba(10,10,5,0.08)",
-        color: active ? "rgba(10,10,5,0.6)" : "rgba(10,10,5,0.35)",
+          ? "1px solid slate-200"
+          : "1px solid slate-200",
+        color: active ? "black" : "black",
       }}
     >
       {icon}
@@ -1611,7 +1653,7 @@ function ExpandableCard({
             {title}
           </span>
         </div>
-        <p className="text-[13.5px] font-light leading-relaxed text-black/60">
+        <p className="text-[16px] font-['Poppins', sans-serif] font-light leading-relaxed text-black">
           {value}
         </p>
       </div>
@@ -1619,13 +1661,6 @@ function ExpandableCard({
   )
 }
 
-function getDefaultExpandedCard(messages: StoredMessage[]) {
-  const lastAssistantMessage = [...messages]
-    .reverse()
-    .find((message) => message.role === "assistant")
-
-  return lastAssistantMessage ? `${lastAssistantMessage.id}-skill` : null
-}
 function SafetyCard({
   showSupport,
   setShowSupport,
