@@ -243,7 +243,8 @@ export default function LoginPage() {
         {/* Right panel */}
         <div className="dot-pattern relative flex w-full items-center justify-center px-6 py-12 lg:w-[520px] lg:shrink-0 lg:bg-[#fefdfb] lg:px-14 lg:py-16 lg:shadow-[inset_1px_0_0_rgba(10,10,15,0.04),-32px_0_80px_rgba(10,10,15,0.04)]">
           <div className="anim-form relative z-10 w-full max-w-[380px]">
-          <Image
+       <Link href="/">
+       <Image
          
          src="/images/stampleyLogo.png" alt="AIDES-T2D" width={32} height={32} 
           style ={{
@@ -252,7 +253,7 @@ export default function LoginPage() {
            right: 0,
 
           }}
-         />
+         /></Link>
             
             <div className="mb-10">
               <div className="f-mono mb-4 flex items-center gap-2 text-[9px] uppercase tracking-[0.24em] text-black/60 select-none">

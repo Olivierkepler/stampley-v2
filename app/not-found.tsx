@@ -1,138 +1,73 @@
+// app/not-found.tsx
+
+import Link from "next/link"
+import Image from "next/image"
+
 export default function NotFound() {
-    return (
-      <>
-        <style>{`
-          @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500&family=JetBrains+Mono:wght@400;500&family=Outfit:wght@300;400;500;600&display=swap');
-        `}</style>
-  
-        <div
-          className="relative min-h-screen overflow-hidden bg-white"
-          style={{ fontFamily: "'Outfit', system-ui, sans-serif" }}
-        >
-          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.9),transparent_32%),radial-gradient(circle_at_bottom_left,rgba(255,255,255,0.55),transparent_30%)]" />
-  
-          <div className="relative mx-auto flex min-h-screen max-w-6xl items-center justify-center px-6 py-12">
-            <div className="grid w-full items-center gap-8 lg:grid-cols-[1.1fr_0.9fr]">
-              <section className="rounded-[36px] border border-black/[0.06] bg-[#fefdfb]/85 p-8 shadow-[0_18px_60px_rgba(15,23,42,0.06)] backdrop-blur-xl sm:p-10">
-                <div className="mb-5 flex items-center gap-2">
-                  <span className="h-px w-8 bg-[#8B6F47]/35" />
-                  <span
-                    className="text-[10px] uppercase tracking-[0.22em] text-[#8B6F47]/80"
-                    style={{ fontFamily: "'JetBrains Mono', monospace" }}
-                  >
-                    Error 404
-                  </span>
-                </div>
-  
-                <h1
-                  className="text-[42px] font-medium leading-[0.98] tracking-[-0.04em] text-black/85 sm:text-[30px]"
-                  style={{ fontFamily: "'Fraunces', Georgia, serif" }}
-                >
-                  This page
-                  <br />
-                  <em className="font-light italic text-black/28">couldn’t be found.</em>
-                </h1>
-  
-                <p className="mt-5 max-w-xl text-[15px] leading-8 text-black/52">
-                  The page you’re looking for may have moved, expired, or never existed.
-                  Let’s get you back to a part of the app that’s actually useful.
-                </p>
-  
-                <div className="mt-7 flex flex-col gap-3 sm:flex-row">
-                  <a
-                    href="/dashboard"
-                    className="inline-flex items-center justify-center rounded-[18px] bg-white px-6 py-3.5 text-sm font-medium text-black transition hover:bg-[#2a231f] shadow-[0_8px_20px_rgba(31,26,23,0.16)]"
-                  >
-                    Go to dashboard
-                  </a>
-  
-                  {/* <a
-                    href="/check-in"
-                    className="inline-flex items-center justify-center rounded-[18px] border border-black/[0.08] bg-white/70 px-6 py-3.5 text-sm font-medium text-black/65 transition hover:bg-[#faf7f2]"
-                  >
-                    Start check-in
-                  </a> */}
-                </div>
-  
-                <div className="mt-8 rounded-[22px] border border-[#e7dac8] bg-white p-4">
-                  <p className="text-[11px] uppercase tracking-[0.16em] text-[#8B6F47]/80">
-                    Helpful note
-                  </p>
-                  <p className="mt-2 text-[13px] leading-6 text-black/50">
-                    If you typed the address manually, check for spelling mistakes. If you followed a link,
-                    the destination may no longer be available.
-                  </p>
-                </div>
-              </section>
-  
-              <aside className="rounded-[36px] border border-black/[0.06] bg-white p-8 text-black shadow-[0_18px_60px_rgba(15,23,42,0.08)] sm:p-10">
-                <p
-                  className="text-[10px] uppercase tracking-[0.22em] text-black"
-                  style={{ fontFamily: "'JetBrains Mono', monospace" }}
-                >
-                  Navigation options
-                </p>
-  
-                <div className="mt-6 space-y-4">
-                  {[
-                    {
-                      step: "01",
-                      title: "Return to your dashboard",
-                      text: "View your recent activity, assessments, and overall progress.",
-                    },
-                    {
-                      step: "02",
-                      title: "Continue your check-in",
-                      text: "Jump back into your next guided support step without losing momentum.",
-                    },
-                    {
-                      step: "03",
-                      title: "Restart from home",
-                      text: "Use the main app entry point if you want to reorient yourself.",
-                    },
-                  ].map((item) => (
-                    <div
-                      key={item.step}
-                      className="rounded-[24px] border border-white/10 bg-white/[0.04] p-5"
-                    >
-                      <div className="flex items-start gap-4">
-                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white/10 text-[11px] font-medium text-black">
-                          {item.step}
-                        </div>
-                        <div>
-                          <h2
-                            className="text-[18px] font-medium tracking-[-0.02em]text-black"
-                            style={{ fontFamily: "'Fraunces', Georgia, serif" }}
-                          >
-                            {item.title}
-                          </h2>
-                          <p className="mt-2 text-[13px] leading-6 text-black">
-                            {item.text}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-  
-                <div className="mt-6 rounded-[24px] border border-white/10 bg-white/[0.04] p-5">
-                  <p className="text-[11px] uppercase tracking-[0.16em] text-white/35">
-                    Status
-                  </p>
-                  <div className="mt-3 flex items-end justify-between">
-                    <span className="text-[14px] text-white/65">Page availability</span>
-                    <span
-                      className="text-[34px] font-semibold tracking-[-0.04em] text-white"
-                      style={{ fontFamily: "'Fraunces', Georgia, serif" }}
-                    >
-                      404
-                    </span>
-                  </div>
-                </div>
-              </aside>
-            </div>
-          </div>
-        </div>
-      </>
-    )
-  }
+return (
+<main
+className="relative flex min-h-screen items-center justify-center overflow-hidden bg-[#fefdfb] px-6"
+style={{
+fontFamily: "'Outfit', system-ui, sans-serif",
+}}
+>
+{/* soft background glow */} <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(37,99,235,0.08),transparent_45%)]" />
+
+  <div className="relative z-10 mx-auto flex max-w-2xl flex-col items-center text-center">
+    
+    {/* Logo */}
+    <div className="mb-8 flex items-center justify-center">
+      <Image
+        src="/images/stampleyLogo.png"
+        alt="Stampley"
+        width={72}
+        height={72}
+        className="h-auto w-auto object-contain"
+        priority
+      />
+    </div>
+
+    {/* 404 */}
+    <p className="mb-3 font-['JetBrains_Mono',monospace] text-[12px] uppercase tracking-[0.24em] text-blue-700/70">
+      Error 404
+    </p>
+
+    {/* title */}
+    <h1
+      className="mb-5 text-[42px] font-light leading-[1.05] tracking-[-0.04em] text-[#0a0a0f] sm:text-[58px]"
+      style={{
+        fontFamily: "'Fraunces', Georgia, serif",
+      }}
+    >
+      This page could not be found
+    </h1>
+
+    {/* description */}
+    <p className="max-w-xl text-[16px] font-light leading-[1.9] text-black/55 sm:text-[17px]">
+      The page you&apos;re looking for may have been moved, removed,
+      or is temporarily unavailable.
+    </p>
+
+    {/* actions */}
+    <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row">
+      
+      <Link
+        href="/"
+        className="inline-flex h-12 items-center justify-center rounded-full bg-blue-900 px-8 text-[15px] font-medium text-white shadow-[0_8px_30px_rgba(37,99,235,0.18)] transition-all duration-300 hover:-translate-y-0.5 hover:bg-blue-800"
+      >
+        Return Home
+      </Link>
+
+      <Link
+        href="/login"
+        className="inline-flex h-12 items-center justify-center rounded-full border border-slate-300 bg-white px-8 text-[15px] font-medium text-slate-700 transition-all duration-300 hover:border-blue-200 hover:bg-blue-50 hover:text-blue-700"
+      >
+        Login
+      </Link>
+    </div>
+  </div>
+</main>
+
+
+)
+}

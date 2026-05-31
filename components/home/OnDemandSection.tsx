@@ -58,7 +58,7 @@ export default function StampleySection() {
 
           <div className="relative h-[360px] w-full max-w-[620px] overflow-hidden bg-slate-100 md:h-[460px]">
             <Image
-              src="/images/sections/chatstampley.jpg"
+              src="/images/image23.jpg"
               alt="Person using AI companion"
               fill
               className={`object-cover grayscale transition-all duration-[1400ms] ease-out ${
@@ -119,7 +119,7 @@ export default function StampleySection() {
             }`}
           >
             <Link
-              href="#"
+              href="/login"
               className="inline-flex bg-blue-900 px-8 py-4 text-sm font-bold uppercase tracking-[0.18em] text-white transition-all duration-300 hover:-translate-y-1 hover:bg-blue-950"
             >
               Explore Stampley

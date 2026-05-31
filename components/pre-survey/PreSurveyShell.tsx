@@ -1,6 +1,7 @@
 "use client"
 
 import Image from "next/image"
+import Link from "next/link"
 
 import PreSurveySidebar from "./PreSurveySidebar"
 
@@ -22,6 +23,7 @@ export default function PreSurveyShell({
         <header className="border-b border-black/[0.06] bg-[#003e73] text-white shadow-[0_2px_16px_rgba(0,0,0,0.08)]">
           <div className="mx-auto flex max-w-7xl items-center gap-4 py-5">
             
+            <Link href="/">
             <div className="flex h-13 w-13 shrink-0 items-center justify-center  bg-white backdrop-blur-sm">
               <Image
                 src="/images/stampleyLogo.png"
@@ -31,7 +33,7 @@ export default function PreSurveyShell({
                 className="h-auto w-auto object-contain"
                 priority
               />
-            </div>
+            </div></Link>
 
             <div className="min-w-0">
               <p className="text-[10px] font-['Poppins', sans-serif]  uppercase tracking-[0.22em] text-white/70 leading-tight">

@@ -17,6 +17,16 @@ export default function RegisterPage() {
     setError("")
 
     const formData = new FormData(e.currentTarget)
+
+    const password = String(formData.get("password") || "")
+    const confirmPassword = String(formData.get("confirmPassword") || "")
+
+    if (password !== confirmPassword) {
+      setError("Passwords do not match.")
+      setLoading(false)
+      return
+    }
+
     const result = await registerWithKey(formData)
 
     if (result?.error) {
@@ -553,6 +563,37 @@ export default function RegisterPage() {
                 <p className="text-[12px] text-black font-light pl-1">
                   Minimum 8 characters
                 </p>
+              </div>
+
+              <div className="flex flex-col gap-2">
+                <label
+                  htmlFor="confirmPassword"
+                  className="f-mono text-[12px] uppercase tracking-[0.16em] text-black/70 select-none"
+                >
+                  Confirm Password
+                </label>
+                <div className="input-group relative">
+                  <svg
+                    className="input-icon pointer-events-none absolute left-3.5 top-1/2 h-[15px] w-[15px] -translate-y-1/2 fill-none stroke-black/40 transition-all duration-200"
+                    viewBox="0 0 24 24"
+                    strokeWidth="1.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <rect x="3" y="11" width="18" height="11" rx="2.5" />
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                  </svg>
+                  <input
+                    id="confirmPassword"
+                    name="confirmPassword"
+                    type={showPassword ? "text" : "password"}
+                    placeholder="••••••••"
+                    required
+                    minLength={8}
+                    disabled={loading}
+                    className="styled-input f-body w-full rounded-[10px] border border-black/[0.12] bg-white py-[13px] pl-[42px] pr-4 text-[13.5px] text-[#0a0a0f] outline-none transition-all duration-200 placeholder:text-black/40 focus:border-[#3d5a80] focus:bg-[#fefdfb] focus:shadow-[0_0_0_3.5px_rgba(61,90,128,0.12)] disabled:cursor-not-allowed disabled:opacity-40"
+                  />
+                </div>
               </div>
 
               <button

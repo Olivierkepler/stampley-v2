@@ -7,9 +7,14 @@ export async function registerWithKey(formData: FormData) {
   const studyId = formData.get("studyId") as string
   const email = formData.get("email") as string
   const password = formData.get("password") as string
+  const confirmPassword = formData.get("confirmPassword") as string | null
 
   if (!studyId || !email || !password) {
     return { error: "All fields are required" }
+  }
+
+  if (confirmPassword != null && confirmPassword !== password) {
+    return { error: "Passwords do not match." }
   }
 
   try {

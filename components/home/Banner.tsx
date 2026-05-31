@@ -156,7 +156,7 @@ export default function StampleyBanner() {
           }}
         >
           <Link
-            href="/register"
+            href="/login"
             className="group inline-flex items-center gap-2 rounded-full transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_14px_40px_rgba(255,177,0,0.28)]"
             style={{
               padding: "14px 28px",
