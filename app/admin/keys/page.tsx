@@ -105,10 +105,10 @@ export default async function AdminKeysPage({
     <div className="space-y-8">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <h1 className="text-3xl font-semibold tracking-tight text-white">
+          <h1 className="text-3xl font-semibold tracking-tight text-gray-900">
             Study Keys
           </h1>
-          <p className="mt-1.5 text-sm text-white">
+          <p className="mt-1.5 text-sm text-gray-500">
             {available} available · {used} used · {total} total
           </p>
         </div>
@@ -119,7 +119,13 @@ export default async function AdminKeysPage({
             await generateStudyKey()
           }}
         >
-        
+          <button
+            type="submit"
+            className="inline-flex h-11 items-center justify-center gap-2 bg-gray-900 px-5 text-sm font-medium text-white shadow-sm transition hover:bg-gray-800"
+          >
+            <span className="text-base leading-none">+</span>
+            Generate New Key
+          </button>
         </form>
       </div>
 
@@ -175,13 +181,6 @@ export default async function AdminKeysPage({
           </p>
         </div>
       </section>
-      <button
-            type="submit"
-            className="inline-flex h-11 items-center justify-center gap-2  bg-gray-900 px-5 text-sm font-medium text-white shadow-sm transition hover:bg-gray-800"
-          >
-            <span className="text-base leading-none">+</span>
-            Generate New Key
-          </button>
 
       <section className="overflow-hidden  border border-gray-200/80 bg-white shadow-sm">
         <div className="border-b border-gray-100 bg-gradient-to-b from-gray-50 to-white px-6 py-5">

@@ -3,6 +3,10 @@ import Link from "next/link"
 import { notFound } from "next/navigation"
 import { StampleySessionCard } from "@/components/admin/stampley-chats/stampley-session-card"
 import { mapStampleySessionRow } from "@/lib/admin-stampley-sessions"
+import {
+  PostSurveyResponseDetails,
+  PostSurveySummaryCards,
+} from "@/components/admin/post-surveys/post-survey-response-details"
 
 export const dynamic = "force-dynamic"
 
@@ -96,6 +100,31 @@ export default async function AdminUserProfilePage({
   )
 
   const preSurvey = preSurveyResult.rows[0] ?? null
+
+  const postSurveyResult = await query(
+    `
+    SELECT
+      dds_answers,
+      dds_scores,
+      phq_answers,
+      phq_total,
+      phq_severity,
+      sus_answers,
+      sus_score,
+      stampley_feedback,
+      open_reflection,
+      future_research_contact,
+      contact_name,
+      contact_email,
+      contact_phone,
+      completed_at
+    FROM post_survey_responses
+    WHERE user_id = $1 AND completed_at IS NOT NULL
+    `,
+    [id]
+  )
+
+  const postSurvey = postSurveyResult.rows[0] ?? null
 
   const progressResult = await query(
     `
@@ -201,10 +230,14 @@ export default async function AdminUserProfilePage({
         </div>
       </div>
 
-      <section className="grid gap-6 lg:grid-cols-4">
+      <section className="grid gap-6 lg:grid-cols-5">
         <StatCard
           label="Pre-Survey"
           value={preSurvey?.completed_at ? "Completed" : "Pending"}
+        />
+        <StatCard
+          label="Post-Survey"
+          value={postSurvey?.completed_at ? "Completed" : "Pending"}
         />
         <StatCard
           label="Total Check-ins"
@@ -440,6 +473,37 @@ export default async function AdminUserProfilePage({
               </div>
             </div>
           </SectionCard>
+        </section>
+      )}
+
+      {!postSurvey ? (
+        <section className="border border-slate-200 bg-slate-50 p-6">
+          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">
+            Post-Survey Summary
+          </p>
+          <p className="mt-2 text-sm leading-6 text-slate-600">
+            No post-survey submitted yet for this participant.
+          </p>
+        </section>
+      ) : (
+        <section className="space-y-4 border border-slate-200 bg-white">
+          <div className="border-b border-slate-200 bg-slate-50 px-5 py-4">
+            <h2 className="text-sm font-semibold text-slate-900">
+              Post-Survey Summary
+            </h2>
+            <p className="mt-1 text-xs text-slate-500">
+              Submitted {formatDate(postSurvey.completed_at)}
+            </p>
+          </div>
+          <div className="p-5">
+            <PostSurveySummaryCards record={postSurvey} />
+            <div className="mt-6">
+              <PostSurveyResponseDetails
+                record={postSurvey}
+                summaryLabel="View detailed responses"
+              />
+            </div>
+          </div>
         </section>
       )}
 

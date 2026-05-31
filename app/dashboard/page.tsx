@@ -14,6 +14,7 @@ import {
   checkinsCompletedInWeek,
 } from "@/lib/check-in-utils"
 import { getStudyWeekForNextCheckIn } from "@/lib/weekly-domain-progress"
+import { getPostSurveyAccessStatus } from "@/lib/post-survey-access"
 
 export default async function DashboardPage() {
   const session = await auth()
@@ -96,6 +97,11 @@ export default async function DashboardPage() {
 
   const remainingCheckins = Math.max(STUDY_TOTAL_CHECKINS - completedCheckins, 0)
   const studyComplete = completedCheckins >= STUDY_TOTAL_CHECKINS
+
+  const postSurveyAccess = studyComplete
+    ? await getPostSurveyAccessStatus(session.user.id)
+    : null
+  const postSurveyCompleted = postSurveyAccess?.postSurveyCompleted ?? false
 
   const checkinPct = computeStudyProgressPercent(completedCheckins)
 
@@ -427,13 +433,34 @@ export default async function DashboardPage() {
 
         <div>
           {studyComplete ? (
-            <div className="dashboard-card-soft inline-block px-5 py-4">
-              <p className="text-sm font-medium text-blue-900">
-                Study check-ins complete
-              </p>
-              <p className="mt-1 text-xs text-blue-900">
-                You finished all 20 check-ins across 4 weeks.
-              </p>
+            <div className="space-y-4">
+              <div className="dashboard-card-soft inline-block px-5 py-4">
+                <p className="text-sm font-medium text-blue-900">
+                  Study check-ins complete
+                </p>
+                <p className="mt-1 text-xs text-blue-900">
+                  You finished all 20 check-ins across 4 weeks.
+                </p>
+              </div>
+              {postSurveyCompleted ? (
+                <div className="dashboard-card-soft inline-block px-5 py-4">
+                  <p className="text-sm font-medium text-blue-900">
+                    Post-Study Survey Completed
+                  </p>
+                  <p className="mt-1 text-xs text-blue-900">
+                    Thank you for sharing your post-study feedback.
+                  </p>
+                </div>
+              ) : (
+                <Link
+                  href="/survey/post-survey"
+                  className="primary-button"
+                  style={{ background: "#005ea8", color: "#fff" }}
+                >
+                  Complete Post-Study Survey
+                  <span aria-hidden="true">→</span>
+                </Link>
+              )}
             </div>
           ) : checkedInToday ? (
             <div className="dashboard-card-soft inline-block px-5 py-4">
@@ -609,6 +636,17 @@ export default async function DashboardPage() {
                       {checkedInToday ? "Completed today" : "Pending today"}
                     </span>
                   </div>
+
+                  {studyComplete ? (
+                    <div className="flex items-center justify-between border-b border-black/[0.08] pb-4">
+                      <span className="text-sm text-black/55">
+                        Post-study survey
+                      </span>
+                      <span className="text-sm font-medium text-black/75">
+                        {postSurveyCompleted ? "Completed" : "Pending"}
+                      </span>
+                    </div>
+                  ) : null}
 
                   <div className="flex items-center justify-between">
                     <span className="text-sm text-black/55">
