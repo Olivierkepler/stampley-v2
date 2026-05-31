@@ -1,5 +1,5 @@
 import { getSubscaleForDay, isCheckInDomain } from "@/lib/check-in-subscale"
-import { computeStudyWeekAndDay } from "@/lib/check-in-utils"
+import { computeStudyWeekAndDayFromCheckInNumber } from "@/lib/check-in-utils"
 import type { Domain } from "@/store/checkin-store"
 
 export type CheckInStudyContext = {
@@ -9,17 +9,15 @@ export type CheckInStudyContext = {
   subscale: string
 }
 
+/** Build study context for the given 1-based check-in number (1–20). */
 export function buildCheckInStudyContext(
   domain: string,
-  studyStartDate: Date | string | null | undefined,
-  referenceDate: Date = new Date()
+  checkInNumber: number
 ): CheckInStudyContext | null {
   if (!isCheckInDomain(domain)) return null
 
-  const { weekNumber, dayNumber } = computeStudyWeekAndDay(
-    studyStartDate,
-    referenceDate
-  )
+  const { weekNumber, dayNumber } =
+    computeStudyWeekAndDayFromCheckInNumber(checkInNumber)
   const subscale = getSubscaleForDay(domain, dayNumber)
 
   return {

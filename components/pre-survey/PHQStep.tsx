@@ -36,7 +36,6 @@ export default function PHQStep({
 
   return (
     <section className="bg-white">
-      {/* HEADER */}
       <div className="border-b border-gray-300 bg-[#003e73] px-6 py-5 text-white">
         <p className="text-xs font-['Poppins', sans-serif] uppercase tracking-[0.18em] text-blue-100">
           Section E
@@ -52,7 +51,6 @@ export default function PHQStep({
         </p>
       </div>
 
-      {/* PROGRESS */}
       <div className="border-b border-gray-300 bg-gray-50 px-6 py-5">
         <div className="mb-2 flex items-center justify-between text-xs font-medium text-gray-500">
           <span>Completion Progress</span>
@@ -71,7 +69,6 @@ export default function PHQStep({
         </p>
       </div>
 
-      {/* MATRIX */}
       <div className="px-6 py-6">
         <div className="overflow-x-auto border border-gray-300 bg-white">
           <table className="w-full min-w-[880px] border-collapse">
@@ -157,9 +154,7 @@ export default function PHQStep({
                               ) : null}
                             </span>
 
-                            <span className="sr-only">
-                              {option.label}
-                            </span>
+                            <span className="sr-only">{option.label}</span>
                           </label>
                         </td>
                       )
@@ -172,8 +167,7 @@ export default function PHQStep({
         </div>
       </div>
 
-      {/* SAFETY NOTE */}
-      <div className="border-t border-amber-200 bg-amber-50 px-6 py-5 ">
+      <div className="border-t border-amber-200 bg-amber-50 px-6 py-5">
         <p className="text-sm leading-6 text-amber-900">
           If you are experiencing emotional distress or thoughts of self-harm,
           please contact a healthcare provider or emergency support service
@@ -181,8 +175,7 @@ export default function PHQStep({
         </p>
       </div>
 
-      {/* NAVIGATION */}
-      <div className=" bg-gray-50">
+      <div className="bg-gray-50">
         <StepButtons prevStep={prevStep} nextStep={nextStep} />
       </div>
     </section>

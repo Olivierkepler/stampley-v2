@@ -40,15 +40,15 @@ type PreSurveyFormData = {
   digital_health_tools_used: boolean;
   voice_tech_comfort: number;
   communication_preference: string;
-  phq1: number;
-  phq2: number;
-  phq3: number;
-  phq4: number;
-  phq5: number;
-  phq6: number;
-  phq7: number;
-  phq8: number;
-  phq9: number;
+  phq1: number | undefined;
+  phq2: number | undefined;
+  phq3: number | undefined;
+  phq4: number | undefined;
+  phq5: number | undefined;
+  phq6: number | undefined;
+  phq7: number | undefined;
+  phq8: number | undefined;
+  phq9: number | undefined;
 };
 
 function isFilled(value: string): boolean {
@@ -57,10 +57,6 @@ function isFilled(value: string): boolean {
 
 function isNonEmptyArray(value: string[]): boolean {
   return Array.isArray(value) && value.length > 0;
-}
-
-function isValidPhq(value: number): boolean {
-  return Number.isInteger(value) && value >= 0 && value <= 3;
 }
 
 function validateStep(
@@ -135,8 +131,7 @@ function validateStep(
     case 6:
       for (let i = 1; i <= 9; i++) {
         const key = `phq${i}` as keyof PreSurveyFormData;
-        const value = formData[key];
-        if (!isValidPhq(value as number)) {
+        if (formData[key] === undefined) {
           missing.push(`phq${i}`);
         }
       }
@@ -194,15 +189,15 @@ export default function PreSurveyClient() {
     voice_tech_comfort: 0,
     communication_preference: "",
 
-    phq1: 0,
-    phq2: 0,
-    phq3: 0,
-    phq4: 0,
-    phq5: 0,
-    phq6: 0,
-    phq7: 0,
-    phq8: 0,
-    phq9: 0,
+    phq1: undefined,
+    phq2: undefined,
+    phq3: undefined,
+    phq4: undefined,
+    phq5: undefined,
+    phq6: undefined,
+    phq7: undefined,
+    phq8: undefined,
+    phq9: undefined,
   });
 
   const [stepError, setStepError] = useState("");

@@ -4,6 +4,25 @@ import { notFound } from "next/navigation"
 
 export const dynamic = "force-dynamic"
 
+const PHQ_QUESTIONS = [
+  "Little interest or pleasure in doing things",
+  "Feeling down, depressed, or hopeless",
+  "Trouble falling or staying asleep, or sleeping too much",
+  "Feeling tired or having little energy",
+  "Poor appetite or overeating",
+  "Feeling bad about yourself — or that you are a failure or have let yourself or your family down",
+  "Trouble concentrating on things, such as reading or watching television",
+  "Moving or speaking so slowly that other people could notice, or the opposite — being so fidgety or restless that you move around more than usual",
+  "Thoughts that you would be better off dead or hurting yourself in some way",
+] as const
+
+const PHQ_LABELS: Record<number, string> = {
+  0: "Not at all",
+  1: "Several days",
+  2: "More than half the days",
+  3: "Nearly every day",
+}
+
 export default async function AdminUserProfilePage({
   params,
 }: {
@@ -27,6 +46,7 @@ export default async function AdminUserProfilePage({
     `
     SELECT
       consent_status,
+      diagnosis_duration,
       age,
       gender,
       race,
@@ -36,14 +56,33 @@ export default async function AdminUserProfilePage({
       employment_status,
       household_income,
       insurance_type,
+      medical_forms_confidence,
+      reading_help_frequency,
       diabetes_duration,
-      diagnosis_duration,
       current_treatments,
+      attended_diabetes_classes,
       diabetes_tools_used,
       overall_health_rating,
+      owns_smartphone,
       internet_usage,
       app_comfort,
+      telehealth_used,
+      mental_health_apps_used,
+      smartphone_app_comfort,
+      digital_health_tools_used,
+      voice_tech_comfort,
       communication_preference,
+      diagnosis_verified,
+      diagnosis_file_url,
+      phq1,
+      phq2,
+      phq3,
+      phq4,
+      phq5,
+      phq6,
+      phq7,
+      phq8,
+      phq9,
       phq_total,
       phq_severity,
       needs_mental_health_followup,
@@ -149,81 +188,228 @@ export default async function AdminUserProfilePage({
         />
       </section>
 
-      <section className="grid gap-6 lg:grid-cols-[1fr_0.8fr]">
-        <div className="border border-slate-200 bg-white">
-          <div className="border-b border-slate-200 bg-slate-50 px-5 py-4">
-            <h2 className="text-sm font-semibold text-slate-900">
-              Pre-Survey Summary
-            </h2>
-          </div>
-
-          <div className="grid gap-4 p-5 md:grid-cols-2">
-            <InfoRow label="Completed" value={formatDate(preSurvey?.completed_at)} />
-            <InfoRow label="Consent" value={preSurvey?.consent_status} />
-            <InfoRow label="Age" value={preSurvey?.age} />
-            <InfoRow label="Gender" value={preSurvey?.gender} />
-            <InfoRow label="Race" value={formatArray(preSurvey?.race)} />
-            <InfoRow label="Ethnicity" value={preSurvey?.ethnicity} />
-            <InfoRow label="Marital Status" value={preSurvey?.marital_status} />
-            <InfoRow label="Education" value={preSurvey?.education} />
-            <InfoRow label="Employment" value={preSurvey?.employment_status} />
-            <InfoRow label="Income" value={preSurvey?.household_income} />
-            <InfoRow label="Insurance" value={preSurvey?.insurance_type} />
-            <InfoRow label="Diabetes Duration" value={preSurvey?.diabetes_duration} />
-            <InfoRow label="Diagnosis Duration" value={preSurvey?.diagnosis_duration} />
-            <InfoRow label="Treatments" value={formatArray(preSurvey?.current_treatments)} />
-            <InfoRow label="Tools Used" value={formatArray(preSurvey?.diabetes_tools_used)} />
-            <InfoRow label="Overall Health" value={preSurvey?.overall_health_rating} />
-            <InfoRow label="Internet Usage" value={preSurvey?.internet_usage} />
-            <InfoRow label="App Comfort" value={preSurvey?.app_comfort} />
-            <InfoRow label="Communication Preference" value={preSurvey?.communication_preference} />
-          </div>
-        </div>
-
-        <div className="border border-slate-200 bg-white">
-          <div className="border-b border-slate-200 bg-slate-50 px-5 py-4">
-            <h2 className="text-sm font-semibold text-slate-900">
-              PHQ-9 Summary
-            </h2>
-          </div>
-
-          <div className="space-y-5 p-5">
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">
-                PHQ Total
-              </p>
-              <p className="mt-2 text-4xl font-semibold text-slate-950">
-                {preSurvey?.phq_total ?? "—"}
-              </p>
+      {!preSurvey ? (
+        <section className="border border-amber-200 bg-amber-50 p-6">
+          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-amber-800">
+            Pre-Survey Pending
+          </p>
+          <p className="mt-2 text-sm leading-6 text-amber-900">
+            No pre-survey submitted yet for this participant.
+          </p>
+        </section>
+      ) : (
+        <section className="space-y-6">
+          <SectionCard title="Consent">
+            <div className="grid gap-4 md:grid-cols-2">
+              <InfoRow
+                label="Completed At"
+                value={formatDate(preSurvey.completed_at)}
+              />
+              <InfoRow label="Consent Status" value={preSurvey.consent_status} />
             </div>
+          </SectionCard>
 
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">
-                Severity
-              </p>
-              <p className="mt-2 text-sm font-medium text-slate-700">
-                {preSurvey?.phq_severity ?? "—"}
-              </p>
+          <SectionCard title="Demographics">
+            <div className="grid gap-4 md:grid-cols-2">
+              <InfoRow
+                label="Diagnosis Duration"
+                value={preSurvey.diagnosis_duration}
+              />
+              <InfoRow label="Age" value={preSurvey.age} />
+              <InfoRow label="Gender" value={preSurvey.gender} />
+              <InfoRow label="Race" value={formatArray(preSurvey.race)} />
+              <InfoRow label="Ethnicity" value={preSurvey.ethnicity} />
+              <InfoRow
+                label="Marital Status"
+                value={preSurvey.marital_status}
+              />
+              <InfoRow label="Education" value={preSurvey.education} />
+              <InfoRow
+                label="Employment Status"
+                value={preSurvey.employment_status}
+              />
+              <InfoRow
+                label="Household Income"
+                value={preSurvey.household_income}
+              />
+              <InfoRow label="Insurance Type" value={preSurvey.insurance_type} />
+              <InfoRow
+                label="Diagnosis Verified"
+                value={formatBoolean(preSurvey.diagnosis_verified)}
+              />
+              <InfoRow
+                label="Diagnosis File URL"
+                value={preSurvey.diagnosis_file_url}
+              />
             </div>
+          </SectionCard>
 
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">
-                Mental Health Follow-up
-              </p>
-
-              {preSurvey?.needs_mental_health_followup ? (
-                <span className="mt-2 inline-flex border border-red-200 bg-red-50 px-3 py-1 text-xs font-semibold text-red-700">
-                  Follow-up Recommended
-                </span>
-              ) : (
-                <span className="mt-2 inline-flex border border-green-200 bg-green-50 px-3 py-1 text-xs font-semibold text-green-700">
-                  No Follow-up Flag
-                </span>
-              )}
+          <SectionCard title="Health Literacy">
+            <div className="grid gap-4 md:grid-cols-2">
+              <InfoRow
+                label="Medical Forms Confidence"
+                value={preSurvey.medical_forms_confidence}
+              />
+              <InfoRow
+                label="Reading Help Frequency"
+                value={preSurvey.reading_help_frequency}
+              />
             </div>
-          </div>
-        </div>
-      </section>
+          </SectionCard>
+
+          <SectionCard title="Diabetes History">
+            <div className="grid gap-4 md:grid-cols-2">
+              <InfoRow
+                label="Diabetes Duration"
+                value={preSurvey.diabetes_duration}
+              />
+              <InfoRow
+                label="Current Treatments"
+                value={formatArray(preSurvey.current_treatments)}
+              />
+              <InfoRow
+                label="Attended Diabetes Classes"
+                value={formatBoolean(preSurvey.attended_diabetes_classes)}
+              />
+              <InfoRow
+                label="Diabetes Tools Used"
+                value={formatArray(preSurvey.diabetes_tools_used)}
+              />
+              <InfoRow
+                label="Overall Health Rating"
+                value={preSurvey.overall_health_rating}
+              />
+            </div>
+          </SectionCard>
+
+          <SectionCard title="Technology Access & Comfort">
+            <div className="grid gap-4 md:grid-cols-2">
+              <InfoRow
+                label="Owns Smartphone"
+                value={formatBoolean(preSurvey.owns_smartphone)}
+              />
+              <InfoRow
+                label="Internet Usage"
+                value={preSurvey.internet_usage}
+              />
+              <InfoRow label="App Comfort" value={preSurvey.app_comfort} />
+              <InfoRow
+                label="Telehealth Used"
+                value={formatBoolean(preSurvey.telehealth_used)}
+              />
+              <InfoRow
+                label="Mental Health Apps Used"
+                value={formatBoolean(preSurvey.mental_health_apps_used)}
+              />
+              <InfoRow
+                label="Smartphone App Comfort (0–10)"
+                value={preSurvey.smartphone_app_comfort}
+              />
+              <InfoRow
+                label="Digital Health Tools Used"
+                value={formatBoolean(preSurvey.digital_health_tools_used)}
+              />
+              <InfoRow
+                label="Voice Tech Comfort (0–10)"
+                value={preSurvey.voice_tech_comfort}
+              />
+              <InfoRow
+                label="Communication Preference"
+                value={preSurvey.communication_preference}
+              />
+            </div>
+          </SectionCard>
+
+          <SectionCard title="PHQ-9 Detailed Responses">
+            <div className="overflow-x-auto">
+              <table className="min-w-full border-collapse text-left text-sm">
+                <thead>
+                  <tr className="border-b border-slate-200 bg-slate-50">
+                    <th className="px-4 py-3 font-semibold text-slate-600">
+                      #
+                    </th>
+                    <th className="px-4 py-3 font-semibold text-slate-600">
+                      Question
+                    </th>
+                    <th className="px-4 py-3 font-semibold text-slate-600">
+                      Score
+                    </th>
+                    <th className="px-4 py-3 font-semibold text-slate-600">
+                      Response
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {PHQ_QUESTIONS.map((question, index) => {
+                    const key = `phq${index + 1}` as const
+                    const score = preSurvey[key]
+                    const numericScore =
+                      score === null || score === undefined
+                        ? null
+                        : Number(score)
+
+                    return (
+                      <tr
+                        key={key}
+                        className="border-b border-slate-100 last:border-b-0"
+                      >
+                        <td className="px-4 py-3 text-slate-500">{index + 1}</td>
+                        <td className="px-4 py-3 text-slate-800">{question}</td>
+                        <td className="px-4 py-3 font-medium text-slate-900">
+                          {numericScore === null || Number.isNaN(numericScore)
+                            ? "Not provided"
+                            : numericScore}
+                        </td>
+                        <td className="px-4 py-3 text-slate-700">
+                          {formatPhqLabel(numericScore)}
+                        </td>
+                      </tr>
+                    )
+                  })}
+                </tbody>
+              </table>
+            </div>
+          </SectionCard>
+
+          <SectionCard title="PHQ-9 Summary">
+            <div className="grid gap-6 md:grid-cols-3">
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">
+                  PHQ Total
+                </p>
+                <p className="mt-2 text-4xl font-semibold text-slate-950">
+                  {formatValue(preSurvey.phq_total)}
+                </p>
+              </div>
+
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">
+                  Severity
+                </p>
+                <p className="mt-2 text-sm font-medium text-slate-700">
+                  {formatValue(preSurvey.phq_severity)}
+                </p>
+              </div>
+
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">
+                  Mental Health Follow-up
+                </p>
+
+                {preSurvey.needs_mental_health_followup ? (
+                  <span className="mt-2 inline-flex border border-red-200 bg-red-50 px-3 py-1 text-xs font-semibold text-red-700">
+                    Follow-up Recommended
+                  </span>
+                ) : (
+                  <span className="mt-2 inline-flex border border-green-200 bg-green-50 px-3 py-1 text-xs font-semibold text-green-700">
+                    No Follow-up Flag
+                  </span>
+                )}
+              </div>
+            </div>
+          </SectionCard>
+        </section>
+      )}
 
       <section className="overflow-hidden border border-slate-200 bg-white">
         <div className="border-b border-slate-200 bg-slate-50 px-5 py-4">
@@ -237,24 +423,38 @@ export default async function AdminUserProfilePage({
             <thead>
               <tr className="border-b border-slate-200">
                 <th className="px-5 py-3 font-semibold text-slate-600">Date</th>
-                <th className="px-5 py-3 font-semibold text-slate-600">Distress</th>
+                <th className="px-5 py-3 font-semibold text-slate-600">
+                  Distress
+                </th>
                 <th className="px-5 py-3 font-semibold text-slate-600">Mood</th>
-                <th className="px-5 py-3 font-semibold text-slate-600">Energy</th>
-                <th className="px-5 py-3 font-semibold text-slate-600">Domain</th>
-                <th className="px-5 py-3 font-semibold text-slate-600">Safety</th>
+                <th className="px-5 py-3 font-semibold text-slate-600">
+                  Energy
+                </th>
+                <th className="px-5 py-3 font-semibold text-slate-600">
+                  Domain
+                </th>
+                <th className="px-5 py-3 font-semibold text-slate-600">
+                  Safety
+                </th>
               </tr>
             </thead>
 
             <tbody>
               {checkIns.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="px-5 py-10 text-center text-slate-500">
+                  <td
+                    colSpan={6}
+                    className="px-5 py-10 text-center text-slate-500"
+                  >
                     No check-ins found.
                   </td>
                 </tr>
               ) : (
                 checkIns.map((item) => (
-                  <tr key={item.id} className="border-b border-slate-100 hover:bg-slate-50">
+                  <tr
+                    key={item.id}
+                    className="border-b border-slate-100 hover:bg-slate-50"
+                  >
                     <td className="px-5 py-4 text-slate-700">
                       {formatDate(item.check_in_date)}
                     </td>
@@ -263,7 +463,9 @@ export default async function AdminUserProfilePage({
                     </td>
                     <td className="px-5 py-4 text-slate-700">{item.mood}</td>
                     <td className="px-5 py-4 text-slate-700">{item.energy}</td>
-                    <td className="px-5 py-4 text-slate-700">{item.domain ?? "—"}</td>
+                    <td className="px-5 py-4 text-slate-700">
+                      {item.domain ?? "—"}
+                    </td>
                     <td className="px-5 py-4">
                       {item.needs_safety_escalation ? (
                         <span className="border border-red-200 bg-red-50 px-2 py-1 text-xs font-semibold text-red-700">
@@ -285,14 +487,18 @@ export default async function AdminUserProfilePage({
 
       <section className="grid gap-4">
         {checkIns.map((item) => (
-          <div key={`${item.id}-reflection`} className="border border-slate-200 bg-white p-5">
+          <div
+            key={`${item.id}-reflection`}
+            className="border border-slate-200 bg-white p-5"
+          >
             <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
               <div>
                 <p className="text-sm font-semibold text-slate-900">
                   {formatDate(item.check_in_date)}
                 </p>
                 <p className="text-xs text-slate-500">
-                  {item.domain ?? "No domain"} · {item.subscale ?? "No subscale"}
+                  {item.domain ?? "No domain"} ·{" "}
+                  {item.subscale ?? "No subscale"}
                 </p>
               </div>
 
@@ -329,15 +535,30 @@ export default async function AdminUserProfilePage({
   )
 }
 
+function SectionCard({
+  title,
+  children,
+}: {
+  title: string
+  children: React.ReactNode
+}) {
+  return (
+    <div className="border border-slate-200 bg-white">
+      <div className="border-b border-slate-200 bg-slate-50 px-5 py-4">
+        <h2 className="text-sm font-semibold text-slate-900">{title}</h2>
+      </div>
+      <div className="p-5">{children}</div>
+    </div>
+  )
+}
+
 function StatCard({ label, value }: { label: string; value: any }) {
   return (
     <div className="border border-slate-200 bg-white p-5">
       <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">
         {label}
       </p>
-      <p className="mt-3 text-2xl font-semibold text-slate-950">
-        {value}
-      </p>
+      <p className="mt-3 text-2xl font-semibold text-slate-950">{value}</p>
     </div>
   )
 }
@@ -349,19 +570,40 @@ function InfoRow({ label, value }: { label: string; value: any }) {
         {label}
       </p>
       <p className="mt-1 break-words text-sm text-slate-800">
-        {value ?? "—"}
+        {formatValue(value)}
       </p>
     </div>
   )
 }
 
-function formatDate(value: any) {
-  if (!value) return "—"
-  return new Date(value).toLocaleString()
+function formatValue(value: unknown) {
+  if (value === null || value === undefined || value === "") {
+    return "Not provided"
+  }
+  return String(value)
 }
 
-function formatArray(value: any) {
-  if (!value) return "—"
-  if (Array.isArray(value)) return value.length ? value.join(", ") : "—"
-  return value
+function formatBoolean(value: unknown) {
+  if (value === null || value === undefined) return "Not provided"
+  return value ? "Yes" : "No"
+}
+
+function formatDate(value: unknown) {
+  if (value === null || value === undefined || value === "") {
+    return "Not provided"
+  }
+  return new Date(value as string | Date).toLocaleString()
+}
+
+function formatArray(value: unknown) {
+  if (value === null || value === undefined) return "Not provided"
+  if (Array.isArray(value)) {
+    return value.length ? value.join(", ") : "Not provided"
+  }
+  return String(value)
+}
+
+function formatPhqLabel(score: number | null) {
+  if (score === null || Number.isNaN(score)) return "Not provided"
+  return PHQ_LABELS[score] ?? "Not provided"
 }

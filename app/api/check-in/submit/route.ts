@@ -4,6 +4,12 @@ export const dynamic = "force-dynamic"
 import { NextRequest, NextResponse } from "next/server"
 import { auth } from "@/lib/auth"
 import { query } from "@/lib/db"
+import { getSubscaleForDay } from "@/lib/check-in-subscale"
+import {
+  computeStudyWeekAndDayFromCheckInNumber,
+  STUDY_COMPLETE_MESSAGE,
+  STUDY_TOTAL_CHECKINS,
+} from "@/lib/check-in-utils"
 
 const VALID_DOMAINS = ["Emotional", "Regimen", "Physician", "Interpersonal"] as const
 type ValidDomain = (typeof VALID_DOMAINS)[number]
@@ -59,6 +65,37 @@ export async function POST(req: NextRequest) {
       )
     }
 
+    const existingToday = await query(
+      `SELECT id
+       FROM check_in_submissions
+       WHERE user_id = $1 AND check_in_date = CURRENT_DATE
+       LIMIT 1`,
+      [session.user.id]
+    )
+
+    if (existingToday.rows.length > 0) {
+      return NextResponse.json(
+        { error: DUPLICATE_CHECK_IN_MESSAGE },
+        { status: 409 }
+      )
+    }
+
+    const progressResult = await query(
+      "SELECT total_checkins FROM user_study_progress WHERE user_id = $1",
+      [session.user.id]
+    )
+
+    const totalCheckins = Number(progressResult.rows[0]?.total_checkins ?? 0)
+
+    if (totalCheckins >= STUDY_TOTAL_CHECKINS) {
+      return NextResponse.json({ error: STUDY_COMPLETE_MESSAGE }, { status: 403 })
+    }
+
+    const checkInNumber = totalCheckins + 1
+    const { weekNumber, dayNumber } =
+      computeStudyWeekAndDayFromCheckInNumber(checkInNumber)
+    const subscale = getSubscaleForDay(domain, dayNumber)
+
     // Get previous check-in for safety logic
     const prevResult = await query(
       `SELECT distress, consecutive_high_distress_days
@@ -75,61 +112,6 @@ export async function POST(req: NextRequest) {
         : distress >= 9 ? 1 : 0
 
     const needsSafetyEscalation = consecutiveDays >= 2
-
-    // Get week number
-    const progressResult = await query(
-      "SELECT study_start_date, current_week FROM user_study_progress WHERE user_id = $1",
-      [session.user.id]
-    )
-
-    let weekNumber = 1
-    let dayNumber = 1
-
-    if (progressResult.rows.length > 0) {
-      const startDate = new Date(progressResult.rows[0].study_start_date)
-      const today = new Date()
-      const startMs = startDate.getTime()
-      const diffDays =
-        Number.isFinite(startMs)
-          ? Math.floor((today.getTime() - startMs) / (1000 * 60 * 60 * 24))
-          : 0
-      weekNumber = Math.min(Math.floor(diffDays / 7) + 1, 4)
-      dayNumber = (diffDays % 7) + 1
-    }
-    if (!Number.isFinite(dayNumber) || dayNumber < 1 || dayNumber > 7) {
-      dayNumber = 1
-    }
-    if (!Number.isFinite(weekNumber) || weekNumber < 1) {
-      weekNumber = 1
-    }
-
-    // Get subscale for today based on domain + day
-    const subscaleMap: Record<string, string[]> = {
-      Emotional: ["Feeling Overwhelmed", "Feeling Discouraged", "Feeling Burned Out", "Fear of Complications", "Mental Energy Drain"],
-      Regimen: ["Blood Sugar Testing", "Routine Failure", "Management Confidence", "Meal Plan Adherence", "Self-Management Motivation"],
-      Physician: ["Doctor Knowledge", "Care Directions", "Doctor Responsiveness", "Doctor Access"],
-      Interpersonal: ["Social Support for Self-Care", "Family Appreciation", "Emotional Support from Others"],
-    }
-
-    const subscales =
-      subscaleMap[domain]?.length ? subscaleMap[domain] : ["General"]
-    const idx = (dayNumber - 1) % subscales.length
-    const subscale = subscales[idx] ?? subscales[0] ?? "General"
-
-    const existingToday = await query(
-      `SELECT id
-       FROM check_in_submissions
-       WHERE user_id = $1 AND check_in_date = CURRENT_DATE
-       LIMIT 1`,
-      [session.user.id]
-    )
-
-    if (existingToday.rows.length > 0) {
-      return NextResponse.json(
-        { error: DUPLICATE_CHECK_IN_MESSAGE },
-        { status: 409 }
-      )
-    }
 
     let checkInSubmissionId: string
     try {
@@ -187,7 +169,6 @@ export async function POST(req: NextRequest) {
       [session.user.id, weekNumber, consecutiveDays]
     )
 
-    // ✅ Return subscale + day info for Stampley AI
     return NextResponse.json({
       success: true,
       id: checkInSubmissionId,

@@ -280,9 +280,9 @@ export default function StampleySupportPage() {
             }}
           >
             {[
-              { label: "Distress", value: `${store.distress}/10`, accent: store.distress >= 7 ? "rgba(122,90,90,0.7)" : store.distress >= 4 ? "rgba(124,106,82,0.7)" : "rgba(90,107,90,0.7)" },
-              { label: "Mood", value: `${store.mood}/10`, accent: "rgba(10,10,5,0.55)" },
-              { label: "Energy", value: `${store.energy}/10`, accent: "rgba(10,10,5,0.55)" },
+              { label: "Distress", value: store.distress === undefined ? "—" : `${store.distress}/10`, accent: (store.distress ?? 0) >= 7 ? "rgba(122,90,90,0.7)" : (store.distress ?? 0) >= 4 ? "rgba(124,106,82,0.7)" : "rgba(90,107,90,0.7)" },
+              { label: "Mood", value: store.mood === undefined ? "—" : `${store.mood}/10`, accent: "rgba(10,10,5,0.55)" },
+              { label: "Energy", value: store.energy === undefined ? "—" : `${store.energy}/10`, accent: "rgba(10,10,5,0.55)" },
               { label: "Context Tags", value: store.contextTags.length > 0 ? `${store.contextTags.length} selected` : "None", accent: "rgba(10,10,5,0.55)" },
               { label: "Domain", value: store.domain ?? "—", accent: "rgba(10,10,5,0.55)" },
             ].map((item, i, arr) => (
@@ -413,9 +413,9 @@ export default function StampleySupportPage() {
           setIsOpen={setIsSidebarOpen}
           setActiveView={(v) => setActiveView(v as "chat" | "results")}
           currentDomain={store.domain}
-          distress={store.distress}
-          mood={store.mood}
-          energy={store.energy}
+          distress={store.distress ?? 0}
+          mood={store.mood ?? 0}
+          energy={store.energy ?? 0}
           chatStarted={messages.length > 0}
           checkInCompleted={submitted}
           subscale={subscale}

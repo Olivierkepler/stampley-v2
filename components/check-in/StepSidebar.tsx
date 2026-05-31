@@ -1,5 +1,6 @@
 "use client"
 
+import { useSyncExternalStore } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { Check, ShieldCheck, Sparkles } from "lucide-react"
@@ -7,20 +8,33 @@ import { STEPS } from "@/app/check-in/constants/navigation"
 import { motion, AnimatePresence } from "framer-motion"
 import DailyWellnessRadar from "../daily-metrics/DailyWellnessRadar"
 import { useCheckInStore } from "@/store/checkin-store"
+import { canNavigateToStep } from "@/lib/check-in-step-validation"
 
 interface StepSidebarProps {
   collapsed?: boolean
 }
 
+function useIsClientReady() {
+  return useSyncExternalStore(
+    () => () => {},
+    () => true,
+    () => false
+  )
+}
+
 export default function StepSidebar({ collapsed = false }: StepSidebarProps) {
   const pathname = usePathname()
-  const { distress, mood, energy } = useCheckInStore()
+  const mounted = useIsClientReady()
 
-  const affect = {
-    distress,
-    mood,
-    energy,
-  }
+  const distress = useCheckInStore((s) => s.distress)
+  const mood = useCheckInStore((s) => s.mood)
+  const energy = useCheckInStore((s) => s.energy)
+  const contextTags = useCheckInStore((s) => s.contextTags)
+  const reflection = useCheckInStore((s) => s.reflection)
+  const copingAction = useCheckInStore((s) => s.copingAction)
+  const domain = useCheckInStore((s) => s.domain)
+
+  const affect = { distress, mood, energy }
 
   const activeIndex = STEPS.findIndex((s) => s.path === pathname)
   const safeActiveIndex = activeIndex === -1 ? 0 : activeIndex
@@ -80,15 +94,20 @@ export default function StepSidebar({ collapsed = false }: StepSidebarProps) {
   const isActive = index === safeActiveIndex
   const isCompleted = index < safeActiveIndex
   const isFinalNode = index === STEPS.length - 1
+  const isNavigable = mounted
+    ? canNavigateToStep(index, safeActiveIndex, {
+        distress,
+        mood,
+        energy,
+        contextTags,
+        reflection,
+        copingAction,
+        domain,
+      })
+    : index <= safeActiveIndex
 
-  return (
-    <Link
-      key={step.id}
-      href={step.path}
-      className={`step-link relative z-10 group flex items-center outline-none focus-visible:ring-2 focus-visible:ring-[#3d5a80]/30 rounded-md ${
-        collapsed ? "justify-center" : "gap-5"
-      }`}
-    >
+  const stepContent = (
+    <>
       {/* Circle indicator */}
       <div className={`flex items-center justify-center shrink-0 ${collapsed ? "w-10" : "w-12"}`}>
         <motion.div
@@ -146,7 +165,34 @@ export default function StepSidebar({ collapsed = false }: StepSidebarProps) {
           )}
         </div>
       )}
-    </Link>
+    </>
+  )
+
+  if (isNavigable) {
+    return (
+      <Link
+        key={step.id}
+        href={step.path}
+        className={`step-link relative z-10 group flex items-center outline-none focus-visible:ring-2 focus-visible:ring-[#3d5a80]/30 rounded-md ${
+          collapsed ? "justify-center" : "gap-5"
+        }`}
+      >
+        {stepContent}
+      </Link>
+    )
+  }
+
+  return (
+    <div
+      key={step.id}
+      aria-disabled="true"
+      title="Complete the current step before continuing"
+      className={`relative z-10 flex items-center rounded-md cursor-not-allowed opacity-45 ${
+        collapsed ? "justify-center" : "gap-5"
+      }`}
+    >
+      {stepContent}
+    </div>
   )
 })}
 

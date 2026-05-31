@@ -1,6 +1,7 @@
 import { auth } from "@/lib/auth"
 import { query } from "@/lib/db"
 import { redirect } from "next/navigation"
+import { STUDY_TOTAL_CHECKINS } from "@/lib/check-in-utils"
 
 export async function redirectIfOnboardingIncomplete() {
   const session = await auth()
@@ -34,11 +35,22 @@ export async function redirectIfAlreadyCheckedInToday() {
   const session = await auth()
   if (!session?.user?.id) redirect("/login")
 
-  const todayResult = await query(
-    `SELECT id FROM check_in_submissions
-     WHERE user_id = $1 AND check_in_date = CURRENT_DATE`,
-    [session.user.id]
-  )
+  const [todayResult, progressResult] = await Promise.all([
+    query(
+      `SELECT id FROM check_in_submissions
+       WHERE user_id = $1 AND check_in_date = CURRENT_DATE`,
+      [session.user.id]
+    ),
+    query(
+      `SELECT total_checkins FROM user_study_progress WHERE user_id = $1`,
+      [session.user.id]
+    ),
+  ])
+
+  const totalCheckins = Number(progressResult.rows[0]?.total_checkins ?? 0)
+  if (totalCheckins >= STUDY_TOTAL_CHECKINS) {
+    redirect("/check-in")
+  }
 
   if (todayResult.rows.length > 0) {
     redirect("/check-in")

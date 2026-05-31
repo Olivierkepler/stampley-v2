@@ -8,6 +8,11 @@ import ParticipantCharts from "@/components/dashboard/ParticipantCharts"
 import DonutProgress from "@/components/dashboard/DonutProgress"
 import Footer from "@/components/home/Footer"
 import { UnsavedTranscriptResend } from "@/components/stampley/unsaved-transcript-resend"
+import {
+  STUDY_TOTAL_CHECKINS,
+  computeStudyProgressPercent,
+  checkinsCompletedInWeek,
+} from "@/lib/check-in-utils"
 
 export default async function DashboardPage() {
   const session = await auth()
@@ -87,11 +92,10 @@ export default async function DashboardPage() {
   })
 
   const completedCheckins = progress?.total_checkins ?? 0
-  const remainingCheckins = Math.max(28 - completedCheckins, 0)
+  const remainingCheckins = Math.max(STUDY_TOTAL_CHECKINS - completedCheckins, 0)
+  const studyComplete = completedCheckins >= STUDY_TOTAL_CHECKINS
 
-  const checkinPct = progress
-    ? Math.min((progress.total_checkins / 28) * 100, 100)
-    : 0
+  const checkinPct = computeStudyProgressPercent(completedCheckins)
 
   const DOMAIN_META: Record<
     string,
@@ -349,7 +353,9 @@ export default async function DashboardPage() {
 
     {session.user?.role === "PARTICIPANT" && (
      <p className="mt-5 max-w-xl text-[clamp(0.95rem,1.5vw,1.05rem)] leading-7 text-white/85">
-        {checkedInToday
+        {studyComplete
+          ? "You’ve completed all 20 study check-ins. Thank you for your participation."
+          : checkedInToday
           ? "You’ve completed today’s check-in. Your progress has been recorded."
           : "Your daily check-in is ready. Take a few minutes to reflect on how you’re feeling today."}
       </p>
@@ -360,7 +366,7 @@ export default async function DashboardPage() {
   <DonutProgress
   percent={checkinPct}
   completed={completedCheckins}
-  total={28}
+  total={STUDY_TOTAL_CHECKINS}
 />
 </div>
 </div>
@@ -402,19 +408,32 @@ export default async function DashboardPage() {
       <div className="mt-6 flex flex-col gap-8">
         <div>
         <h2 className="font-display text-[clamp(1.55rem,3vw,2rem)] font-light leading-tight tracking-[-0.03em] text-black/85">
-            {checkedInToday
+            {studyComplete
+              ? "All 20 study check-ins are complete."
+              : checkedInToday
               ? "Today’s check-in is complete."
               : "How are you feeling today?"}
           </h2>
           <p className="mt-4 max-w-lg text-[clamp(0.95rem,1.3vw,1rem)] leading-7 text-black/55">
-            {checkedInToday
+            {studyComplete
+              ? "Thank you for completing the 4-week study protocol."
+              : checkedInToday
               ? "Thank you for checking in. Come back tomorrow to continue your daily reflection."
               : "Record your distress, mood, energy, context, and reflection for today."}
           </p>
         </div>
 
         <div>
-          {checkedInToday ? (
+          {studyComplete ? (
+            <div className="dashboard-card-soft inline-block px-5 py-4">
+              <p className="text-sm font-medium text-blue-900">
+                Study check-ins complete
+              </p>
+              <p className="mt-1 text-xs text-blue-900">
+                You finished all 20 check-ins across 4 weeks.
+              </p>
+            </div>
+          ) : checkedInToday ? (
             <div className="dashboard-card-soft inline-block px-5 py-4">
               <p className="text-sm font-medium text-blue-900">
                 Completed today
@@ -445,11 +464,11 @@ export default async function DashboardPage() {
                       <div className="flex items-end justify-between">
                         <div>
                           <p className="font-display text-[36px] font-light text-black/85">
-                            {completedCheckins} / 28
+                            {completedCheckins} / {STUDY_TOTAL_CHECKINS}
                           </p>
 
                           <p className="mt-1 text-sm text-black/45">
-                            Check-ins completed
+                            Check-ins completed · 4 weeks, 5 per week
                           </p>
                         </div>
 
@@ -473,6 +492,10 @@ export default async function DashboardPage() {
 
                       <div className="mt-5 grid grid-cols-4 gap-2">
                         {[1, 2, 3, 4].map((week) => {
+                          const weekCompleted = checkinsCompletedInWeek(
+                            completedCheckins,
+                            week
+                          )
                           const active = progress
                             ? week <= progress.current_week
                             : week === 1
@@ -500,6 +523,14 @@ export default async function DashboardPage() {
                                   }`}
                                 >
                                   {week}
+                                </p>
+
+                                <p
+                                  className={`mt-1 text-[10px] ${
+                                    active ? "text-white/70" : "text-blue-900/50"
+                                  }`}
+                                >
+                                  {weekCompleted}/5
                                 </p>
                               </div>
                             ) 

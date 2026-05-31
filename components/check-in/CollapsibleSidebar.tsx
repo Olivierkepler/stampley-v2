@@ -5,6 +5,7 @@ import Link from "next/link"
 import { PanelLeftClose, PanelLeft } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 import StepSidebar from "./StepSidebar"
+import Image from "next/image"
 
 const SIDEBAR_CONFIG = {
   EXPANDED: "w-[280px]",
@@ -85,7 +86,7 @@ export default function CollapsibleSidebar() {
                 className="overflow-hidden"
               >
                 <Link href="/dashboard" className="flex flex-col outline-none rounded-md hover:scale-105 transition-all duration-300">
-                  <span className="f-mono text-[9px] uppercase tracking-[0.2em] text-black/30"
+                  {/* <span className="f-mono text-[9px] uppercase tracking-[0.2em] text-black/30"
                   
                   >
                     AIDES-T2D
@@ -95,7 +96,8 @@ export default function CollapsibleSidebar() {
                   style={{ fontFamily: "'Poppins', sans-serif", fontSize: "clamp(10px, 1vw, 12px)" }}
                   >
                     Daily Check-in
-                  </span>
+                  </span> */}
+                  <Image src="/images/stampleyLogo.png" alt="AIDES-T2D" width={30} height={30} />
                 </Link>
               </motion.div>
             )}

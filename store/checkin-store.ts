@@ -6,9 +6,9 @@ export type Domain = "Emotional" | "Regimen" | "Physician" | "Interpersonal"
 const CHECK_IN_DRAFT_KEY = "stampley-checkin-draft"
 
 export const checkInInitialState = {
-  distress: 5,
-  mood: 5,
-  energy: 5,
+  distress: undefined as number | undefined,
+  mood: undefined as number | undefined,
+  energy: undefined as number | undefined,
   contextTags: [] as string[],
   reflection: "",
   copingAction: "",
@@ -17,9 +17,9 @@ export const checkInInitialState = {
 
 export interface CheckInState {
   // Step 1 — Daily Metrics
-  distress: number
-  mood: number
-  energy: number
+  distress: number | undefined
+  mood: number | undefined
+  energy: number | undefined
   // Step 2 — Contextual Factors
   contextTags: string[]
   // Step 3 — Clinical Narrative

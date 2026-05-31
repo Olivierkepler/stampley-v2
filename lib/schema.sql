@@ -57,7 +57,7 @@ CREATE TABLE IF NOT EXISTS check_in_submissions (
   needs_safety_escalation BOOLEAN DEFAULT FALSE, -- True if distress >= 9 for 2 consecutive days
   consecutive_high_distress_days INTEGER DEFAULT 0,
   week_number INTEGER DEFAULT 1,               -- Study week (1-4)
-  day_number INTEGER DEFAULT 1,                -- Day within week (1-7)
+  day_number INTEGER DEFAULT 1,                -- Day within week (1-5)
   check_in_date DATE DEFAULT CURRENT_DATE,     -- Exact date of check-in
   created_at TIMESTAMP DEFAULT NOW(),
   updated_at TIMESTAMP DEFAULT NOW(),

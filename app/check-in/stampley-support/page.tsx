@@ -29,7 +29,10 @@ import {
   type StoredMessage,
   type StampleyResponseData,
 } from "@/store/conversation-storage"
-import { StampleySidebar } from "@/components/stampley/stampley-sidebar"
+import {
+  StampleySidebar,
+  type DdsSummary,
+} from "@/components/stampley/stampley-sidebar"
 import {
   deriveConversationPhase,
   formatAssistantMessageForHistory,
@@ -157,6 +160,7 @@ export default function StampleySupportPage() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
   const [activeView, setActiveView] = useState<"chat" | "results">("chat")
   const [copiedId, setCopiedId] = useState<string | null>(null)
+  const [ddsSummary, setDdsSummary] = useState<DdsSummary | null>(null)
 
   const [needsSafety, setNeedsSafety] = useState(false)
   const [showSupport, setShowSupport] = useState(false)
@@ -166,10 +170,10 @@ export default function StampleySupportPage() {
   const isBusy = completingCheckIn || loading
   const chatReady = chatStarted
 
-  const metrics = chatSnapshot ?? {
-    distress: store.distress,
-    mood: store.mood,
-    energy: store.energy,
+  const metrics: SavedMetrics = chatSnapshot ?? {
+    distress: store.distress ?? 0,
+    mood: store.mood ?? 0,
+    energy: store.energy ?? 0,
     domain: store.domain,
     contextTags: store.contextTags,
     reflection: store.reflection,
@@ -180,7 +184,7 @@ export default function StampleySupportPage() {
   }
 
   const inChatSafety =
-    (chatSnapshot?.distress ?? metrics.distress) >= 9
+    (chatSnapshot?.distress ?? metrics.distress ?? 0) >= 9
 
   const weekNumber = chatSnapshot?.weekNumber ?? 1
   const dayNumber = chatSnapshot?.dayNumber ?? 1
@@ -209,6 +213,22 @@ export default function StampleySupportPage() {
 
   useEffect(() => {
     setConversations(getConversations())
+  }, [])
+
+  useEffect(() => {
+    void (async () => {
+      try {
+        const res = await fetch("/api/check-in/dds-summary")
+        if (!res.ok) return
+
+        const data = await res.json()
+        if (data?.ddsSummary) {
+          setDdsSummary(data.ddsSummary as DdsSummary)
+        }
+      } catch {
+        // Keep ddsSummary null if fetch fails
+      }
+    })()
   }, [])
 
   useEffect(() => {
@@ -337,10 +357,15 @@ export default function StampleySupportPage() {
     []
   )
 
-  const buildSnapshotFromStore = useCallback((): Omit<
-    SavedMetrics,
-    "weekNumber" | "dayNumber" | "subscale"
-  > => {
+  const buildSnapshotFromStore = useCallback((): {
+    distress: number | undefined
+    mood: number | undefined
+    energy: number | undefined
+    domain: string | null
+    contextTags: string[]
+    reflection: string
+    copingAction: string
+  } => {
     return {
       distress: store.distress,
       mood: store.mood,
@@ -395,6 +420,19 @@ export default function StampleySupportPage() {
     setError("")
 
     const snapshot = buildSnapshotFromStore()
+    if (
+      snapshot.distress === undefined ||
+      snapshot.mood === undefined ||
+      snapshot.energy === undefined
+    ) {
+      setError(
+        "Please complete Step 1 and set stress, mood, and energy before starting Stampley."
+      )
+      startChatInFlightRef.current = false
+      setLoading(false)
+      return
+    }
+
     if (!snapshot.domain) {
       setError(
         "Please complete Step 4 and select a focus domain before starting Stampley."
@@ -407,7 +445,13 @@ export default function StampleySupportPage() {
     try {
       const studyContext = await fetchStudyContext(snapshot.domain)
       const fullSnapshot: SavedMetrics = {
-        ...snapshot,
+        distress: snapshot.distress,
+        mood: snapshot.mood,
+        energy: snapshot.energy,
+        domain: snapshot.domain,
+        contextTags: snapshot.contextTags,
+        reflection: snapshot.reflection,
+        copingAction: snapshot.copingAction,
         ...studyContext,
       }
       setChatSnapshot(fullSnapshot)
@@ -685,8 +729,8 @@ export default function StampleySupportPage() {
 
 
 
-          <main className="flex min-h-0 flex-1 flex-col overflow-hidden my-10 ">
-            <div className="min-h-0 flex-1 overflow-y-auto">
+          <main className="flex min-h-0 flex-1 flex-col overflow-hidden my-10  ">
+            <div className="min-h-0 flex-1 overflow-y-auto mb-10">
             <motion.div className="mx-auto flex w-full max-w-5xl flex-col gap-6 px-4 py-6 md:px-6 md:py-8">
               <section className="flex items-center gap-3  border border-black/[0.07] bg-white px-4 py-3 shadow-[0_1px_4px_rgba(10,10,15,0.04)]">
                 <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-[9px] bg-[#3d5a80]/[0.08] text-[#3d5a80]">
@@ -798,6 +842,7 @@ export default function StampleySupportPage() {
           subscale={subscale}
           dayNumber={dayNumber}
           weekNumber={weekNumber}
+          ddsSummary={ddsSummary}
         />
 
         

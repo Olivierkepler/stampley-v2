@@ -42,7 +42,7 @@ export function isCheckInDomain(domain: unknown): domain is Domain {
   )
 }
 
-/** Subscale for the study day within the weekly domain (matches submit route). */
+/** Subscale for the study day within the weekly domain (1–5 per week; matches submit route). */
 export function getSubscaleForDay(
   domain: string,
   dayNumber: number

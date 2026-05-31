@@ -97,7 +97,7 @@ function NarrativeBox({
         </div>
       </div>
 
-      {suggestions && suggestions.length > 0 && (
+      {/* {suggestions && suggestions.length > 0 && (
         <div className="mb-3 flex items-center gap-2">
           <button
             type="button"
@@ -133,7 +133,7 @@ function NarrativeBox({
             <ChevronRight size={14} />
           </button>
         </div>
-      )}
+      )} */}
 
       <div className="group relative">
         <textarea
@@ -142,7 +142,7 @@ function NarrativeBox({
           maxLength={maxLength}
           onChange={(e) => handleChange(e.target.value)}
           placeholder={placeholder}
-          className="min-h-[150px] w-full resize-none  border border-black/[0.08] bg-white p-5 pr-12 text-[18px] font-light leading-[1.7] text-[#0a0a0f] outline-none transition-all duration-300 placeholder:text-black/30 hover:border-[#3d5a80]/25 focus:border-[#3d5a80]/50 focus:ring-[3px] focus:ring-[#3d5a80]/10 focus:shadow-[0_4px_20px_rgba(61,90,128,0.08)]"
+          className="min-h-[150px] w-full resize-none  border border-black/[0.2] bg-white p-5 pr-12 text-[18px] font-light leading-[1.7] text-[#0a0a0f] outline-none transition-all duration-300 placeholder:text-black/30 hover:border-[#3d5a80]/25 focus:border-[#3d5a80]/50 focus:ring-[3px] focus:ring-[#3d5a80]/10 focus:shadow-[0_4px_20px_rgba(61,90,128,0.08)]"
           style={{ fontFamily: "'Outfit', system-ui, sans-serif" }}
         />
 

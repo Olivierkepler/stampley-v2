@@ -2,6 +2,7 @@
 
 import { useCheckInStore } from "@/store/checkin-store"
 import DonutProgress from "@/components/dashboard/DonutProgress"
+import { computeWellnessPercent } from "@/lib/wellness-score"
 
 type CheckInSubHeaderProps = {
   eyebrow: string
@@ -16,15 +17,10 @@ export default function CheckInSubHeader({
 }: CheckInSubHeaderProps) {
   const { distress, mood, energy } = useCheckInStore()
 
-  const avg = ((10 - distress) + mood + energy) / 3
-
-  const percent = Math.max(
-    0,
-    Math.min((avg / 10) * 100, 100)
-  )
+  const wellness = computeWellnessPercent(distress, mood, energy)
 
   return (
-    <div className="relative overflow-hidden px-10 border-b border-white/10 bg-[#003e73]  ">
+    <div className="relative overflow-hidden border-b border-white/10 bg-[#003e73] px-10">
       <div className="pointer-events-none absolute -right-16 -top-16 h-48 w-48 rounded-full bg-white/10 blur-3xl" />
 
       <div className="relative z-10 mx-auto flex min-h-28 max-w-7xl items-center justify-between gap-6 px-6 py-4">
@@ -37,16 +33,19 @@ export default function CheckInSubHeader({
             {title}
           </h1>
 
-          <p className="mt-2 max-w-md text-[18px] leading-[1.5] text-white/75" style={{ fontFamily: "'Poppins', sans-serif" }}>
+          <p
+            className="mt-2 max-w-md text-[18px] leading-[1.5] text-white/75"
+            style={{ fontFamily: "'Poppins', sans-serif" }}
+          >
             {description}
           </p>
         </div>
 
         <div className="hidden shrink-0 origin-right scale-[0.58] sm:block">
           <DonutProgress
-            percent={percent}
-            completed={Math.round(avg)}
-            total={10}
+            percent={wellness}
+            completed={wellness}
+            total={100}
             label="Wellness"
             bgColor="#003e73"
           />

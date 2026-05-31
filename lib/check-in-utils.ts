@@ -1,40 +1,51 @@
 /**
- * Study week/day helpers aligned with /api/check-in/submit logic (read-only).
+ * Study schedule helpers for the 4-week / 20 check-in protocol.
+ * Week mapping: W1 = check-ins 1–5, W2 = 6–10, W3 = 11–15, W4 = 16–20.
  */
+
+export const STUDY_TOTAL_CHECKINS = 20
+export const STUDY_WEEKS = 4
+export const CHECKINS_PER_WEEK = 5
 
 export type StudyWeekDay = {
   weekNumber: number
   dayNumber: number
 }
 
-export function computeStudyWeekAndDay(
-  studyStartDate: Date | string | null | undefined,
-  referenceDate: Date = new Date()
+export const STUDY_COMPLETE_MESSAGE =
+  "You have completed all 20 study check-ins. Thank you for participating."
+
+/** 1-based check-in number (1–20) → week (1–4) and day within week (1–5). */
+export function computeStudyWeekAndDayFromCheckInNumber(
+  checkInNumber: number
 ): StudyWeekDay {
-  let weekNumber = 1
-  let dayNumber = 1
+  const n = Math.min(
+    Math.max(Math.floor(Number(checkInNumber)) || 1, 1),
+    STUDY_TOTAL_CHECKINS
+  )
 
-  if (studyStartDate != null && studyStartDate !== "") {
-    const startDate =
-      studyStartDate instanceof Date
-        ? studyStartDate
-        : new Date(studyStartDate)
-    const startMs = startDate.getTime()
-    const diffDays = Number.isFinite(startMs)
-      ? Math.floor(
-          (referenceDate.getTime() - startMs) / (1000 * 60 * 60 * 24)
-        )
-      : 0
-    weekNumber = Math.min(Math.floor(diffDays / 7) + 1, 4)
-    dayNumber = (diffDays % 7) + 1
-  }
-
-  if (!Number.isFinite(dayNumber) || dayNumber < 1 || dayNumber > 7) {
-    dayNumber = 1
-  }
-  if (!Number.isFinite(weekNumber) || weekNumber < 1) {
-    weekNumber = 1
-  }
+  const weekNumber = Math.min(
+    Math.floor((n - 1) / CHECKINS_PER_WEEK) + 1,
+    STUDY_WEEKS
+  )
+  const dayNumber = ((n - 1) % CHECKINS_PER_WEEK) + 1
 
   return { weekNumber, dayNumber }
+}
+
+/** Progress percent toward the 20-check-in study goal. */
+export function computeStudyProgressPercent(completedCheckins: number): number {
+  const completed = Math.max(Number(completedCheckins) || 0, 0)
+  return Math.min((completed / STUDY_TOTAL_CHECKINS) * 100, 100)
+}
+
+/** Check-ins completed within a given study week (1–4). */
+export function checkinsCompletedInWeek(
+  totalCompleted: number,
+  week: number
+): number {
+  if (week < 1 || week > STUDY_WEEKS) return 0
+  const start = (week - 1) * CHECKINS_PER_WEEK + 1
+  if (totalCompleted < start) return 0
+  return Math.min(totalCompleted - start + 1, CHECKINS_PER_WEEK)
 }

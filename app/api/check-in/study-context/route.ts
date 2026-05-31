@@ -60,12 +60,13 @@ export async function POST(req: NextRequest) {
     }
 
     const progressResult = await query(
-      "SELECT study_start_date FROM user_study_progress WHERE user_id = $1",
+      "SELECT total_checkins FROM user_study_progress WHERE user_id = $1",
       [session.user.id]
     )
 
-    const studyStartDate = progressResult.rows[0]?.study_start_date ?? null
-    const context = buildCheckInStudyContext(domain, studyStartDate)
+    const totalCheckins = Number(progressResult.rows[0]?.total_checkins ?? 0)
+    const checkInNumber = totalCheckins + 1
+    const context = buildCheckInStudyContext(domain, checkInNumber)
 
     if (!context) {
       return NextResponse.json(

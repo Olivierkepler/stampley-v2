@@ -47,6 +47,20 @@ interface SessionStep {
   status: StepStatus
 }
 
+export type DdsSummary = {
+  totalScore: number
+  emotionalScore: number
+  regimenScore: number
+  physicianScore: number
+  interpersonalScore: number
+  highestDomain: string
+}
+
+function formatScore(value: number | null | undefined) {
+  if (typeof value !== "number" || Number.isNaN(value)) return "—"
+  return value.toFixed(2)
+}
+
 export interface StampleySidebarProps {
   isOpen: boolean
   setIsOpen: (open: boolean) => void
@@ -65,6 +79,7 @@ export interface StampleySidebarProps {
   subscale?: string
   dayNumber?: number
   weekNumber?: number
+  ddsSummary?: DdsSummary | null
 }
 
 function isDomainKey(value: string | null): value is DomainKey {
@@ -213,6 +228,7 @@ export function StampleySidebar({
   subscale,
   dayNumber,
   weekNumber,
+  ddsSummary = null,
 }: StampleySidebarProps) {
   const [isCollapsed, setIsCollapsed] = useState(false)
 
@@ -325,6 +341,56 @@ export function StampleySidebar({
                 </p>
               )}
             </SidebarCard>
+
+            <SidebarCard className="p-4">
+              <MonoLabel>DDS Summary</MonoLabel>
+              {ddsSummary ? (
+                <div className="space-y-2 text-[12px] font-light leading-[1.65] text-black">
+                  <p>
+                    <span className="text-black/50">Total DDS:</span>{" "}
+                    <span className="font-medium text-black">
+                      {formatScore(ddsSummary.totalScore)}
+                    </span>
+                  </p>
+                  <p>
+                    <span className="text-black/50">Emotional:</span>{" "}
+                    <span className="font-medium text-black">
+                      {formatScore(ddsSummary.emotionalScore)}
+                    </span>
+                  </p>
+                  <p>
+                    <span className="text-black/50">Regimen:</span>{" "}
+                    <span className="font-medium text-black">
+                      {formatScore(ddsSummary.regimenScore)}
+                    </span>
+                  </p>
+                  <p>
+                    <span className="text-black/50">Physician:</span>{" "}
+                    <span className="font-medium text-black">
+                      {formatScore(ddsSummary.physicianScore)}
+                    </span>
+                  </p>
+                  <p>
+                    <span className="text-black/50">Interpersonal:</span>{" "}
+                    <span className="font-medium text-black">
+                      {formatScore(ddsSummary.interpersonalScore)}
+                    </span>
+                  </p>
+                  <p>
+                    <span className="text-black/50">Highest domain:</span>{" "}
+                    <span className="font-medium text-black">
+                      {ddsSummary.highestDomain}
+                    </span>
+                  </p>
+                </div>
+              ) : (
+                <p className="text-[12px] font-light leading-[1.65] text-black/45">
+                  DDS results will appear here after the DDS-17 survey is
+                  completed.
+                </p>
+              )}
+            </SidebarCard>
+
             {/* What you're doing */}
             {/* <SidebarCard>
               <MonoLabel>What you&apos;re doing</MonoLabel>
@@ -449,7 +515,7 @@ export function StampleySidebar({
     />
 
     <p className="text-[12px] font-light leading-[1.65] text-black">
-      Complete Check-in saves today&apos;s record.
+      Complete Check-in saves today&apos;s record
     </p>
   </div>
 </SidebarCard>
