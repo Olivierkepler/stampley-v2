@@ -11,6 +11,8 @@ import {
   Circle,
   CircleDot,
 } from "lucide-react"
+import Link from "next/link"
+import Image from "next/image"
 
 type DomainKey = "Emotional" | "Regimen" | "Physician" | "Interpersonal"
 
@@ -195,7 +197,7 @@ function SidebarCard({
 }) {
   return (
     <motion.div
-      className={` border border-black/[0.07] bg-white p-3.5 shadow-[0_1px_4px_rgba(10,10,15,0.04)] ${className}`}
+      className={` border-b border-black/[0.07] bg-white p-3.5  ${className}`}
     >
       {children}
     </motion.div>
@@ -204,7 +206,7 @@ function SidebarCard({
 
 function MonoLabel({ children }: { children: React.ReactNode }) {
   return (
-    <p className="mb-2  text-[8px] uppercase tracking-[0.18em] text-black">
+    <p className="mb-4  text-[16px] font-['Poppins',sans-serif]   font-bold text-black">
       {children}
     </p>
   )
@@ -230,7 +232,7 @@ export function StampleySidebar({
   weekNumber,
   ddsSummary = null,
 }: StampleySidebarProps) {
-  const [isCollapsed, setIsCollapsed] = useState(false)
+  const [isCollapsed, setIsCollapsed] = useState(true)
 
   const domainFocus = isDomainKey(currentDomain)
     ? DDS_FOCUS[currentDomain]
@@ -255,6 +257,7 @@ export function StampleySidebar({
           />
         )}
       </AnimatePresence>
+      
 
       <motion.aside
         initial={false}
@@ -275,9 +278,15 @@ export function StampleySidebar({
           style={{ borderBottom: "1px solid rgba(10,10,5,0.05)" }}
         >
           {!isCollapsed && (
-            <span className="px-1 font-[JetBrains_Mono,monospace] text-[10px] uppercase tracking-[0.22em] text-black">
-              Session
-            </span>
+            // <span className="px-1 font-[JetBrains_Mono,monospace] text-[10px] uppercase tracking-[0.22em] text-black">
+            //   Session
+            // </span> 
+          <Link href="/dashboard" className="flex items-center gap-2 hover:scale-105 transition-all duration-300">
+              <Image src="/images/stampleyLogo.png" alt="Stampley" width={30} height={30} />
+     
+          </Link>
+          
+          
           )}
           <button
             type="button"
@@ -323,73 +332,102 @@ export function StampleySidebar({
               scrollbarColor: "rgba(10,10,5,0.08) transparent",
             }}
           >
-               {/* DDS focus */}
-               <SidebarCard className="p-4">
-              <MonoLabel>DDS focus</MonoLabel>
-              {domainFocus ? (
-                <>
-                  <p className="mb-1.5 font-[Fraunces,Georgia,serif] text-[14px] font-light text-black">
-                    {domainFocus.label}
-                  </p>
-                  <p className="text-[12px] font-light leading-[1.65] text-black">
-                    {domainFocus.description}
-                  </p>
-                </>
-              ) : (
-                <p className="text-[12px] font-light leading-[1.65] text-black/45">
-                  Your focus domain will appear here once selected.
-                </p>
-              )}
-            </SidebarCard>
 
-            <SidebarCard className="p-4">
-              <MonoLabel>DDS Summary</MonoLabel>
-              {ddsSummary ? (
-                <div className="space-y-2 text-[12px] font-light leading-[1.65] text-black">
-                  <p>
-                    <span className="text-black/50">Total DDS:</span>{" "}
-                    <span className="font-medium text-black">
-                      {formatScore(ddsSummary.totalScore)}
-                    </span>
-                  </p>
-                  <p>
-                    <span className="text-black/50">Emotional:</span>{" "}
-                    <span className="font-medium text-black">
-                      {formatScore(ddsSummary.emotionalScore)}
-                    </span>
-                  </p>
-                  <p>
-                    <span className="text-black/50">Regimen:</span>{" "}
-                    <span className="font-medium text-black">
-                      {formatScore(ddsSummary.regimenScore)}
-                    </span>
-                  </p>
-                  <p>
-                    <span className="text-black/50">Physician:</span>{" "}
-                    <span className="font-medium text-black">
-                      {formatScore(ddsSummary.physicianScore)}
-                    </span>
-                  </p>
-                  <p>
-                    <span className="text-black/50">Interpersonal:</span>{" "}
-                    <span className="font-medium text-black">
-                      {formatScore(ddsSummary.interpersonalScore)}
-                    </span>
-                  </p>
-                  <p>
-                    <span className="text-black/50">Highest domain:</span>{" "}
-                    <span className="font-medium text-black">
-                      {ddsSummary.highestDomain}
-                    </span>
-                  </p>
-                </div>
-              ) : (
-                <p className="text-[12px] font-light leading-[1.65] text-black/45">
-                  DDS results will appear here after the DDS-17 survey is
-                  completed.
+<SidebarCard className="p-4">
+     {/* DDS focus */}
+     {(dayNumber || weekNumber || subscale) && (
+                <p className="mt-2.5 font-['Poppins',sans-serif] text-[16px]   tracking-[0.12em] text-black">
+                  {weekNumber ? `Week ${weekNumber}` : ""}
+                  {dayNumber ? ` · Day ${dayNumber}` : ""}
+                  {/* {subscale ? ` · ${subscale}` : ""} */}
                 </p>
               )}
-            </SidebarCard>
+</SidebarCard>
+
+
+            {/* DDS focus */}
+{/* <SidebarCard className="p-4">
+
+
+
+  
+  <MonoLabel>DDS focus</MonoLabel>
+
+  {domainFocus ? (
+    <>
+      <p className="mb-2 text-[16px] font-['Poppins',sans-serif] font-medium text-black">
+        {domainFocus.label}
+      </p>
+
+      <p className="text-[16px] font-['Poppins',sans-serif] leading-[1.65] text-black">
+        {domainFocus.description}
+      </p>
+    </>
+  ) : (
+    <p className="text-[16px] font-['Poppins',sans-serif] leading-[1.65] text-black/50">
+      Your focus domain will appear here once selected.
+    </p>
+  )}
+</SidebarCard> */}
+
+<SidebarCard className="p-4">
+  <MonoLabel>DDS Summary</MonoLabel>
+
+  {ddsSummary ? (
+    <div className="space-y-3">
+      {/* Total DDS */}
+      {/* <div className="rounded-[12px] border border-black/[0.06] bg-black/[0.02] p-3">
+        <p className="mb-1 text-[13px] font-['Poppins',sans-serif] text-black/50">
+          Total DDS Score
+        </p>
+
+        <p className="text-[28px] font-['Poppins',sans-serif] font-semibold leading-none text-black">
+          {formatScore(ddsSummary.totalScore)}
+        </p>
+      </div> */}
+
+      {/* Domain scores */}
+      <div className="space-y-2">
+        <MetricRow
+          label="Emotional"
+          value={formatScore(ddsSummary.emotionalScore)}
+        />
+
+        <MetricRow
+          label="Regimen"
+          value={formatScore(ddsSummary.regimenScore)}
+        />
+
+        <MetricRow
+          label="Physician"
+          value={formatScore(ddsSummary.physicianScore)}
+        />
+
+        <MetricRow
+          label="Interpersonal"
+          value={formatScore(ddsSummary.interpersonalScore)}
+        />
+      </div>
+
+      {/* Highest domain */}
+      {/* <div className="rounded-[12px] border border-[#3d5a80]/12 bg-[#3d5a80]/[0.03] p-3">
+        <p className="mb-1 text-[13px] font-['Poppins',sans-serif] text-black/50">
+          Highest Distress Domain
+        </p>
+
+        <p className="text-[16px] font-['Poppins',sans-serif] font-medium text-black">
+          {ddsSummary.highestDomain}
+        </p>
+      </div> */}
+    </div>
+  ) : (
+    <div className="rounded-[12px] border border-dashed border-black/[0.08] bg-black/[0.02] p-4">
+      <p className="text-[16px] font-['Poppins',sans-serif] leading-[1.65] text-black/50">
+        DDS results will appear here after the DDS-17 survey is completed.
+      </p>
+    </div>
+  )}
+</SidebarCard>
 
             {/* What you're doing */}
             {/* <SidebarCard>
@@ -413,34 +451,32 @@ export function StampleySidebar({
                   accent
                 />
               </motion.div>
-              {(dayNumber || weekNumber || subscale) && (
-                <p className="mt-2.5 font-[JetBrains_Mono,monospace] text-[8px] uppercase tracking-[0.12em] text-black/30">
-                  {weekNumber ? `Week ${weekNumber}` : ""}
-                  {dayNumber ? ` · Day ${dayNumber}` : ""}
-                  {subscale ? ` · ${subscale}` : ""}
-                </p>
-              )}
+             
             </SidebarCard>
+         
 
             {/* Today’s questions */}
-            <SidebarCard className="p-4">
-              <MonoLabel>Today&apos;s questions</MonoLabel>
-              <div className="space-y-1.5">
-                <p className="text-[12px] font-light leading-[1.65] text-black">
-                  Expected:{" "}
-                  <span className="font-medium text-black/70">2–4</span>{" "}
-                  questions
-                </p>
-                <p className="text-[12px] font-light leading-[1.65] text-black">
-                  High stress:{" "}
-                  <span className="font-medium text-black/70">1–2</span>{" "}
-                  shorter questions
-                </p>
-                <p className="mt-2 text-[12px] font-light text-black/50">
-                  Opening → Exploration → Coping → Closure
-                </p>
-              </div>
-            </SidebarCard>
+            {/* <SidebarCard className="p-4">
+  <MonoLabel>Today&apos;s questions</MonoLabel>
+
+  <div className="space-y-2">
+    <p className="text-[16px] font-['Poppins',sans-serif] text-black">
+      Expected:{" "}
+      <span className="font-medium text-black/70">2–4</span>{" "}
+      questions
+    </p>
+
+    <p className="text-[16px] font-['Poppins',sans-serif] text-black">
+      High stress:{" "}
+      <span className="font-medium text-black/70">1–2</span>{" "}
+      shorter questions
+    </p>
+
+    <p className="mt-3 text-[16px] font-['Poppins',sans-serif] text-black/70">
+      Opening → Exploration → Coping → Closure
+    </p>
+  </div>
+</SidebarCard> */}
 
             {/* Why Stampley asks */}
             {/* <SidebarCard>
@@ -496,7 +532,7 @@ export function StampleySidebar({
             </SidebarCard> */}
 
             {/* Progress */}
-            <SidebarCard
+            {/* <SidebarCard
   className="p-4 font-['Poppins', sans-serif]"
  
 >
@@ -518,11 +554,11 @@ export function StampleySidebar({
       Complete Check-in saves today&apos;s record
     </p>
   </div>
-</SidebarCard>
+</SidebarCard> */}
          
 
             {/* Session progress */}
-            <SidebarCard className="p-4">
+            {/* <SidebarCard className="p-4">
               <MonoLabel>Session progress</MonoLabel>
               <ul className="space-y-2.5">
                 {sessionSteps.map((step) => (
@@ -542,7 +578,7 @@ export function StampleySidebar({
                   </li>
                 ))}
               </ul>
-            </SidebarCard>
+            </SidebarCard> */}
 
             {/* Reminder */}
             {/* <SidebarCard className="border-black/15 bg-black/[0.04]">
@@ -557,23 +593,25 @@ export function StampleySidebar({
             </SidebarCard> */}
 
             {setActiveView && (
-              <button
-                type="button"
-                onClick={() => setActiveView("results")}
-                className="flex w-full items-center justify-center gap-2 rounded-[10px] border border-black/[0.08] bg-white px-3 py-2.5 text-[10px] uppercase tracking-[0.12em] text-black/45 transition-all hover:border-black/20 hover:text-black"
-                style={{ fontFamily: "'JetBrains Mono', monospace" }}
-              >
-                <FileBarChart size={13} strokeWidth={1.5} />
-                View results summary
-              </button>
+              <div className="absolute bottom-0 left-0 right-0 z-10 bg-white/90 pt-4 pb-3 px-0 " style={{marginLeft: '-12px', marginRight: '-12px'}}>
+                <button
+                  type="button"
+                  onClick={() => setActiveView("results")}
+                  className="flex w-full py-10 items-center cursor-pointer justify-center gap-2 rounded-[10px] border border-black/[0.08] bg-white px-3 py-2.5 text-[14px]  tracking-[0.12em] text-black/45 transition-all hover:border-black/20 hover:text-black"
+                  style={{ fontFamily: 'Poppins, sans-serif' }}
+                >
+                  <FileBarChart size={13} strokeWidth={1.5} />
+                  View results summary
+                </button>
+              </div>
             )}
+       
           </div>
         )}
       </motion.aside>
     </>
   )
 }
-
 function MetricRow({
   label,
   value,
@@ -584,11 +622,14 @@ function MetricRow({
   accent?: boolean
 }) {
   return (
-    <div className="flex items-center justify-between gap-2">
-      <span className="text-[12px] text-black">{label}</span>
+    <div className="flex items-center justify-between gap-3">
+      <span className="text-[16px] font-['Poppins',sans-serif] text-black">
+        {label}
+      </span>
+
       <span
-        className={`text-[12px] font-medium ${
-          accent ? "text-black" : "text-black"
+        className={`text-[16px] font-['Poppins',sans-serif] ${
+          accent ? "font-medium text-black" : "text-black"
         }`}
       >
         {value}

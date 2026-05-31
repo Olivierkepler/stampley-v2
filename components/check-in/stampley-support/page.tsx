@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from "react"
 import { useRouter } from "next/navigation"
 import { motion, AnimatePresence } from "framer-motion"
+import Image from "next/image"
 import {
   Menu, SquarePen, Trash2, ArrowUp,
   Loader2, Wind, BookOpen, Copy, Check,
@@ -15,6 +16,18 @@ import {
   type StampleyResponseData
 } from "@/store/conversation-storage"
 import { StampleySidebar } from "@/components/stampley/stampley-sidebar"
+
+const bodyText =
+  "text-[16px] font-['Poppins',sans-serif] text-black leading-relaxed"
+const bodySecondary =
+  "text-[16px] font-['Poppins',sans-serif] text-black/70 leading-relaxed"
+const bodyMuted =
+  "text-[16px] font-['Poppins',sans-serif] text-black/50 leading-relaxed"
+const labelText =
+  "text-[12px] font-['Poppins',sans-serif] text-black/50 uppercase tracking-[0.16em]"
+const captionText = "text-[12px] font-['Poppins',sans-serif] text-black/50"
+const headingText = "font-['Poppins',sans-serif] font-medium text-black"
+const buttonText = "font-['Poppins',sans-serif] font-medium"
 
 const getCurrentTime = () =>
   new Date().toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })
@@ -162,7 +175,7 @@ export default function StampleySupportPage() {
         data: data.response,
         timestamp: getCurrentTime(),
       }])
-      setExpandedCard(`${msgId}-skill`)
+      setExpandedCard(null)
     } catch {
       const msgId = Date.now().toString()
       setMessages(prev => [...prev, {
@@ -176,6 +189,7 @@ export default function StampleySupportPage() {
         },
         timestamp: getCurrentTime(),
       }])
+      setExpandedCard(null)
     } finally {
       setIsLoading(false)
     }
@@ -238,35 +252,23 @@ export default function StampleySupportPage() {
 
   if (!submitted) {
     return (
-      <>
-        <style>{`@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;1,9..144,300&family=JetBrains+Mono:wght@300;400;500&family=Outfit:wght@300;400;500;600&display=swap');`}</style>
-        <div
-          className="space-y-6"
-          style={{ fontFamily: "'Outfit', system-ui, sans-serif" }}
-        >
+      <div className={`space-y-6 ${bodyText}`}>
           <div>
             <div className="flex items-center gap-2 mb-3">
               <span className="h-px w-5 bg-black/20" />
-              <span
-                className="text-[9px] uppercase tracking-[0.28em]"
-                style={{ color: "rgba(10,10,5,0.3)", fontFamily: "'JetBrains Mono', monospace" }}
-              >
+              <span className={labelText}>
                 Step 5 of 5
               </span>
             </div>
             <h2
-              className="text-[26px] font-light leading-tight tracking-[-0.02em]"
-              style={{ fontFamily: "'Fraunces', Georgia, serif", color: "rgba(10,10,5,0.72)" }}
+              className={`text-[24px] leading-tight ${headingText}`}
             >
               Review &{" "}
-              <em className="italic font-light" style={{ color: "rgba(10,10,5,0.28)" }}>
+              <em className="not-italic text-black/50">
                 submit
               </em>
             </h2>
-            <p
-              className="text-[13px] font-light mt-1.5 leading-relaxed"
-              style={{ color: "rgba(10,10,5,0.4)" }}
-            >
+            <p className={`${bodyMuted} mt-1.5`}>
               Submit your check-in and begin your session with Stampley.
             </p>
           </div>
@@ -293,14 +295,11 @@ export default function StampleySupportPage() {
                   borderBottom: i < arr.length - 1 ? "1px solid rgba(10,10,5,0.05)" : "none",
                 }}
               >
-                <p
-                  className="text-[12.5px]"
-                  style={{ color: "rgba(10,10,5,0.4)", fontFamily: "'JetBrains Mono', monospace" }}
-                >
+                <p className={labelText}>
                   {item.label}
                 </p>
                 <p
-                  className="text-[13px] font-medium"
+                  className={`text-[16px] ${buttonText}`}
                   style={{ color: item.accent }}
                 >
                   {item.value}
@@ -312,16 +311,10 @@ export default function StampleySupportPage() {
                 className="px-6 py-4"
                 style={{ borderTop: "1px solid rgba(10,10,5,0.05)" }}
               >
-                <p
-                  className="text-[11px] uppercase tracking-[0.16em] mb-1.5"
-                  style={{ color: "rgba(10,10,5,0.3)", fontFamily: "'JetBrains Mono', monospace" }}
-                >
+                <p className={`${labelText} mb-1.5`}>
                   Reflection
                 </p>
-                <p
-                  className="text-[13px] font-light leading-relaxed line-clamp-2"
-                  style={{ color: "rgba(10,10,5,0.55)" }}
-                >
+                <p className={`${bodySecondary} line-clamp-2`}>
                   {store.reflection}
                 </p>
               </div>
@@ -330,7 +323,7 @@ export default function StampleySupportPage() {
 
           {error && (
             <div
-              className="p-3 rounded-[14px] text-[13px]"
+              className={`p-3 rounded-[14px] ${bodyText}`}
               style={{
                 background: "rgba(122,90,90,0.07)",
                 border: "1px solid rgba(122,90,90,0.15)",
@@ -355,10 +348,7 @@ export default function StampleySupportPage() {
               >
                 💙
               </div>
-              <p
-                className="text-[13px]"
-                style={{ color: "rgba(10,10,5,0.45)", fontFamily: "'Outfit', system-ui, sans-serif" }}
-              >
+              <p className={bodyMuted}>
                 {submitting ? "Saving your check-in…" : "Stampley is preparing…"}
               </p>
             </div>
@@ -368,23 +358,20 @@ export default function StampleySupportPage() {
             <div className="flex gap-3">
               <button
                 onClick={() => router.push("/check-in/weekly-domain")}
-                className="flex-1 rounded-[16px] py-[14px] text-[13px] font-medium transition-all duration-200"
+                className={`flex-1 rounded-[16px] py-[14px] ${buttonText} text-black/70 transition-all duration-200`}
                 style={{
                   border: "1.5px solid rgba(10,10,5,0.09)",
-                  color: "rgba(10,10,5,0.38)",
                   background: "linear-gradient(160deg, #fefdfb 0%, #f9f6f1 100%)",
-                  fontFamily: "'Outfit', system-ui, sans-serif",
                 }}
               >
                 ← Back
               </button>
               <button
                 onClick={handleSubmitCheckin}
-                className="flex-1 rounded-[16px] py-[14px] text-[13px] font-semibold uppercase tracking-[0.07em] text-white transition-all duration-300 hover:-translate-y-px relative overflow-hidden"
+                className={`flex-1 rounded-[16px] py-[14px] ${buttonText} uppercase tracking-[0.07em] text-white transition-all duration-300 hover:-translate-y-px relative overflow-hidden`}
                 style={{
                   background: "linear-gradient(135deg, #1a1a18 0%, #0a0a0f 100%)",
                   boxShadow: "0 6px 20px rgba(10,10,5,0.2)",
-                  fontFamily: "'Outfit', system-ui, sans-serif",
                 }}
               >
                 Submit & Chat with Stampley 💙
@@ -392,19 +379,14 @@ export default function StampleySupportPage() {
             </div>
           )}
         </div>
-      </>
     )
   }
 
   return (
-    <>
-      <style>{`@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;1,9..144,300&family=JetBrains+Mono:wght@300;400;500&family=Outfit:wght@300;400;500;600&display=swap');`}</style>
-
-      <div
-        className="fixed inset-0 top-0 flex overflow-hidden"
+    <div
+        className={`fixed inset-0 top-0 flex overflow-hidden ${bodyText}`}
         style={{
           background: "linear-gradient(160deg, #fefdfb 0%, #f5f2ec 100%)",
-          fontFamily: "'Outfit', system-ui, sans-serif",
           zIndex: 50,
         }}
       >
@@ -454,9 +436,8 @@ export default function StampleySupportPage() {
                 <button
                   key={view}
                   onClick={() => setActiveView(view)}
-                  className="px-4 py-1.5 rounded-full text-[11px] font-medium transition-all duration-200 uppercase tracking-[0.08em]"
+                  className={`px-4 py-1.5 rounded-full ${buttonText} text-[12px] transition-all duration-200 uppercase tracking-[0.08em]`}
                   style={{
-                    fontFamily: "'JetBrains Mono', monospace",
                     background: activeView === view
                       ? "linear-gradient(160deg, #fefdfb 0%, #f9f6f1 100%)"
                       : "transparent",
@@ -524,21 +505,12 @@ export default function StampleySupportPage() {
                         <Activity size={14} strokeWidth={1.5} style={{ color: "rgba(10,10,5,0.45)" }} />
                       </div>
                       <div>
-                        <p
-                          className="text-[8px] uppercase tracking-[0.2em] mb-0.5"
-                          style={{ color: "rgba(10,10,5,0.28)", fontFamily: "'JetBrains Mono', monospace" }}
-                        >
-                          Today's metrics
+                        <p className={`${labelText} mb-0.5`}>
+                          Today&apos;s metrics
                         </p>
-                        <p
-                          className="text-[12px] font-light"
-                          style={{ color: "rgba(10,10,5,0.55)" }}
-                        >
+                        <p className={bodySecondary}>
                           Distress {store.distress} · Mood {store.mood} · Energy {store.energy}
-                          <span
-                            className="ml-2 text-[10px]"
-                            style={{ color: "rgba(10,10,5,0.25)" }}
-                          >
+                          <span className={`ml-2 ${captionText}`}>
                             used by Stampley
                           </span>
                         </p>
@@ -554,21 +526,18 @@ export default function StampleySupportPage() {
                         }}
                       >
                         <p
-                          className="text-[13px] font-medium mb-1"
-                          style={{ color: "rgba(122,90,90,0.8)", fontFamily: "'Fraunces', Georgia, serif" }}
+                          className={`${headingText} text-[16px] mb-1`}
+                          style={{ color: "rgba(122,90,90,0.8)" }}
                         >
                           Support is available
                         </p>
-                        <p
-                          className="text-[12px] font-light leading-relaxed mb-3"
-                          style={{ color: "rgba(10,10,5,0.45)" }}
-                        >
-                          Your distress has been high. You don't have to carry this alone.
+                        <p className={`${bodyMuted} mb-3`}>
+                          Your distress has been high. You don&apos;t have to carry this alone.
                         </p>
                         <div className="flex flex-col sm:flex-row gap-2">
                           <a
                             href="mailto:pcrg@umb.edu"
-                            className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-[10px] text-[11.5px] font-medium transition-all"
+                            className={`flex items-center justify-center gap-2 px-4 py-2.5 rounded-[10px] ${buttonText} text-[16px] transition-all`}
                             style={{
                               background: "rgba(122,90,90,0.07)",
                               border: "1px solid rgba(122,90,90,0.2)",
@@ -579,7 +548,7 @@ export default function StampleySupportPage() {
                           </a>
                           <a
                             href="tel:6172874067"
-                            className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-[10px] text-[11.5px] font-medium transition-all"
+                            className={`flex items-center justify-center gap-2 px-4 py-2.5 rounded-[10px] ${buttonText} text-[16px] transition-all`}
                             style={{
                               background: "rgba(122,90,90,0.07)",
                               border: "1px solid rgba(122,90,90,0.2)",
@@ -603,20 +572,16 @@ export default function StampleySupportPage() {
                         {msg.role === "user" ? (
                           <div className="flex flex-col items-end gap-1 max-w-[78%]">
                             <div
-                              className="px-5 py-3 rounded-[18px] rounded-tr-[5px] text-[13.5px] font-light leading-relaxed"
+                              className={`px-5 py-3 rounded-[18px] rounded-tr-[5px] ${bodyText}`}
                               style={{
                                 background: "linear-gradient(160deg, #fefdfb 0%, #f9f6f1 100%)",
                                 border: "1px solid rgba(10,10,5,0.08)",
-                                color: "rgba(10,10,5,0.78)",
                                 boxShadow: "0 1px 4px rgba(10,10,5,0.06)",
                               }}
                             >
                               {msg.content}
                             </div>
-                            <span
-                              className="text-[9px] px-2"
-                              style={{ color: "rgba(10,10,5,0.22)", fontFamily: "'JetBrains Mono', monospace" }}
-                            >
+                            <span className={`${captionText} px-2`}>
                               {msg.timestamp}
                             </span>
                           </div>
@@ -635,34 +600,23 @@ export default function StampleySupportPage() {
 
                             <div className="flex flex-col gap-2 w-full min-w-0">
                               <div className="flex items-center gap-2 pt-1 mb-0.5">
-                                <span
-                                  className="text-[11px] uppercase tracking-[0.14em]"
-                                  style={{ color: "rgba(10,10,5,0.45)", fontFamily: "'JetBrains Mono', monospace" }}
-                                >
+                                <span className={`${labelText} normal-case tracking-normal text-black/70`}>
                                   Stampley
                                 </span>
-                                <span
-                                  className="text-[9px]"
-                                  style={{ color: "rgba(10,10,5,0.22)", fontFamily: "'JetBrains Mono', monospace" }}
-                                >
+                                <span className={captionText}>
                                   {msg.timestamp}
                                 </span>
                               </div>
 
                               {msg.data && (
-                                <div
-                                  className="text-[14.5px] font-light leading-[1.72] space-y-3"
-                                  style={{ color: "rgba(10,10,5,0.78)", fontFamily: "'Outfit', system-ui, sans-serif" }}
-                                >
+                                <div className={`${bodyText} space-y-3`}>
                                   {msg.data.greeting && (
-                                    <p style={{ color: "rgba(10,10,5,0.78)" }}>{msg.data.greeting}</p>
+                                    <p>{msg.data.greeting}</p>
                                   )}
-                                  <p style={{ color: "rgba(10,10,5,0.65)" }}>{msg.data.validation}</p>
-                                  <p style={{ color: "rgba(10,10,5,0.78)", fontWeight: 400 }}>
-                                    {msg.data.reflection_question}
-                                  </p>
+                                  <p className="text-black/70">{msg.data.validation}</p>
+                                  <p>{msg.data.reflection_question}</p>
                                   {msg.data.closure && (
-                                    <p style={{ color: "rgba(10,10,5,0.5)", fontStyle: "italic" }}>
+                                    <p className="text-black/50 italic">
                                       {msg.data.closure}
                                     </p>
                                   )}
@@ -674,9 +628,8 @@ export default function StampleySupportPage() {
                                   onClick={() => setExpandedCard(
                                     expandedCard === `${msg.id}-skill` ? null : `${msg.id}-skill`
                                   )}
-                                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] transition-all duration-200"
+                                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[12px] ${buttonText} transition-all duration-200`}
                                   style={{
-                                    fontFamily: "'JetBrains Mono', monospace",
                                     background: expandedCard === `${msg.id}-skill`
                                       ? "rgba(10,10,5,0.07)"
                                       : "transparent",
@@ -696,9 +649,8 @@ export default function StampleySupportPage() {
                                   onClick={() => setExpandedCard(
                                     expandedCard === `${msg.id}-edu` ? null : `${msg.id}-edu`
                                   )}
-                                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] transition-all duration-200"
+                                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[12px] ${buttonText} transition-all duration-200`}
                                   style={{
-                                    fontFamily: "'JetBrains Mono', monospace",
                                     background: expandedCard === `${msg.id}-edu`
                                       ? "rgba(10,10,5,0.07)"
                                       : "transparent",
@@ -747,17 +699,11 @@ export default function StampleySupportPage() {
                                     >
                                       <div className="flex items-center gap-2 mb-2">
                                         <Wind size={13} strokeWidth={1.8} style={{ color: "rgba(10,10,5,0.4)" }} />
-                                        <span
-                                          className="text-[11px] uppercase tracking-[0.14em] font-semibold"
-                                          style={{ color: "rgba(10,10,5,0.45)", fontFamily: "'JetBrains Mono', monospace" }}
-                                        >
+                                        <span className={`${labelText} font-medium text-black/70`}>
                                           Micro-skill
                                         </span>
                                       </div>
-                                      <p
-                                        className="text-[13.5px] font-light leading-relaxed"
-                                        style={{ color: "rgba(10,10,5,0.6)" }}
-                                      >
+                                      <p className={bodySecondary}>
                                         {msg.data?.micro_skill}
                                       </p>
                                     </div>
@@ -782,17 +728,11 @@ export default function StampleySupportPage() {
                                     >
                                       <div className="flex items-center gap-2 mb-2">
                                         <BookOpen size={13} strokeWidth={1.8} style={{ color: "rgba(10,10,5,0.4)" }} />
-                                        <span
-                                          className="text-[11px] uppercase tracking-[0.14em] font-semibold"
-                                          style={{ color: "rgba(10,10,5,0.45)", fontFamily: "'JetBrains Mono', monospace" }}
-                                        >
+                                        <span className={`${labelText} font-medium text-black/70`}>
                                           Insight
                                         </span>
                                       </div>
-                                      <p
-                                        className="text-[13.5px] font-light leading-relaxed"
-                                        style={{ color: "rgba(10,10,5,0.6)" }}
-                                      >
+                                      <p className={bodySecondary}>
                                         {msg.data?.education_chip}
                                       </p>
                                     </div>
@@ -819,12 +759,9 @@ export default function StampleySupportPage() {
                             opacity: 0.5,
                           }}
                         >
-                          💙
+                          <Image src="/images/stampleyLogo.png" alt="Stampley" width={18} height={18} className="object-contain" />   
                         </div>
-                        <div
-                          className="flex items-center gap-2 text-[13.5px] font-light"
-                          style={{ color: "rgba(10,10,5,0.38)" }}
-                        >
+                        <div className={`flex items-center gap-2 ${bodyMuted}`}>
                           <Loader2 size={13} className="animate-spin" />
                           <span>Stampley is thinking…</span>
                         </div>
@@ -854,11 +791,7 @@ export default function StampleySupportPage() {
                       onKeyDown={(e) => e.key === "Enter" && handleSend()}
                       placeholder="Reply to Stampley…"
                       disabled={isLoading}
-                      className="flex-1 h-[50px] pl-5 bg-transparent outline-none text-[13.5px] font-light disabled:opacity-40"
-                      style={{
-                        color: "rgba(10,10,5,0.75)",
-                        fontFamily: "'Outfit', system-ui, sans-serif",
-                      }}
+                      className={`flex-1 h-[50px] pl-5 bg-transparent outline-none ${bodyText} placeholder:text-black/50 disabled:opacity-40`}
                     />
                     <div className="pr-2">
                       <button
@@ -886,8 +819,7 @@ export default function StampleySupportPage() {
                   </div>
 
                   <p
-                    className="text-center text-[8.5px] uppercase tracking-[0.16em] mt-2.5 hidden md:block select-none"
-                    style={{ color: "rgba(10,10,5,0.2)", fontFamily: "'JetBrains Mono', monospace" }}
+                    className={`text-center ${labelText} mt-2.5 hidden md:block select-none`}
                   >
                     Stampley may make mistakes · not a substitute for professional care
                   </p>
@@ -905,11 +837,8 @@ export default function StampleySupportPage() {
                 className="flex-1 overflow-y-auto"
               >
                 <div className="max-w-2xl mx-auto px-6 py-8 space-y-4">
-                  <h2
-                    className="text-[22px] font-light tracking-[-0.02em]"
-                    style={{ fontFamily: "'Fraunces', Georgia, serif", color: "rgba(10,10,5,0.65)" }}
-                  >
-                    Today's results
+                  <h2 className={`text-[22px] tracking-[-0.02em] ${headingText}`}>
+                    Today&apos;s results
                   </h2>
                   {[
                     { label: "Distress", value: `${store.distress} / 10` },
@@ -927,27 +856,20 @@ export default function StampleySupportPage() {
                         border: "1px solid rgba(10,10,5,0.07)",
                       }}
                     >
-                      <p
-                        className="text-[9px] uppercase tracking-[0.2em] mb-1"
-                        style={{ color: "rgba(10,10,5,0.3)", fontFamily: "'JetBrains Mono', monospace" }}
-                      >
+                      <p className={`${labelText} mb-1`}>
                         {item.label}
                       </p>
-                      <p
-                        className="text-[14px] font-light"
-                        style={{ color: "rgba(10,10,5,0.65)" }}
-                      >
+                      <p className={bodySecondary}>
                         {item.value}
                       </p>
                     </div>
                   ))}
                   <button
                     onClick={() => router.push("/dashboard")}
-                    className="w-full rounded-[16px] py-4 text-[13px] font-semibold uppercase tracking-[0.07em] text-white mt-2 transition-all hover:-translate-y-px"
+                    className={`w-full rounded-[16px] py-4 ${buttonText} uppercase tracking-[0.07em] text-white mt-2 transition-all hover:-translate-y-px`}
                     style={{
                       background: "linear-gradient(135deg, #1a1a18, #0a0a0f)",
                       boxShadow: "0 6px 20px rgba(10,10,5,0.2)",
-                      fontFamily: "'Outfit', system-ui, sans-serif",
                     }}
                   >
                     Back to Dashboard
@@ -958,6 +880,5 @@ export default function StampleySupportPage() {
           </AnimatePresence>
         </main>
       </div>
-    </>
   )
 }
