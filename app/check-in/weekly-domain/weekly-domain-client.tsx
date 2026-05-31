@@ -56,87 +56,155 @@ const DOMAINS = [
 ]
 
 interface Props {
-  lockedDomain: string | null
+  lockedDomain: Domain | null
   weekNumber: number
   isLocked: boolean
+  usedPreviousDomains: Domain[]
 }
 
 export function WeeklyDomainClient({
   lockedDomain,
   weekNumber,
   isLocked,
+  usedPreviousDomains,
 }: Props) {
-  const { domain, setDomain } = useCheckInStore()
+  const { domain, setDomain, clearDomain } = useCheckInStore()
   const [hoveredId, setHoveredId] = useState<string | null>(null)
   const [showInsight, setShowInsight] = useState<string | null>(null)
+  const [saveError, setSaveError] = useState("")
+  const [savingDomain, setSavingDomain] = useState<Domain | null>(null)
 
   useLayoutEffect(() => {
-    if (lockedDomain) setDomain(lockedDomain as Domain)
-  }, [lockedDomain, setDomain])
+    if (lockedDomain) {
+      setDomain(lockedDomain)
+      return
+    }
+
+    if (domain && usedPreviousDomains.includes(domain)) {
+      clearDomain()
+    }
+  }, [lockedDomain, domain, usedPreviousDomains, setDomain, clearDomain])
 
   const activeDomain = DOMAINS.find((item) => item.id === (domain || lockedDomain))
 
+  async function handleSelectDomain(selected: Domain) {
+    if (isLocked || usedPreviousDomains.includes(selected)) return
+
+    setSaveError("")
+    setSavingDomain(selected)
+
+    try {
+      const res = await fetch("/api/check-in/weekly-domain", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ domain: selected }),
+      })
+
+      const data = await res.json().catch(() => ({}))
+
+      if (!res.ok) {
+        setSaveError(
+          typeof data.error === "string"
+            ? data.error
+            : "Failed to save your weekly focus domain."
+        )
+        return
+      }
+
+      setDomain(selected)
+      setShowInsight(selected)
+      window.setTimeout(() => setShowInsight(null), 3000)
+    } catch {
+      setSaveError("Failed to save your weekly focus domain. Please try again.")
+    } finally {
+      setSavingDomain(null)
+    }
+  }
+
   return (
     <div className="space-y-8 px-4 md:px-8 lg:px-12">
-     <AnimatePresence>
-  {activeDomain && (domain || lockedDomain) && (
-    <motion.section
-      initial={{ opacity: 0, y: 8 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: 8 }}
-      transition={{ duration: 0.25 }}
-      className="flex items-center gap-3 border border-black/[0.07] bg-white px-5 py-4 shadow-[0_1px_4px_rgba(10,10,15,0.04)]"
-    >
-      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[12px] bg-[#3d5a80]/[0.08] text-[#3d5a80]">
-        {isLocked ? (
-          <Lock size={16} strokeWidth={1.8} />
-        ) : (
-          <activeDomain.icon size={16} strokeWidth={1.8} />
+      <AnimatePresence>
+        {activeDomain && (domain || lockedDomain) && (
+          <motion.section
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 8 }}
+            transition={{ duration: 0.25 }}
+            className="flex items-center gap-3 border border-black/[0.07] bg-white px-5 py-4 shadow-[0_1px_4px_rgba(10,10,15,0.04)]"
+          >
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[12px] bg-[#3d5a80]/[0.08] text-[#3d5a80]">
+              {isLocked ? (
+                <Lock size={16} strokeWidth={1.8} />
+              ) : (
+                <activeDomain.icon size={16} strokeWidth={1.8} />
+              )}
+            </div>
+
+            <div className="min-w-0 flex-1">
+              <p
+                className="text-[13.5px] font-medium text-black"
+                style={{ fontFamily: "'Poppins', sans-serif" }}
+              >
+                {isLocked
+                  ? `Week ${weekNumber} focus locked`
+                  : `Week ${weekNumber} focus selected`}
+              </p>
+
+              <p
+                className="mt-0.5 text-[12px] leading-[1.6] text-black/60"
+                style={{ fontFamily: "'Poppins', sans-serif" }}
+              >
+                {isLocked ? (
+                  <>
+                    This week&apos;s domain is locked once check-ins begin.
+                    Stampley will focus on{" "}
+                    <span className="font-semibold text-black">
+                      {activeDomain.label}
+                    </span>
+                    .
+                  </>
+                ) : (
+                  <>
+                    Stampley will focus on{" "}
+                    <span className="font-semibold text-black">
+                      {activeDomain.label}
+                    </span>{" "}
+                    for this week&apos;s check-ins.
+                  </>
+                )}
+              </p>
+            </div>
+
+            <div className="hidden shrink-0 items-center rounded-full border border-black/[0.08] bg-black/[0.03] px-3 py-1.5 sm:flex">
+              <span
+                className="text-[9.5px] font-semibold uppercase tracking-[0.16em] text-black/45"
+                style={{ fontFamily: "'JetBrains Mono', monospace" }}
+              >
+                {activeDomain.shortLabel}
+              </span>
+            </div>
+          </motion.section>
         )}
-      </div>
+      </AnimatePresence>
 
-      <div className="min-w-0 flex-1">
+      {saveError && (
         <p
-          className="text-[13.5px] font-medium text-black"
+          className="rounded-[14px] border border-red-200 bg-red-50 px-4 py-3 text-[14px] text-red-800"
           style={{ fontFamily: "'Poppins', sans-serif" }}
         >
-          {isLocked
-            ? `Week ${weekNumber} focus locked`
-            : "Current Stampley focus"}
+          {saveError}
         </p>
-
-        <p
-          className="mt-0.5 text-[12px] leading-[1.6] text-black/60"
-          style={{ fontFamily: "'Poppins', sans-serif" }}
-        >
-          Stampley will focus on{" "}
-          <span className="font-semibold text-black">
-            {activeDomain.label}
-          </span>{" "}
-          for the next 4 days.
-          {isLocked
-            ? ` A new focus domain becomes available at Week ${weekNumber + 1}.`
-            : ""}
-        </p>
-      </div>
-
-      <div className="hidden shrink-0 items-center rounded-full border border-black/[0.08] bg-black/[0.03] px-3 py-1.5 sm:flex">
-        <span
-          className="text-[9.5px] font-semibold uppercase tracking-[0.16em] text-black/45"
-          style={{ fontFamily: "'JetBrains Mono', monospace" }}
-        >
-          {activeDomain.shortLabel}
-        </span>
-      </div>
-    </motion.section>
-  )}
-</AnimatePresence>
+      )}
 
       <div className=" mb-20 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:gap-5">
         {DOMAINS.map((item, index) => {
           const Icon = item.icon
           const isSelected = domain === item.id || lockedDomain === item.id
-          const isDisabled = isLocked && lockedDomain !== item.id
+          const usedPreviously = usedPreviousDomains.includes(item.id)
+          const isDisabled =
+            (isLocked && lockedDomain !== item.id) ||
+            usedPreviously ||
+            savingDomain !== null
           const isHovered = hoveredId === item.id && !isDisabled && !isLocked
 
           return (
@@ -150,15 +218,10 @@ export function WeeklyDomainClient({
                 duration: 0.35,
                 ease: [0.22, 1, 0.36, 1],
               }}
-              onClick={() => {
-                if (isLocked) return
-                setDomain(item.id)
-                setShowInsight(item.id)
-                window.setTimeout(() => setShowInsight(null), 3000)
-              }}
+              onClick={() => handleSelectDomain(item.id)}
               onMouseEnter={() => setHoveredId(item.id)}
               onMouseLeave={() => setHoveredId(null)}
-              disabled={isDisabled}
+              disabled={isDisabled || isLocked}
               className={`relative w-full overflow-hidden rounded-[22px] border bg-white p-5 text-left transition-all duration-300 sm:p-6 ${
                 isDisabled ? "cursor-not-allowed opacity-45" : "cursor-pointer"
               }`}
@@ -253,6 +316,24 @@ export function WeeklyDomainClient({
               >
                 {item.description}
               </p>
+
+              {usedPreviously && (
+                <p
+                  className="mt-3 text-[12px] leading-relaxed text-black/45"
+                  style={{ fontFamily: "'Poppins', sans-serif" }}
+                >
+                  You already completed this domain in a previous week.
+                </p>
+              )}
+
+              {savingDomain === item.id && (
+                <p
+                  className="mt-3 text-[12px] text-black/50"
+                  style={{ fontFamily: "'Poppins', sans-serif" }}
+                >
+                  Saving…
+                </p>
+              )}
 
               <AnimatePresence>
                 {showInsight === item.id && (

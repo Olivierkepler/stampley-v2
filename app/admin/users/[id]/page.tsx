@@ -1,6 +1,8 @@
 import { query } from "@/lib/db"
 import Link from "next/link"
 import { notFound } from "next/navigation"
+import { StampleySessionCard } from "@/components/admin/stampley-chats/stampley-session-card"
+import { mapStampleySessionRow } from "@/lib/admin-stampley-sessions"
 
 export const dynamic = "force-dynamic"
 
@@ -135,6 +137,36 @@ export default async function AdminUserProfilePage({
   )
 
   const checkIns = checkInsResult.rows
+
+  const stampleySessionsResult = await query(
+    `
+    SELECT
+      s.id,
+      s.user_id,
+      u.email,
+      s.check_in_submission_id,
+      s.domain,
+      s.stress_level,
+      s.mood,
+      s.energy,
+      s.user_message_count,
+      s.assistant_message_count,
+      s.summary,
+      s.messages,
+      s.created_at,
+      c.check_in_date
+    FROM stampley_chat_sessions s
+    JOIN users u ON u.id = s.user_id
+    LEFT JOIN check_in_submissions c ON c.id = s.check_in_submission_id
+    WHERE s.user_id = $1
+    ORDER BY s.created_at DESC
+    `,
+    [id]
+  )
+
+  const stampleySessions = (
+    stampleySessionsResult.rows as Record<string, unknown>[]
+  ).map(mapStampleySessionRow)
 
   return (
     <main className="space-y-8">
@@ -530,6 +562,29 @@ export default async function AdminUserProfilePage({
             </div>
           </div>
         ))}
+      </section>
+
+      <section className="space-y-4">
+        <div className="border border-slate-200 bg-slate-50 px-5 py-4">
+          <h2 className="text-sm font-semibold text-slate-900">
+            Stampley Chat History
+          </h2>
+          <p className="mt-1 text-xs leading-5 text-slate-500">
+            Saved Stampley sessions from this participant&apos;s check-ins.
+          </p>
+        </div>
+
+        {stampleySessions.length === 0 ? (
+          <div className="border border-slate-200 bg-white px-5 py-10 text-center shadow-sm">
+            <p className="text-sm text-slate-500">
+              No Stampley chat sessions saved for this participant yet.
+            </p>
+          </div>
+        ) : (
+          stampleySessions.map((session) => (
+            <StampleySessionCard key={session.id} session={session} />
+          ))
+        )}
       </section>
     </main>
   )

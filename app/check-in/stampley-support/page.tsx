@@ -36,6 +36,7 @@ import {
 import {
   deriveConversationPhase,
   formatAssistantMessageForHistory,
+  hasStampleyFieldText,
   type StampleyHistoryMessage,
 } from "@/lib/stampley-prompt"
 import {
@@ -123,18 +124,12 @@ function buildStampleyHistory(
     .filter((m): m is StampleyHistoryMessage => m !== null)
 }
 
-function getRequiredDailyReplies(isHighStress: boolean) {
-  return isHighStress ? 1 : 3
+function getRequiredDailyReplies() {
+  return 1
 }
 
-function hasCompletedDailyReflection({
-  userMessageCount,
-  isHighStress,
-}: {
-  userMessageCount: number
-  isHighStress: boolean
-}) {
-  return userMessageCount >= getRequiredDailyReplies(isHighStress)
+function hasCompletedDailyReflection(userMessageCount: number) {
+  return userMessageCount >= 1
 }
 
 export default function StampleySupportPage() {
@@ -200,12 +195,9 @@ export default function StampleySupportPage() {
           ? ("coping" as const)
           : ("closure" as const)
 
-  const requiredDailyReplies = getRequiredDailyReplies(inChatSafety)
+  const requiredDailyReplies = getRequiredDailyReplies()
 
-  const dailyReflectionComplete = hasCompletedDailyReflection({
-    userMessageCount,
-    isHighStress: inChatSafety,
-  })
+  const dailyReflectionComplete = hasCompletedDailyReflection(userMessageCount)
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
@@ -499,7 +491,7 @@ export default function StampleySupportPage() {
 
     if (!dailyReflectionComplete) {
       setError(
-        "Please answer Stampley's daily reflection questions before completing today's check-in."
+        "Please send at least one reply in the Stampley chat before completing today's check-in."
       )
       return
     }
@@ -695,9 +687,26 @@ export default function StampleySupportPage() {
 
   function handleCopy(msg: StoredMessage) {
     if (!msg.data) return
-    navigator.clipboard.writeText(
-      `${msg.data.greeting ? `${msg.data.greeting}\n\n` : ""}${msg.data.validation}\n\n${msg.data.reflection_question}`
-    )
+    const parts: string[] = []
+    if (hasStampleyFieldText(msg.data.greeting)) {
+      parts.push(msg.data.greeting!.trim())
+    }
+    if (hasStampleyFieldText(msg.data.validation)) {
+      parts.push(String(msg.data.validation).trim())
+    }
+    if (hasStampleyFieldText(msg.data.reflection_question)) {
+      parts.push(String(msg.data.reflection_question).trim())
+    }
+    if (hasStampleyFieldText(msg.data.micro_skill)) {
+      parts.push(String(msg.data.micro_skill).trim())
+    }
+    if (hasStampleyFieldText(msg.data.education_chip)) {
+      parts.push(String(msg.data.education_chip).trim())
+    }
+    if (hasStampleyFieldText(msg.data.closure)) {
+      parts.push(String(msg.data.closure).trim())
+    }
+    navigator.clipboard.writeText(parts.join("\n\n"))
     setCopiedId(msg.id)
     setTimeout(() => setCopiedId(null), 2000)
   }
@@ -1055,86 +1064,94 @@ export default function StampleySupportPage() {
             )}
 
             {activeView === "results" && (
-              <motion.div
-                key="results"
-                initial={{ opacity: 0, x: 16 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -16 }}
-                transition={{ duration: 0.2 }}
-                className="flex min-h-0 flex-1 flex-col overflow-y-auto"
-              >
-                <div className="mx-auto max-w-2xl space-y-4 px-6 py-8 ">
-                  <h2
-                    className="text-[22px] font-light tracking-[-0.02em]"
-                    style={{
-                      fontFamily: "'Fraunces', Georgia, serif",
-                      color: "rgba(10,10,5,0.65)",
-                    }}
-                  >
-                    Today&apos;s results
-                  </h2>
-                  <p className="text-[13px] font-light text-black/45">
-                    Review your entries below. Tap Complete Check-in in the
-                    Chat tab to save today&apos;s check-in.
-                  </p>
-                  {[
-                    { label: "Distress", value: `${metrics.distress} / 10` },
-                    { label: "Mood", value: `${metrics.mood} / 10` },
-                    { label: "Energy", value: `${metrics.energy} / 10` },
-                    { label: "Domain", value: metrics.domain ?? "—" },
-                    {
-                      label: "Context tags",
-                      value:
-                        metrics.contextTags.length > 0
-                          ? `${metrics.contextTags.length} selected`
-                          : "None",
-                    },
-                    { label: "Reflection", value: metrics.reflection || "—" },
-                    {
-                      label: "Coping action",
-                      value: metrics.copingAction || "—",
-                    },
-                  ].map((item) => (
-                    <div
-                      key={item.label}
-                      className="rounded-[16px] px-5 py-4"
-                      style={{
-                        background:
-                          "white",
-                        border: "1px solid rgba(10,10,5,0.07)",
-                      }}
-                    >
-                      <p
-                        className="mb-1 text-[9px] uppercase tracking-[0.2em]"
-                        style={{
-                          color: "rgba(10,10,5,0.3)",
-                          fontFamily: "'JetBrains Mono', monospace",
-                        }}
-                      >
-                        {item.label}
-                      </p>
-                      <p
-                        className="text-[14px] font-light"
-                        style={{ color: "rgba(10,10,5,0.65)" }}
-                      >
-                        {item.value}
-                      </p>
-                    </div>
-                  ))}
-                  <button
-                    type="button"
-                    onClick={() => setActiveView("chat")}
-                    className="mt-2 w-full rounded-[16px] py-4 text-[13px] font-semibold uppercase tracking-[0.07em] text-white transition-all hover:-translate-y-px"
-                    style={{
-                      background: "linear-gradient(135deg, #1a1a18, #0a0a0f)",
-                      boxShadow: "0 6px 20px rgba(10,10,5,0.2)",
-                      fontFamily: "'Outfit', system-ui, sans-serif",
-                    }}
-                  >
-                    Return to Chat to Complete Check-in
-                  </button>
-                </div>
-              </motion.div>
+             <motion.div
+             key="results"
+             initial={{ opacity: 0, y: 10 }}
+             animate={{ opacity: 1, y: 0 }}
+             exit={{ opacity: 0, y: -10 }}
+             transition={{ duration: 0.24, ease: "easeOut" }}
+             className="flex min-h-0 flex-1 flex-col overflow-y-auto"
+             
+             >
+             
+               <div className="mx-auto w-full max-w-2xl space-y-5 px-5 py-8 sm:px-6">
+                 <div className="space-y-2">
+                   <h2
+                     className="text-[24px] font-light tracking-[-0.03em] text-black"
+                     style={{
+                       fontFamily: "'Fraunces', Georgia, serif",
+                     }}
+                   >
+                     Today&apos;s check-in
+                   </h2>
+             
+             
+               <p className="text-[15px] font-['Poppins',sans-serif] leading-[1.7] text-black">
+                 Review your responses below. When you&apos;re ready, return to the
+                 chat to complete today&apos;s check-in.
+               </p>
+             </div>
+             
+             <div className="space-y-3">
+               {[
+                 { label: "Distress", value: `${metrics.distress} / 10` },
+                 { label: "Mood", value: `${metrics.mood} / 10` },
+                 { label: "Energy", value: `${metrics.energy} / 10` },
+                 { label: "Focus domain", value: metrics.domain ?? "—" },
+                 {
+                   label: "Context tags",
+                   value:
+                     metrics.contextTags.length > 0
+                       ? `${metrics.contextTags.length} selected`
+                       : "None selected",
+                 },
+                 {
+                   label: "Reflection",
+                   value: metrics.reflection || "No reflection added",
+                 },
+                 {
+                   label: "Coping action",
+                   value: metrics.copingAction || "No coping action added",
+                 },
+               ].map((item) => (
+                 <div
+                   key={item.label}
+                   className="rounded-[18px] border border-black/[0.06] bg-white px-5 py-4 shadow-[0_1px_4px_rgba(10,10,15,0.03)] transition-all duration-200"
+                 >
+                   <p
+                     className="mb-2 text-[10px] uppercase tracking-[0.18em] text-black/35"
+                     style={{
+                       fontFamily: "'JetBrains Mono', monospace",
+                     }}
+                   >
+                     {item.label}
+                   </p>
+             
+                   <p
+                     className="text-[16px] font-['Poppins',sans-serif] leading-[1.75] text-black/75"
+                   >
+                     {item.value}
+                   </p>
+                 </div>
+               ))}
+             </div>
+             
+             <button
+               type="button"
+               onClick={() => setActiveView("chat")}
+               className="mt-2 flex w-full items-center justify-center rounded-[18px] border border-[#005ea8]/10 bg-[#005ea8] px-5 py-4 text-[14px] font-medium tracking-[0.01em] text-white transition-all duration-200 hover:-translate-y-[1px] hover:bg-[#004b87] active:translate-y-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#005ea8]/30 focus-visible:ring-offset-2"
+               style={{
+                 fontFamily: "'Poppins', sans-serif",
+                 boxShadow: "0 10px 24px rgba(0, 94, 168, 0.18)",
+               }}
+             >
+               Return to Chat to Complete Check-in
+             </button>
+             
+             
+               </div>
+             </motion.div>
+             
             )}
           </AnimatePresence>
           </div>
@@ -1327,7 +1344,6 @@ function ChatInputDock({
   requiredDailyReplies: number
 }) {
   const inputDisabled = loading || completingCheckIn
-  const remainingReplies = Math.max(requiredDailyReplies - userMessageCount, 0)
   const inputHintActive = !inputText.trim() && !inputDisabled
 
   return (
@@ -1378,12 +1394,8 @@ function ChatInputDock({
         </div>
         <p className="mt-2 text-center text-[18px] leading-[1.5] text-black " style={{ fontFamily: "'Poppins', sans-serif" }}>
           {!canComplete
-            ? `Continue chatting with Stampley. 
-            
-            Answer ${remainingReplies} more question${
-                remainingReplies === 1 ? "" : "s"
-              } to complete today’s reflection.`
-            : "You can complete today’s check-in when you’re ready."}
+            ? "Reply once to unlock Complete Check-in. You can keep chatting after that."
+            : "You can complete today\u2019s check-in when you\u2019re ready\u2014or keep chatting with Stampley."}
         </p>
         <button
           type="button"
@@ -1507,81 +1519,133 @@ function ChatMessage({
 
         {msg.data && (
           <>
-            <div className="space-y-3 text-[18px] font-['Poppins', sans-serif] font-light leading-[1.72] text-black">
-              {msg.data.greeting && <p>{msg.data.greeting}</p>}
-              <p className="text-black font-['Poppins', sans-serif] text-[18px] font-light">{msg.data.validation}</p>
+            {(() => {
+              const data = msg.data
+              const showSkill = hasStampleyFieldText(data.micro_skill)
+              const showInsight = hasStampleyFieldText(data.education_chip)
+              const hasBody =
+                hasStampleyFieldText(data.greeting) ||
+                hasStampleyFieldText(data.validation) ||
+                hasStampleyFieldText(data.reflection_question) ||
+                hasStampleyFieldText(data.closure)
 
-{/* stampley question */}
-              <p className=" text-[20px] mt-14 leading-[1.5] text-black font-['Poppins', sans-serif] " >
-                {msg.data.reflection_question}
-              </p>
+              return (
+                <>
+                  {hasBody ? (
+                    <div className="space-y-3 text-[18px] font-['Poppins', sans-serif] font-light leading-[1.72] text-black">
+                      {hasStampleyFieldText(data.greeting) ? (
+                        <p>{data.greeting}</p>
+                      ) : null}
+                      {hasStampleyFieldText(data.validation) ? (
+                        <p className="text-black font-['Poppins', sans-serif] text-[18px] font-light">
+                          {data.validation}
+                        </p>
+                      ) : null}
+                      {hasStampleyFieldText(data.reflection_question) ? (
+                        <p className="text-[20px] leading-[1.5] text-black font-['Poppins', sans-serif]">
+                          {data.reflection_question}
+                        </p>
+                      ) : null}
+                      {hasStampleyFieldText(data.closure) ? (
+                        <p className="text-[16px] leading-[1.6] text-black/70">
+                          {data.closure}
+                        </p>
+                      ) : null}
+                    </div>
+                  ) : null}
 
+                  {(showSkill || showInsight) && (
+                    <div className="flex items-center gap-1.5">
+                      {showSkill ? (
+                        <ChipButton
+                          active={expandedCard === `${msg.id}-skill`}
+                          onClick={() =>
+                            setExpandedCard(
+                              expandedCard === `${msg.id}-skill`
+                                ? null
+                                : `${msg.id}-skill`
+                            )
+                          }
+                          icon={<Wind size={11} strokeWidth={2} />}
+                          label="Skill"
+                        />
+                      ) : null}
+                      {showInsight ? (
+                        <ChipButton
+                          active={expandedCard === `${msg.id}-edu`}
+                          onClick={() =>
+                            setExpandedCard(
+                              expandedCard === `${msg.id}-edu`
+                                ? null
+                                : `${msg.id}-edu`
+                            )
+                          }
+                          icon={<BookOpen size={11} strokeWidth={2} />}
+                          label="Insight"
+                        />
+                      ) : null}
+                      <div className="flex-1" />
+                      <button
+                        type="button"
+                        onClick={() => onCopy(msg)}
+                        className="rounded-full p-1.5 text-black/30 transition-all hover:text-black/55"
+                        aria-label="Copy response"
+                      >
+                        {copiedId === msg.id ? (
+                          <Check
+                            size={12}
+                            strokeWidth={2}
+                            className="text-emerald-600"
+                          />
+                        ) : (
+                          <Copy size={12} strokeWidth={1.5} />
+                        )}
+                      </button>
+                    </div>
+                  )}
 
-              {/* {msg.data.closure && (
-                <p className="text-black/50 italic">{msg.data.closure}</p>
-              )} */}
-            </div>
+                  {!showSkill && !showInsight ? (
+                    <div className="flex justify-end">
+                      <button
+                        type="button"
+                        onClick={() => onCopy(msg)}
+                        className="rounded-full p-1.5 text-black/30 transition-all hover:text-black/55"
+                        aria-label="Copy response"
+                      >
+                        {copiedId === msg.id ? (
+                          <Check
+                            size={12}
+                            strokeWidth={2}
+                            className="text-emerald-600"
+                          />
+                        ) : (
+                          <Copy size={12} strokeWidth={1.5} />
+                        )}
+                      </button>
+                    </div>
+                  ) : null}
 
-            <div className="flex items-center gap-1.5">
-              <ChipButton
-                active={expandedCard === `${msg.id}-skill`}
-                onClick={() =>
-                  setExpandedCard(
-                    expandedCard === `${msg.id}-skill`
-                      ? null
-                      : `${msg.id}-skill`
-                  )
-                }
-                icon={<Wind size={11} strokeWidth={2} />}
-                label="Skill"
-              />
-              <ChipButton
-                active={expandedCard === `${msg.id}-edu`}
-                onClick={() =>
-                  setExpandedCard(
-                    expandedCard === `${msg.id}-edu` ? null : `${msg.id}-edu`
-                  )
-                }
-                icon={<BookOpen size={11} strokeWidth={2} />}
-                label="Insight"
-              />
-              <div className="flex-1" />
-              <button
-                type="button"
-                onClick={() => onCopy(msg)}
-                className="rounded-full p-1.5 text-black/30 transition-all hover:text-black/55"
-                aria-label="Copy response"
-              >
-                {copiedId === msg.id ? (
-                  <Check
-                    size={12}
-                    strokeWidth={2}
-                    className="text-emerald-600"
-                  />
-                ) : (
-                  <Copy size={12} strokeWidth={1.5} />
-                )}
-              </button>
-            </div>
-
-            <AnimatePresence mode="wait">
-              {expandedCard === `${msg.id}-skill` && (
-                <ExpandableCard
-                  key="skill"
-                  icon={<Wind size={13} strokeWidth={1.8} />}
-                  title="Micro-skill"
-                  value={msg.data.micro_skill}
-                />
-              )}
-              {expandedCard === `${msg.id}-edu` && (
-                <ExpandableCard
-                  key="edu"
-                  icon={<BookOpen size={13} strokeWidth={1.8} />}
-                  title="Insight"
-                  value={msg.data.education_chip}
-                />
-              )}
-            </AnimatePresence>
+                  <AnimatePresence mode="wait">
+                    {showSkill && expandedCard === `${msg.id}-skill` ? (
+                      <ExpandableCard
+                        key="skill"
+                        icon={<Wind size={13} strokeWidth={1.8} />}
+                        title="Micro-skill"
+                        value={data.micro_skill ?? ""}
+                      />
+                    ) : null}
+                    {showInsight && expandedCard === `${msg.id}-edu` ? (
+                      <ExpandableCard
+                        key="edu"
+                        icon={<BookOpen size={13} strokeWidth={1.8} />}
+                        title="Insight"
+                        value={data.education_chip ?? ""}
+                      />
+                    ) : null}
+                  </AnimatePresence>
+                </>
+              )
+            })()}
           </>
         )}
       </div>
@@ -1629,6 +1693,8 @@ function ExpandableCard({
   title: string
   value: string
 }) {
+  if (!hasStampleyFieldText(value)) return null
+
   return (
     <motion.div
       initial={{ opacity: 0, height: 0 }}

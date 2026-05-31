@@ -15,10 +15,10 @@ export interface StoredConversation {
   
   export interface StampleyResponseData {
     greeting?: string
-    validation: string
-    reflection_question: string
-    micro_skill: string
-    education_chip: string
+    validation?: string
+    reflection_question?: string
+    micro_skill?: string
+    education_chip?: string
     closure?: string
   }
   

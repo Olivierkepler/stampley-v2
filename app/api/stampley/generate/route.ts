@@ -18,6 +18,7 @@ import {
   type StampleyInput,
   type StampleyPhase,
 } from "@/lib/stampley-prompt"
+import { getRecentEmotionalThemes } from "@/lib/stampley-memory"
 import type { Domain } from "@/store/checkin-store"
 
 function safeErrorInfo(error: unknown) {
@@ -135,10 +136,22 @@ export async function POST(req: NextRequest) {
       weekNumber: liveStudyContext?.weekNumber ?? 1,
     }
 
+    const history = sanitizeHistory(messageHistory)
+    const phase = resolvePhase(history, conversationPhase)
+
     let longitudinalContext
+    let emotionalThemeMemory
 
     try {
-      longitudinalContext = await loadLongitudinalContext(session.user.id)
+      ;[longitudinalContext, emotionalThemeMemory] = await Promise.all([
+        loadLongitudinalContext(session.user.id),
+        getRecentEmotionalThemes(session.user.id, {
+          weekNumber: input.weekNumber,
+          phase,
+          highStress,
+          dayNumber: input.dayNumber,
+        }),
+      ])
 
       console.log("[stampley/generate] memory DB query success")
     } catch (error) {
@@ -149,15 +162,13 @@ export async function POST(req: NextRequest) {
       throw error
     }
 
-    const history = sanitizeHistory(messageHistory)
-    const phase = resolvePhase(history, conversationPhase)
-
     const messages = buildOpenAIMessages(
       input,
       history,
       phase,
       highStress,
-      longitudinalContext
+      longitudinalContext,
+      emotionalThemeMemory
     )
 
     console.log("[stampley/generate] OpenAI call start")
@@ -312,90 +323,70 @@ function resolvePhase(
 }
 
 function getFallbackResponse(
-  name: string,
-  domain: Domain,
+  _name: string,
+  _domain: Domain,
   phase: StampleyPhase,
   highStress: boolean
 ) {
-  const domainMessages: Record<Domain, string> = {
-    Emotional:
-      "managing the emotional weight of diabetes takes real courage. You showed up today and that matters.",
-    Regimen:
-      "keeping up with your diabetes routine is genuinely hard work. Every effort counts, even the small ones.",
-    Physician:
-      "navigating your healthcare can feel overwhelming sometimes. Your concerns are always valid.",
-    Interpersonal:
-      "feeling unsupported can make everything harder. Reaching out — even small steps — makes a difference.",
-  }
-
-  const educationChip = `Living with diabetes means ${domainMessages[domain]}`
-
   const microSkill =
-    "Try taking one slow, deep breath — in for 4 counts, hold for 4, out for 4. You can do this anytime things feel heavy."
+    "Small reset: relax your shoulders once before moving to the next thing."
 
   if (highStress) {
     return {
-      greeting: `Hi ${name}, I'm glad you're here.`,
+      greeting: "",
       validation:
-        "Your stress level is very high today, and that is completely understandable. You don't have to go through this alone.",
-      reflection_question:
-        "What's one thing — even something small — that might help you feel a little more steady right now?",
+        "Today sounds really heavy, and it makes sense you'd feel that way.",
+      reflection_question: "",
       micro_skill: microSkill,
-      education_chip: educationChip,
+      education_chip: "",
       closure:
-        "Support is available if you need someone to talk to. Take things one breath at a time.",
+        "You do not need to figure everything out right now. Support is available if you need someone to talk to.",
     }
   }
 
   switch (phase) {
     case "opening":
       return {
-        greeting: `Hi ${name}, thank you for checking in today. This space is just for you — no judgment, no pressure.`,
+        greeting: "",
         validation:
-          "I can see today had its challenges. What you're feeling makes complete sense given everything you're managing.",
-        reflection_question:
-          "What's one thing from today you'd like to leave behind as you move into tomorrow?",
-        micro_skill: microSkill,
-        education_chip: educationChip,
-        closure:
-          "You've already done something meaningful today by checking in. For tomorrow, try giving yourself one small moment of kindness.",
+          "Trying to manage diabetes while carrying what you shared today can feel heavy.",
+        reflection_question: "What felt hardest to carry today?",
+        micro_skill: "",
+        education_chip: "",
+        closure: "",
       }
 
     case "exploration":
       return {
         greeting: "",
         validation:
-          "Thank you for sharing more — what you're describing matters, and it makes sense you'd feel this way.",
+          "It sounds like the pressure may have built gradually through the day.",
         reflection_question:
-          "What feels like the most important part of that for you right now?",
-        micro_skill: microSkill,
-        education_chip: educationChip,
-        closure: "I'm glad you're continuing to reflect.",
+          "When did you first notice yourself feeling overwhelmed?",
+        micro_skill: "",
+        education_chip: "",
+        closure: "",
       }
 
     case "coping":
       return {
         greeting: "",
-        validation:
-          "It sounds like you've been carrying a lot. A small step can still make a real difference.",
-        reflection_question:
-          "What's one small action you could try in the next day or two that feels realistic for you?",
+        validation: "You have been holding a lot — a small reset can still help.",
+        reflection_question: "",
         micro_skill: microSkill,
-        education_chip: educationChip,
-        closure: "Even a tiny step counts. Be gentle with yourself.",
+        education_chip: "",
+        closure: "",
       }
 
     case "closure":
       return {
         greeting: "",
-        validation:
-          "Thank you for taking this time to reflect today. What you shared really matters.",
-        reflection_question:
-          "When you feel ready, would you like to complete today's check-in so it's saved?",
-        micro_skill: microSkill,
-        education_chip: educationChip,
+        validation: "Thank you for checking in honestly today.",
+        reflection_question: "",
+        micro_skill: "",
+        education_chip: "",
         closure:
-          "Tap Complete Check-in when you're ready to save today's check-in. You can always come back tomorrow.",
+          "You do not need to solve everything tonight. Complete Check-in is here when you are ready — no rush.",
       }
   }
 }

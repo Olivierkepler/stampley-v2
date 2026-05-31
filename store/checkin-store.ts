@@ -35,6 +35,7 @@ export interface CheckInState {
   setReflection: (v: string) => void
   setCopingAction: (v: string) => void
   setDomain: (d: Domain) => void
+  clearDomain: () => void
   reset: () => void
 }
 
@@ -49,6 +50,7 @@ export const useCheckInStore = create<CheckInState>()(
       setReflection: (v) => set({ reflection: v }),
       setCopingAction: (v) => set({ copingAction: v }),
       setDomain: (d) => set({ domain: d }),
+      clearDomain: () => set({ domain: null }),
       reset: () => {
         set({ ...checkInInitialState })
         void useCheckInStore.persist.clearStorage()

@@ -13,6 +13,7 @@ import {
   computeStudyProgressPercent,
   checkinsCompletedInWeek,
 } from "@/lib/check-in-utils"
+import { getStudyWeekForNextCheckIn } from "@/lib/weekly-domain-progress"
 
 export default async function DashboardPage() {
   const session = await auth()
@@ -30,19 +31,23 @@ export default async function DashboardPage() {
 
   const checkedInToday = todayCheckin.rows.length > 0
 
-  const domainResult = await query(
-    `SELECT domain FROM user_weekly_domains
-     WHERE user_id = $1 ORDER BY week_number DESC LIMIT 1`,
-    [session.user.id]
-  )
-
-  const currentDomain = domainResult.rows[0]?.domain ?? null
-
   const progressResult = await query(
     `SELECT total_checkins, current_week
      FROM user_study_progress WHERE user_id = $1`,
     [session.user.id]
   )
+
+  const progress = progressResult.rows[0] ?? null
+  const completedCheckins = progress?.total_checkins ?? 0
+  const activeStudyWeek = getStudyWeekForNextCheckIn(completedCheckins)
+
+  const currentWeekDomainResult = await query(
+    `SELECT domain FROM user_weekly_domains
+     WHERE user_id = $1 AND week_number = $2`,
+    [session.user.id, activeStudyWeek]
+  )
+
+  const currentDomain = currentWeekDomainResult.rows[0]?.domain ?? null
 
   const chartResult = await query(
     `
@@ -80,8 +85,6 @@ export default async function DashboardPage() {
     count,
   }))
 
-  const progress = progressResult.rows[0] ?? null
-
   const firstName = session.user.email?.split("@")[0]?.split(".")[0] ?? ""
   const formattedName = firstName.charAt(0).toUpperCase() + firstName.slice(1)
 
@@ -91,7 +94,6 @@ export default async function DashboardPage() {
     day: "numeric",
   })
 
-  const completedCheckins = progress?.total_checkins ?? 0
   const remainingCheckins = Math.max(STUDY_TOTAL_CHECKINS - completedCheckins, 0)
   const studyComplete = completedCheckins >= STUDY_TOTAL_CHECKINS
 
@@ -474,7 +476,7 @@ export default async function DashboardPage() {
 
                         <div className="text-right">
                           <p className="text-sm font-medium text-black/75">
-                            Week {progress?.current_week ?? 1} / 4
+                            Week {activeStudyWeek} / 4
                           </p>
 
                           <p className="mt-1 text-xs text-black/45">
@@ -496,9 +498,7 @@ export default async function DashboardPage() {
                             completedCheckins,
                             week
                           )
-                          const active = progress
-                            ? week <= progress.current_week
-                            : week === 1
+                          const active = week <= activeStudyWeek
 
                             return (
                               <div
@@ -554,7 +554,7 @@ export default async function DashboardPage() {
               </section>
 
             <section className="dashboard-card p-8 scroll-section">
-                <p className="label">This Week’s Focus</p>
+                <p className="label">This Week&apos;s Focus · Week {activeStudyWeek}</p>
 
                 {domainMeta ? (
                   <div className="mt-6 flex items-start gap-5">
@@ -581,11 +581,10 @@ export default async function DashboardPage() {
                 ) : (
                   <div className="mt-6 border border-black/[0.08] bg-[#fcfbf8] p-5">
                     <p className="text-sm font-medium text-black/70">
-                      No weekly focus selected yet.
+                      No weekly focus selected yet for Week {activeStudyWeek}.
                     </p>
                     <p className="mt-2 text-sm leading-6 text-black/50">
-                      Your focus area will appear here after your check-in flow
-                      identifies or records one.
+                      Choose your focus domain during Step 4 of your next check-in.
                     </p>
                   </div>
                 )}

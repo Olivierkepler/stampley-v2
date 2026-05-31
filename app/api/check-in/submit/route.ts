@@ -10,13 +10,8 @@ import {
   STUDY_COMPLETE_MESSAGE,
   STUDY_TOTAL_CHECKINS,
 } from "@/lib/check-in-utils"
-
-const VALID_DOMAINS = ["Emotional", "Regimen", "Physician", "Interpersonal"] as const
-type ValidDomain = (typeof VALID_DOMAINS)[number]
-
-function isValidDomain(d: unknown): d is ValidDomain {
-  return typeof d === "string" && VALID_DOMAINS.includes(d as ValidDomain)
-}
+import { resolveWeeklyDomainForUser } from "@/lib/resolve-weekly-domain"
+import { STUDY_DOMAINS } from "@/lib/weekly-domain-progress"
 
 const DUPLICATE_CHECK_IN_MESSAGE =
   "You have already completed today's check-in."
@@ -40,25 +35,12 @@ export async function POST(req: NextRequest) {
     const body = await req.json()
     const { distress, mood, energy, contextTags, reflection, copingAction } = body
 
-    let domain: ValidDomain | null = isValidDomain(body.domain) ? body.domain : null
-    if (!domain) {
-      const weekly = await query(
-        `SELECT domain FROM user_weekly_domains
-         WHERE user_id = $1 ORDER BY week_number DESC LIMIT 1`,
-        [session.user.id]
-      )
-      const d = weekly.rows[0]?.domain
-      if (isValidDomain(d)) domain = d
-    }
-    if (!domain) {
-      const dds = await query(
-        `SELECT confirmed_domain FROM dds_responses WHERE user_id = $1`,
-        [session.user.id]
-      )
-      const d = dds.rows[0]?.confirmed_domain
-      if (isValidDomain(d)) domain = d
-    }
-    if (!domain) {
+    const { domain } = await resolveWeeklyDomainForUser(
+      session.user.id,
+      body.domain
+    )
+
+    if (!domain || !STUDY_DOMAINS.includes(domain)) {
       return NextResponse.json(
         { error: "Weekly focus is missing. Open Weekly Domain and continue again." },
         { status: 400 }

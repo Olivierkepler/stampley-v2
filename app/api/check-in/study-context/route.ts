@@ -4,40 +4,9 @@ export const dynamic = "force-dynamic"
 import { NextRequest, NextResponse } from "next/server"
 import { auth } from "@/lib/auth"
 import { buildCheckInStudyContext } from "@/lib/check-in-context"
-import { isCheckInDomain } from "@/lib/check-in-subscale"
+import { resolveWeeklyDomainForUser } from "@/lib/resolve-weekly-domain"
+import { STUDY_DOMAINS } from "@/lib/weekly-domain-progress"
 import { query } from "@/lib/db"
-import type { Domain } from "@/store/checkin-store"
-
-const VALID_DOMAINS: Domain[] = [
-  "Emotional",
-  "Regimen",
-  "Physician",
-  "Interpersonal",
-]
-
-async function resolveDomain(
-  userId: string,
-  requested: unknown
-): Promise<Domain | null> {
-  if (isCheckInDomain(requested)) return requested
-
-  const weekly = await query(
-    `SELECT domain FROM user_weekly_domains
-     WHERE user_id = $1 ORDER BY week_number DESC LIMIT 1`,
-    [userId]
-  )
-  const weeklyDomain = weekly.rows[0]?.domain
-  if (isCheckInDomain(weeklyDomain)) return weeklyDomain
-
-  const dds = await query(
-    `SELECT confirmed_domain FROM dds_responses WHERE user_id = $1`,
-    [userId]
-  )
-  const confirmed = dds.rows[0]?.confirmed_domain
-  if (isCheckInDomain(confirmed)) return confirmed
-
-  return null
-}
 
 export async function POST(req: NextRequest) {
   const session = await auth()
@@ -47,9 +16,12 @@ export async function POST(req: NextRequest) {
 
   try {
     const body = await req.json().catch(() => ({}))
-    const domain = await resolveDomain(session.user.id, body.domain)
+    const { domain } = await resolveWeeklyDomainForUser(
+      session.user.id,
+      body.domain
+    )
 
-    if (!domain || !VALID_DOMAINS.includes(domain)) {
+    if (!domain || !STUDY_DOMAINS.includes(domain)) {
       return NextResponse.json(
         {
           error:
