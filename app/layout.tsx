@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+
 import { AuthProvider } from "@/components/auth/auth-provider";
 import Footer from "@/components/home/Footer";
 import MenuBar from "@/components/home/MenuBar";
@@ -17,15 +18,24 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+
 export const metadata: Metadata = {
-  title: "AIDES-T2D Study Portal",
-  description: "AI-Driven Emotional Support for Type 2 Diabetes",
+  title: "FiveStarsSkies",
+  description: "Find flights, hotels, and unforgettable journeys.",
   icons: {
-    icon: "/images/stampleyLogo.png", // Updated path
-    shortcut: "/images/stampleyLogo.png", // Optional: ensures it shows in bookmarks
-    apple: "/images/stampleyLogo.png", // Optional: for pinned iOS home screen icons
+    icon: [
+      { url: "/images/Stampley/favicon.ico", sizes: "any" },
+      { url: "/images/Stampley/favicon-32x32.png", sizes: "32x32", type: "image/png" },
+      { url: "/images/Stampley/favicon-48x48.png", sizes: "48x48", type: "image/png" },
+      { url: "/images/Stampley/favicon-64x64.png", sizes: "64x64", type: "image/png" },
+    ],
+    shortcut: "/images/Stampley/favicon.ico",
+    apple: [
+      { url: "/images/Stampley/apple-icon.png", sizes: "180x180", type: "image/png" },
+    ],
   },
 };
+
 
 export default function RootLayout({
   children,
@@ -38,12 +48,9 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
-    
-  
         <AuthProvider>
           {children}
         </AuthProvider>
-      
       </body>
     </html>
   );

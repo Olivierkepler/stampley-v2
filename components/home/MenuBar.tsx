@@ -19,7 +19,7 @@ export default function MenuBar() {
             <li key={item.href} className="h-full shrink-0">
               <a
                 href={item.href}
-                className="group relative flex h-full items-center px-3 text-[15px] font-medium tracking-[-0.01em] transition-colors duration-200 hover:text-blue-600 focus-visible:text-blue-600 focus-visible:outline-none sm:px-4 xl:px-5"
+                className="group relative flex h-full items-center px-3 text-[16px] font-['Poppins', sans-serif] tracking-[-0.01em] transition-colors duration-200 hover:text-blue-600 focus-visible:text-blue-600 focus-visible:outline-none sm:px-4 xl:px-5"
               >
                 <span className="relative whitespace-nowrap">
                   {item.label}
